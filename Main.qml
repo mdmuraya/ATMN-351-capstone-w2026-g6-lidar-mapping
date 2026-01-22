@@ -6,10 +6,10 @@ import LIDARMapping
 
 ApplicationWindow {
     id: applicationWindowId
-    width: 1900
-    minimumWidth: 1500
-    height: 768
-    minimumHeight: 500
+    width: 1600
+    minimumWidth: 1600
+    height: 850
+    minimumHeight: 850
     color: "#E0DFDB"
     visible: true
     title: qsTr("LIDAR Mapping HMI")
@@ -389,7 +389,7 @@ ApplicationWindow {
     }
 
     footer: Rectangle {
-        height: 60
+        height: 40
         color: "gray"
     }
 }
