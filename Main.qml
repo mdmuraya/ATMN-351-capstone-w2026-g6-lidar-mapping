@@ -14,7 +14,7 @@ ApplicationWindow {
     color: "#E0DFDB"
     visible: true
     title: qsTr("Humber Polytechnic: Electromechanical Engineering Technology: Winter 2026 Capstone: Group 6: LIDAR Mapping HMI")
-
+    Material.theme: Material.Dark // Or Light
     //flags: Qt.Window | Qt.FramelessWindowHint
 
     // A flag to indicate if the closing action is confirmned
