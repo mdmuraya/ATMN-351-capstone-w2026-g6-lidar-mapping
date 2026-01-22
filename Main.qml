@@ -8,8 +8,8 @@ ApplicationWindow {
     id: applicationWindowId
     width: 1900
     minimumWidth: 1500
-    height: 980
-    minimumHeight: 980
+    height: 768
+    minimumHeight: 500
     color: "#E0DFDB"
     visible: true
     title: qsTr("LIDAR Mapping HMI")
@@ -283,7 +283,7 @@ ApplicationWindow {
                                 // Define the background (the progress bar track)
                                 background: Rectangle {
                                     Layout.fillWidth: true
-                                    implicitHeight: 50
+                                    implicitHeight: 20
                                     color: "#e6e6e6" // Light gray track color
                                     radius: 5
                                     border.color: "#cccccc"
@@ -308,7 +308,7 @@ ApplicationWindow {
                             // Add a Text label to show the percentage value
                             Text {
                                 text: progressBar.value.toFixed(0) + "% complete"
-                                font.pointSize: 14
+                                font.pointSize: 12
                                 horizontalAlignment: Text.AlignHCenter
                                 Layout.fillWidth: true
                             }
