@@ -1,28 +1,33 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import QtQuick.Dialogs
 import QtQuick.Controls.Material
 import LIDARMapping
 
 ApplicationWindow {
-    id: applicationWindowId
+    id: applicationWindow
     width: 1600
     minimumWidth: 1600
     height: 850
     minimumHeight: 850
     color: "#E0DFDB"
     visible: true
-    title: qsTr("LIDAR Mapping HMI")
+    title: qsTr("Humber Polytechnic: Electromechanical Engineering Technology: Winter 2026 Capstone: Group 6: LIDAR Mapping HMI")
 
     //flags: Qt.Window | Qt.FramelessWindowHint
 
+    // A flag to indicate if the closing action is confirmned
+    property bool quitConfirmed: false
+
+    /*
     header: Rectangle {
         height: 60
         color: "gray"
     }
-
+    */
     contentData: Rectangle {
-        id: contentDataId
+        id: contentDataContainer
         anchors.fill: parent
         anchors.margins: 5
         color: "transparent"
@@ -58,7 +63,7 @@ ApplicationWindow {
                 */
 
                 ColumnLayout {
-                    id: columnLayoutControlsId
+                    id: columnLayoutControls
                     Layout.horizontalStretchFactor: 1
 
                     Frame {
@@ -378,19 +383,48 @@ ApplicationWindow {
                 Item { Layout.fillWidth: true }
 
                 Button {
-                    text: qsTr("Quit Application")
+                    text: qsTr("Quit HMI Application")
+                    font {
+                        bold: true
+                        pointSize: 12
+                    }
                     onClicked: {
-                        Qt.quit()
+                        confirmQuitDialog.open()
                     }
                 }
 
             }
         }
     }
-
+    /*
     footer: Rectangle {
         height: 40
         color: "gray"
+    }
+    */
+
+    MessageDialog {
+        id: confirmQuitDialog
+        title: qsTr("Confirm")
+        text: "Do you want to quit?"
+        //: StandardIcon.Question
+        buttons: MessageDialog.Yes | MessageDialog.No
+
+        // Handler for when the user clicks the "OK" button or dismisses the dialog
+        onAccepted: {
+            applicationWindow.quitConfirmed = true;
+            applicationWindow.close();
+            Qt.quit()
+        }
+    }
+
+    // Handler for the window's closing signal
+    onClosing: (close) => {
+        // If not admitted, ignore the close event and show the dialog
+        if (!quitConfirmed) {
+            close.accepted = false; // Prevent the window from closing immediately
+            confirmQuitDialog.open(); // Open the confirmation dialog
+        }
     }
 }
 
