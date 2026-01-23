@@ -35,6 +35,7 @@ public slots:
 private:
     std::unique_ptr<QTimer> _getPLCStatusTimer; // Default initialized to nullptr
     QDateTime _dateTimeOnApplicationStart = QDateTime::currentDateTime();
+    const QStringList _commandLineArguments;
 };
 
 #endif // MAINBACKENDHELPER_H

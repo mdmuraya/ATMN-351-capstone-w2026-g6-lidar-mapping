@@ -1,3 +1,4 @@
+#include <QCoreApplication>
 #include <QDebug>
 #include <QVariantList>
 
@@ -6,9 +7,25 @@
 
 MainBackendHelper::MainBackendHelper(QObject *parent) :
     QObject (parent),
-    _getPLCStatusTimer (std::make_unique<QTimer>())
+    _getPLCStatusTimer (std::make_unique<QTimer>()),
+    _commandLineArguments(QCoreApplication::arguments())
 {
     qDebug() << "MainBackendHelper::MainBackendHelper()";
+
+    // Get all arguments as a QStringList
+    //const QStringList args = QCoreApplication::arguments();
+
+    qDebug() << "Total arguments:" << _commandLineArguments.count();
+
+    // Iterate over the arguments
+    for (int i = 0; i < _commandLineArguments.count(); ++i) {
+        qDebug() << "Argument" << i << ":" << _commandLineArguments.at(i);
+    }
+
+    // Access specific arguments (e.g., the second argument if it exists)
+    if (_commandLineArguments.count() > 1) {
+        qDebug() << "Second argument:" << _commandLineArguments.at(1);
+    }
 
     connect(_getPLCStatusTimer.get(), &QTimer::timeout, [this](){
         //emit requestPLCStatus();
