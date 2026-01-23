@@ -65,8 +65,9 @@ ApplicationWindow {
                     id: columnLayoutControls
                     Layout.horizontalStretchFactor: 1
 
-                    Frame {
-                        Layout.fillWidth: true
+                    GroupBox {
+                        title: "Start Mode"
+                        Layout.fillWidth: true                        
                         RowLayout {
                             anchors.fill: parent
 
@@ -95,7 +96,8 @@ ApplicationWindow {
                         }
                     }
 
-                    Frame {
+                    GroupBox {
+                        title: "Actions"
                         Layout.fillWidth: true
                         ColumnLayout {
                             anchors.fill: parent
@@ -145,7 +147,8 @@ ApplicationWindow {
 
                     Item { Layout.fillHeight: true }
 
-                    Frame {
+                    GroupBox {
+                        title: "Jog"
                         Layout.fillWidth: true
                         ColumnLayout {
                             anchors.fill: parent
@@ -204,7 +207,8 @@ ApplicationWindow {
                     }
                 }
 
-                Frame {
+                GroupBox {
+                    title: "Scan Area"
                     Layout.fillWidth: true
                     Layout.fillHeight: true
                     Layout.horizontalStretchFactor: 98
@@ -325,7 +329,8 @@ ApplicationWindow {
                     Layout.horizontalStretchFactor: 1
 
                     // Items inside a Layout should use Layout attached properties, not anchors
-                    Frame {
+                    GroupBox {
+                        title: "Indicator Lights"
                         Layout.fillWidth: true
                         Layout.fillHeight: true
                         ColumnLayout {
