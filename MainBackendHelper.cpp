@@ -7,24 +7,23 @@
 
 MainBackendHelper::MainBackendHelper(QObject *parent) :
     QObject (parent),
-    _getPLCStatusTimer (std::make_unique<QTimer>()),
-    _commandLineArguments(QCoreApplication::arguments())
+    _getPLCStatusTimer (std::make_unique<QTimer>())
 {
     qDebug() << "MainBackendHelper::MainBackendHelper()";
 
     // Get all arguments as a QStringList
-    //const QStringList args = QCoreApplication::arguments();
+    const QStringList commandLineArguments = QCoreApplication::arguments();
 
-    qDebug() << "Total arguments:" << _commandLineArguments.count();
+    qDebug() << "Total arguments:" << commandLineArguments.count();
 
     // Iterate over the arguments
-    for (int i = 0; i < _commandLineArguments.count(); ++i) {
-        qDebug() << "Argument" << i << ":" << _commandLineArguments.at(i);
+    for (int i = 0; i < commandLineArguments.count(); ++i) {
+        qDebug() << "Argument" << i << ":" << commandLineArguments.at(i);
     }
 
     // Access specific arguments (e.g., the second argument if it exists)
-    if (_commandLineArguments.count() > 1) {
-        qDebug() << "Second argument:" << _commandLineArguments.at(1);
+    if (commandLineArguments.count() > 1) {
+        qDebug() << "Second argument:" << commandLineArguments.at(1);
     }
 
     connect(_getPLCStatusTimer.get(), &QTimer::timeout, [this](){

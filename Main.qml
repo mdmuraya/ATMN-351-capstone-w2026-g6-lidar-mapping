@@ -424,7 +424,7 @@ ApplicationWindow {
 
     // Handler for the window's closing signal
     onClosing: (close) => {
-        // If not admitted, ignore the close event and show the dialog
+        // If not confirmed, ignore the close event and show the dialog
         if (!quitConfirmed) {
             close.accepted = false; // Prevent the window from closing immediately
             confirmQuitDialog.open(); // Open the confirmation dialog
