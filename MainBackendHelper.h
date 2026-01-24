@@ -33,7 +33,7 @@ public slots:
     void onRequestPLCStatus();
 
 private:
-    std::unique_ptr<QTimer> _getPLCStatusTimer; // Default initialized to nullptr
+    std::unique_ptr<QTimer> _getPLCStatusTimer = nullptr;
     QDateTime _dateTimeOnApplicationStart = QDateTime::currentDateTime();    
 };
 

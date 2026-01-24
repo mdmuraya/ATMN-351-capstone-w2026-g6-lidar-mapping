@@ -12,8 +12,13 @@ int main(int argc, char *argv[])
     auto mainBackendHelper(std::make_unique<MainBackendHelper>());// new MainBackendHelper());
 
     if(mainBackendHelper == nullptr)
-        return -1;
+    {
+        qCritical() << "************************************************************";
+        qCritical() << "*** Could not instantiate MainBackendHelper. Aborting... ***";
+        qCritical() << "************************************************************";
 
+        return -1;
+    }
 
     QQmlApplicationEngine engine;
     QObject::connect(
