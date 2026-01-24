@@ -5,7 +5,11 @@
 
 int main(int argc, char *argv[])
 {
-    QGuiApplication app(argc, argv);
+    qInfo() << "***************************************";
+    qInfo() << "*** LIDARMapping App starting up... ***";
+    qInfo() << "***************************************";
+
+    QGuiApplication qGuiApplication(argc, argv);
 
     //instantiate the MainBackendHelper, and if that suceeds, load the UI
 
@@ -13,9 +17,9 @@ int main(int argc, char *argv[])
 
     if(mainBackendHelper == nullptr)
     {
-        qCritical() << "************************************************************";
-        qCritical() << "*** Could not instantiate MainBackendHelper. Aborting... ***";
-        qCritical() << "************************************************************";
+        qCritical() << "*****************************************************************************";
+        qCritical() << "*** Could not instantiate MainBackendHelper. LIDARMapping App aborting... ***";
+        qCritical() << "*****************************************************************************";
 
         return -1;
     }
@@ -24,10 +28,16 @@ int main(int argc, char *argv[])
     QObject::connect(
         &engine,
         &QQmlApplicationEngine::objectCreationFailed,
-        &app,
+        &qGuiApplication,
         []() { QCoreApplication::exit(-1); },
         Qt::QueuedConnection);
     engine.loadFromModule("LIDARMapping", "Main");
 
-    return app.exec();
+    auto returnValue = qGuiApplication.exec();
+
+    qInfo() << "*******************************************************************************";
+    qInfo() << "*** LIDARMapping App terminating with retun value:" << returnValue << "... ***";
+    qInfo() << "*******************************************************************************";
+
+    return returnValue;
 }
