@@ -2,12 +2,12 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 
-#include "MainBackendHelper.h"
+#include "include/MainBackendHelper.h"
 
 int main(int argc, char *argv[])
 {
     qInfo() << "***************************************";
-    qInfo() << "*** LIDARMapping App starting up... ***";
+    qInfo() << "*** LIDAR Mapping HMI App starting up... ***";
     qInfo() << "***************************************";
 
     QGuiApplication qGuiApplication(argc, argv);
@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
     if(mainBackendHelper == nullptr)
     {
         qCritical() << "*****************************************************************************";
-        qCritical() << "*** Could not instantiate MainBackendHelper. LIDARMapping App aborting... ***";
+        qCritical() << "*** Could not instantiate MainBackendHelper. LIDAR Mapping HMI App aborting... ***";
         qCritical() << "*****************************************************************************";
 
         return -1;
@@ -36,12 +36,12 @@ int main(int argc, char *argv[])
         Qt::QueuedConnection);
 
     engine.rootContext()->setContextProperty("MainBackendHelper", mainBackendHelper.get());
-    engine.loadFromModule("LIDARMapping", "Main");
+    engine.loadFromModule("LIDARMapping_HMI", "Main");
 
     auto returnValue = qGuiApplication.exec();
 
     qInfo() << "*******************************************************************************";
-    qInfo() << "*** LIDARMapping App terminating with retun value:" << returnValue << "... ***";
+    qInfo() << "*** LIDAR Mapping HMI App terminating with retun value:" << returnValue << "... ***";
     qInfo() << "*******************************************************************************";
 
     return returnValue;

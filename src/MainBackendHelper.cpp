@@ -2,7 +2,7 @@
 #include <QDebug>
 #include <QVariantList>
 
-#include "MainBackendHelper.h"
+#include "include/MainBackendHelper.h"
 
 
 MainBackendHelper::MainBackendHelper(QObject *parent) :
