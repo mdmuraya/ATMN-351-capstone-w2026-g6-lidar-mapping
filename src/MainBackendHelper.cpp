@@ -94,7 +94,7 @@ void MainBackendHelper::onMoveBack()
 
 void MainBackendHelper::onRequestPLCStatus()
 {
-    qDebug() << "MainBackendHelper::onRequestPLCStatus()";
+    qDebug() << "MainBackendHelper::onRequestPLCStatus()" << QDateTime::currentDateTime();
 }
 
 
