@@ -10,8 +10,8 @@
 class MainBackendHelper : public QObject
 {
     Q_OBJECT
-    QML_ELEMENT
-    QML_SINGLETON
+    //QML_ELEMENT
+    //QML_SINGLETON
 public:
     explicit MainBackendHelper(QObject *parent = nullptr);
     ~MainBackendHelper();

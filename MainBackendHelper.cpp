@@ -27,12 +27,12 @@ MainBackendHelper::MainBackendHelper(QObject *parent) :
     }
 
     connect(_getPLCStatusTimer.get(), &QTimer::timeout, [this](){
-        //emit requestPLCStatus();
+        emit requestPLCStatus();
     });
 
     connect(this, &MainBackendHelper::requestPLCStatus, this, &MainBackendHelper::onRequestPLCStatus);
 
-    _getPLCStatusTimer->start(100); //100 miliseconds
+    _getPLCStatusTimer->start(1000); //1000 miliseconds
 
 }
 

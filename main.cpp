@@ -1,5 +1,6 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
+#include <QQmlContext>
 
 #include "MainBackendHelper.h"
 
@@ -13,6 +14,7 @@ int main(int argc, char *argv[])
 
     //instantiate the MainBackendHelper, and if that suceeds, load the UI
 
+
     auto mainBackendHelper(std::make_unique<MainBackendHelper>());// new MainBackendHelper());
 
     if(mainBackendHelper == nullptr)
@@ -24,6 +26,7 @@ int main(int argc, char *argv[])
         return -1;
     }
 
+
     QQmlApplicationEngine engine;
     QObject::connect(
         &engine,
@@ -31,6 +34,8 @@ int main(int argc, char *argv[])
         &qGuiApplication,
         []() { QCoreApplication::exit(-1); },
         Qt::QueuedConnection);
+
+    engine.rootContext()->setContextProperty("MainBackendHelper", mainBackendHelper.get());
     engine.loadFromModule("LIDARMapping", "Main");
 
     auto returnValue = qGuiApplication.exec();
