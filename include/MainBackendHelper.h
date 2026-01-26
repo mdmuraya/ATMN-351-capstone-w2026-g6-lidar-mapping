@@ -21,6 +21,7 @@ class MainBackendHelper : public QObject
 
     signals:
         void requestPLCStatus();
+        void timeToPublish();
 
     public slots:
         void onConnectToPLC();
@@ -34,13 +35,18 @@ class MainBackendHelper : public QObject
         void onMoveForward();
         void onMoveBack();
         void onRequestPLCStatus();
+        void onTimeToPublish();
 
     private:
         QDateTime _dateTimeOnApplicationStart = QDateTime::currentDateTime();
         std::unique_ptr<QTimer> _getPLCStatusTimer = nullptr;
-        std::unique_ptr<QTimer> _publishTimer = nullptr;
-        std::shared_ptr<rclcpp::Node> _rosNode = nullptr;
+        std::shared_ptr<QTimer> _publishTimer = nullptr;
+        std::shared_ptr<rclcpp::Node> _ros2Node = nullptr;
         rclcpp::Publisher<std_msgs::msg::String>::SharedPtr _publisher = nullptr;
+
+        void initializeROS2();
+        void setupConnections();
+        void startTimers();
 };
 
 #endif // MAINBACKENDHELPER_H
