@@ -24,8 +24,7 @@ else()
     set(USE_ROS OFF)
 endif()
 
-#find_package(Qt6 6.8 REQUIRED COMPONENTS Quick QuickControls2)
-find_package(Qt6 6.8 REQUIRED COMPONENTS Quick QuickControls2 PATHS /lib/x86_64-linux-gnu NO_DEFAULT_PATH)
+find_package(Qt6 6.8 REQUIRED COMPONENTS Quick QuickControls2)
 
 
 if(Qt6_FOUND)
@@ -70,8 +69,6 @@ if(USE_QT)
        SOURCES include/MainBackendHelper.h src/MainBackendHelper.cpp
     )
 
-
-
     target_include_directories(${PROJECT_NAME}_App PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/include
     )
@@ -106,11 +103,7 @@ include(GNUInstallDirs)
 
 if(USE_ROS)
     install(TARGETS ${PROJECT_NAME}_App
-        #DESTINATION lib/${PROJECT_NAME}_App
-        BUNDLE DESTINATION .
-        LIBRARY DESTINATION lib/${PROJECT_NAME}_App
-        RUNTIME DESTINATION lib/${PROJECT_NAME}_App
-
+        DESTINATION lib/${PROJECT_NAME}_App
     )
 
     install(DIRECTORY
