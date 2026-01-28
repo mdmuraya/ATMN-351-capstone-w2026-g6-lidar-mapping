@@ -3,7 +3,9 @@
 #include <QVariantList>
 
 #include "include/MainBackendHelper.h"
+#include "include/libplctag.h"
 
+#define REQUIRED_VERSION 2, 4, 0
 
 MainBackendHelper::MainBackendHelper(QObject *parent) :
     QObject (parent),
@@ -90,6 +92,56 @@ void MainBackendHelper::onMoveBack()
 void MainBackendHelper::onRequestPLCStatus()
 {
     qDebug() << "MainBackendHelper::onRequestPLCStatus()" << QDateTime::currentDateTime();
+
+    //protocol=ab-eip&gateway=%s&plc=Micro800&name=
+    int i = 0, rc = 0, elementCount = 10, elementSize = 4, dataTimeout = 5000;
+    QString plcTagPath = "protocol=ab-eip&gateway=192.168.40.62&plc=Micro800&elem_size=1&elem_count=1&name=DENNIS_TAG";
+    auto tag = plc_tag_create(plcTagPath.toUtf8().constData(), dataTimeout);
+
+    qDebug() << plcTagPath;
+    qDebug() << QString::number(tag);
+
+    /* everything OK? */
+    if(tag < 0) {
+        qDebug() << "ERROR" << QString::fromUtf8(plc_tag_decode_error(tag)) << ": Could not create tag!";
+        return;
+    }
+
+    if((rc = plc_tag_status(tag)) != PLCTAG_STATUS_OK) {
+        qDebug() << "Error setting up tag internal state. Error" << QString::fromUtf8(plc_tag_decode_error(rc));
+        plc_tag_destroy(tag);
+        return;
+    }
+
+    /* get the data */
+    rc = plc_tag_read(tag, dataTimeout);
+    if(rc != PLCTAG_STATUS_OK) {
+        qDebug() << "ERROR: Unable to read the data! Got error code" << rc << ":" << QString::fromUtf8(plc_tag_decode_error(rc));
+        plc_tag_destroy(tag);
+        return;
+    }
+    qDebug() << QString::number(tag);
+    /* print out the data */
+    for(i = 0; i < elementCount; i++)
+    {
+        //fprintf(stderr, "data[%d]=%d\n", i, plc_tag_get_int32(tag, (i * ELEM_SIZE)));
+        qDebug() << "data[" <<  i << "]=" << plc_tag_get_int32(tag, (i * elementSize));
+    }
+
+    /* now test a write */
+    for(i = 0; i < elementCount; i++) {
+        int32_t val = plc_tag_get_int32(tag, (i * elementSize));
+
+        val = val + 1;
+
+        qDebug() << "Setting element" <<  i << " to" << val;
+
+        plc_tag_set_int32(tag, (i * elementSize), val);
+    }
+
+    rc = plc_tag_write(tag, dataTimeout);
+
+    plc_tag_destroy(tag);
 }
 
 void MainBackendHelper::onTimeToPublish()
@@ -113,7 +165,7 @@ void MainBackendHelper::onTimeToPublish()
 void MainBackendHelper::initializeROS2()
 {
     rclcpp::init(0, nullptr);
-    _ros2Node = std::make_shared<rclcpp::Node>("LIDARMapping_HMI_App");
+    _ros2Node = rclcpp::Node::make_shared("LIDARMapping_HMI_App");
     _publisher = _ros2Node->create_publisher<std_msgs::msg::String>("LIDARMapping_HMI_App_topic", 10);
 
 }
@@ -133,13 +185,15 @@ void MainBackendHelper::setupConnections()
     connect(this, &MainBackendHelper::requestPLCStatus, this, &MainBackendHelper::onRequestPLCStatus);
     connect(this, &MainBackendHelper::timeToPublish, this, &MainBackendHelper::onTimeToPublish);
 
+
+
 }
 
 void MainBackendHelper::startTimers()
 {
     qDebug() << "MainBackendHelper::startTimers()";
 
-    int frequency = 1; //number of times per second
+    int frequency = 5; //number of times per second
     _getPLCStatusTimer->start((1000/frequency));
 
     frequency= 1; //number of times per second

@@ -7,6 +7,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON) # Enforce C++23 support
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # set(CMAKE_PREFIX_PATH "/opt/Qt/6.10.1/gcc_64")
 set(Qt6_DIR "/opt/Qt/6.10.1/gcc_64/lib/cmake/Qt6")
+# Define the paths to the external library files
+set(EXTERNAL_LIB_DIR "lib")
+set(EXTERNAL_INC_DIR "include")
 
 
 
@@ -25,7 +28,6 @@ else()
 endif()
 
 find_package(Qt6 6.8 REQUIRED COMPONENTS Quick QuickControls2)
-
 
 if(Qt6_FOUND)
     message(STATUS "Qt6 found. Building with Qt support.")
@@ -47,8 +49,8 @@ if(USE_QT)
     set(CMAKE_AUTOUIC ON)
     set(CMAKE_AUTOUIC_SEARCH_PATHS ${CMAKE_CURRENT_SOURCE_DIR}/ui)
 
-    file(GLOB HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h *.hpp)
-    file(GLOB SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp *.c)
+    file(GLOB HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/include/*.hpp ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h)
+    file(GLOB SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/*.c)
     file(GLOB QML_FILES ${CMAKE_CURRENT_SOURCE_DIR}/ui/*.qml)
     file(GLOB RESOURCES ${CMAKE_CURRENT_SOURCE_DIR}/resources/*.qrc)
 
@@ -69,9 +71,19 @@ if(USE_QT)
        SOURCES include/MainBackendHelper.h src/MainBackendHelper.cpp
     )
 
+    add_library(libplctag STATIC IMPORTED)
+
+    set_target_properties(libplctag PROPERTIES
+        IMPORTED_LOCATION "${CMAKE_CURRENT_SOURCE_DIR}/lib/libplctag_static.a"
+
+    )
+
+
     target_include_directories(${PROJECT_NAME}_App PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/include
     )
+
+
 
     if(USE_ROS)
         target_link_libraries(${PROJECT_NAME}_App
@@ -82,6 +94,9 @@ if(USE_QT)
     target_link_libraries(${PROJECT_NAME}_App
         PRIVATE Qt6::Quick
      )
+
+    target_link_libraries(${PROJECT_NAME}_App PRIVATE libplctag)
+
 
 
     if(WIN32)
@@ -99,7 +114,6 @@ if(USE_QT)
 endif()
 
 include(GNUInstallDirs)
-#set(ENV{LD_LIBRARY_PATH} "$ENV{LD_LIBRARY_PATH}:/opt/Qt/6.10.1/gcc_64/lib")
 
 if(USE_ROS)
     install(TARGETS ${PROJECT_NAME}_App

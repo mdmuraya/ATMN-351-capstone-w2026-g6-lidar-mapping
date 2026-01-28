@@ -41,7 +41,7 @@ class MainBackendHelper : public QObject
         QDateTime _dateTimeOnApplicationStart = QDateTime::currentDateTime();
         std::unique_ptr<QTimer> _getPLCStatusTimer = nullptr;
         std::shared_ptr<QTimer> _publishTimer = nullptr;
-        std::shared_ptr<rclcpp::Node> _ros2Node = nullptr;
+        rclcpp::Node::SharedPtr _ros2Node = nullptr;
         rclcpp::Publisher<std_msgs::msg::String>::SharedPtr _publisher = nullptr;
 
         void initializeROS2();
