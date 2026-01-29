@@ -39,14 +39,145 @@ MainBackendHelper::~MainBackendHelper()
     }
 }
 
+bool MainBackendHelper::getPLCRunTag() const
+{
+    return _plcRunTagValue;
+}
+
+void MainBackendHelper::setPLCRunTag(bool plcRunTagValue)
+{
+    if (_plcRunTagValue == plcRunTagValue)
+        return;
+    _plcRunTagValue = plcRunTagValue;
+    emit plcRunTagChanged(_plcRunTagValue); // Emit signal to trigger QML updates
+}
+
 void MainBackendHelper::onConnectToPLC()
 {
     qDebug() << "MainBackendHelper::onConnectToPLC()";
 }
 
-void MainBackendHelper::onStartScan()
+void MainBackendHelper::onStartClicked()
 {
-    qDebug() << "MainBackendHelper::onStartScan()";
+    qDebug() << "MainBackendHelper::onStartClicked()";
+}
+
+void MainBackendHelper::onStartPressed()
+{
+    qDebug() << "MainBackendHelper::onStartPressed()";
+
+    int i = 0, rc = 0, elementCount = 1, elementSize = 1, dataTimeout = 5000;
+    QString plcTagPath = "protocol=ab-eip&gateway=192.168.40.62&plc=Micro800&elem_size=1&elem_count=1&name=HMI_Start_PB";
+    auto tag = plc_tag_create(plcTagPath.toUtf8().constData(), dataTimeout);
+
+    qDebug() << plcTagPath;
+
+    /* everything OK? */
+    if(tag < 0) {
+        qDebug() << "ERROR" << QString::fromUtf8(plc_tag_decode_error(tag)) << ": Could not create tag!";
+        return;
+    }
+
+    if((rc = plc_tag_status(tag)) != PLCTAG_STATUS_OK) {
+        qDebug() << "Error setting up tag internal state. Error" << QString::fromUtf8(plc_tag_decode_error(rc));
+        plc_tag_destroy(tag);
+        return;
+    }
+
+    /* get the data */
+    rc = plc_tag_read(tag, dataTimeout);
+    if(rc != PLCTAG_STATUS_OK) {
+        qDebug() << "ERROR: Unable to read the data! Got error code" << rc << ":" << QString::fromUtf8(plc_tag_decode_error(rc));
+        plc_tag_destroy(tag);
+        return;
+    }
+    qDebug() << QString::number(tag);
+    /* print out the data */
+    for(i = 0; i < elementCount; i++)
+    {
+        //fprintf(stderr, "data[%d]=%d\n", i, plc_tag_get_int32(tag, (i * ELEM_SIZE)));
+        qDebug() << "BEFORE data[" <<  i << "]=" << plc_tag_get_bit(tag, (i * elementSize));
+    }
+
+    /* now test a write */
+    for(i = 0; i < elementCount; i++) {
+        int32_t val = plc_tag_get_bit(tag, (i * elementSize));
+
+        val = 1;
+
+        qDebug() << "Setting element" <<  i << " to" << val;
+
+        plc_tag_set_bit(tag, (i * elementSize), val);
+    }
+
+    rc = plc_tag_write(tag, dataTimeout);
+
+    for(i = 0; i < elementCount; i++)
+    {
+        //fprintf(stderr, "data[%d]=%d\n", i, plc_tag_get_int32(tag, (i * ELEM_SIZE)));
+        qDebug() << "AFTER data[" <<  i << "]=" << plc_tag_get_bit(tag, (i * elementSize));
+    }
+
+    plc_tag_destroy(tag);
+}
+
+void MainBackendHelper::onStartReleased()
+{
+    qDebug() << "MainBackendHelper::onStartReleased()";
+
+    int i = 0, rc = 0, elementCount = 1, elementSize = 1, dataTimeout = 5000;
+    QString plcTagPath = "protocol=ab-eip&gateway=192.168.40.62&plc=Micro800&elem_size=1&elem_count=1&name=HMI_Start_PB";
+    auto tag = plc_tag_create(plcTagPath.toUtf8().constData(), dataTimeout);
+
+    qDebug() << plcTagPath;
+
+    /* everything OK? */
+    if(tag < 0) {
+        qDebug() << "ERROR" << QString::fromUtf8(plc_tag_decode_error(tag)) << ": Could not create tag!";
+        return;
+    }
+
+    if((rc = plc_tag_status(tag)) != PLCTAG_STATUS_OK) {
+        qDebug() << "Error setting up tag internal state. Error" << QString::fromUtf8(plc_tag_decode_error(rc));
+        plc_tag_destroy(tag);
+        return;
+    }
+
+    /* get the data */
+    rc = plc_tag_read(tag, dataTimeout);
+    if(rc != PLCTAG_STATUS_OK) {
+        qDebug() << "ERROR: Unable to read the data! Got error code" << rc << ":" << QString::fromUtf8(plc_tag_decode_error(rc));
+        plc_tag_destroy(tag);
+        return;
+    }
+    qDebug() << QString::number(tag);
+    /* print out the data */
+    for(i = 0; i < elementCount; i++)
+    {
+        //fprintf(stderr, "data[%d]=%d\n", i, plc_tag_get_int32(tag, (i * ELEM_SIZE)));
+        qDebug() << "BEFORE data[" <<  i << "]=" << plc_tag_get_bit(tag, (i * elementSize));
+    }
+
+    /* now test a write */
+    for(i = 0; i < elementCount; i++) {
+        int32_t val = plc_tag_get_bit(tag, (i * elementSize));
+
+        val = 0;
+
+        qDebug() << "Setting element" <<  i << " to" << val;
+
+        plc_tag_set_bit(tag, (i * elementSize), val);
+    }
+
+    rc = plc_tag_write(tag, dataTimeout);
+
+    for(i = 0; i < elementCount; i++)
+    {
+        //fprintf(stderr, "data[%d]=%d\n", i, plc_tag_get_int32(tag, (i * ELEM_SIZE)));
+        qDebug() << "AFTER data[" <<  i << "]=" << plc_tag_get_bit(tag, (i * elementSize));
+    }
+
+    plc_tag_destroy(tag);
 }
 
 void MainBackendHelper::onResetSystem()
@@ -54,9 +185,127 @@ void MainBackendHelper::onResetSystem()
     qDebug() << "MainBackendHelper::onResetSystem()";
 }
 
-void MainBackendHelper::onStopScan()
+void MainBackendHelper::onStopClicked()
 {
-    qDebug() << "MainBackendHelper::onStopScan()";
+    qDebug() << "MainBackendHelper::onStopClicked()";
+}
+
+void MainBackendHelper::onStopPressed()
+{
+    qDebug() << "MainBackendHelper::onStopPressed()";
+
+    int i = 0, rc = 0, elementCount = 1, elementSize = 1, dataTimeout = 5000;
+    QString plcTagPath = "protocol=ab-eip&gateway=192.168.40.62&plc=Micro800&elem_size=1&elem_count=1&name=HMI_Stop_PB";
+    auto tag = plc_tag_create(plcTagPath.toUtf8().constData(), dataTimeout);
+
+    qDebug() << plcTagPath;
+
+    /* everything OK? */
+    if(tag < 0) {
+        qDebug() << "ERROR" << QString::fromUtf8(plc_tag_decode_error(tag)) << ": Could not create tag!";
+        return;
+    }
+
+    if((rc = plc_tag_status(tag)) != PLCTAG_STATUS_OK) {
+        qDebug() << "Error setting up tag internal state. Error" << QString::fromUtf8(plc_tag_decode_error(rc));
+        plc_tag_destroy(tag);
+        return;
+    }
+
+    /* get the data */
+    rc = plc_tag_read(tag, dataTimeout);
+    if(rc != PLCTAG_STATUS_OK) {
+        qDebug() << "ERROR: Unable to read the data! Got error code" << rc << ":" << QString::fromUtf8(plc_tag_decode_error(rc));
+        plc_tag_destroy(tag);
+        return;
+    }
+    qDebug() << QString::number(tag);
+    /* print out the data */
+    for(i = 0; i < elementCount; i++)
+    {
+        //fprintf(stderr, "data[%d]=%d\n", i, plc_tag_get_int32(tag, (i * ELEM_SIZE)));
+        qDebug() << "BEFORE data[" <<  i << "]=" << plc_tag_get_bit(tag, (i * elementSize));
+    }
+
+    /* now test a write */
+    for(i = 0; i < elementCount; i++) {
+        int32_t val = plc_tag_get_bit(tag, (i * elementSize));
+
+        val = 1;
+
+        qDebug() << "Setting element" <<  i << " to" << val;
+
+        plc_tag_set_bit(tag, (i * elementSize), val);
+    }
+
+    rc = plc_tag_write(tag, dataTimeout);
+
+    for(i = 0; i < elementCount; i++)
+    {
+        //fprintf(stderr, "data[%d]=%d\n", i, plc_tag_get_int32(tag, (i * ELEM_SIZE)));
+        qDebug() << "AFTER data[" <<  i << "]=" << plc_tag_get_bit(tag, (i * elementSize));
+    }
+
+    plc_tag_destroy(tag);
+}
+
+void MainBackendHelper::onStopReleased()
+{
+    qDebug() << "MainBackendHelper::onStopReleased()";
+
+    int i = 0, rc = 0, elementCount = 1, elementSize = 1, dataTimeout = 5000;
+    QString plcTagPath = "protocol=ab-eip&gateway=192.168.40.62&plc=Micro800&elem_size=1&elem_count=1&name=HMI_Stop_PB";
+    auto tag = plc_tag_create(plcTagPath.toUtf8().constData(), dataTimeout);
+
+    qDebug() << plcTagPath;
+
+    /* everything OK? */
+    if(tag < 0) {
+        qDebug() << "ERROR" << QString::fromUtf8(plc_tag_decode_error(tag)) << ": Could not create tag!";
+        return;
+    }
+
+    if((rc = plc_tag_status(tag)) != PLCTAG_STATUS_OK) {
+        qDebug() << "Error setting up tag internal state. Error" << QString::fromUtf8(plc_tag_decode_error(rc));
+        plc_tag_destroy(tag);
+        return;
+    }
+
+    /* get the data */
+    rc = plc_tag_read(tag, dataTimeout);
+    if(rc != PLCTAG_STATUS_OK) {
+        qDebug() << "ERROR: Unable to read the data! Got error code" << rc << ":" << QString::fromUtf8(plc_tag_decode_error(rc));
+        plc_tag_destroy(tag);
+        return;
+    }
+    qDebug() << QString::number(tag);
+    /* print out the data */
+    for(i = 0; i < elementCount; i++)
+    {
+        //fprintf(stderr, "data[%d]=%d\n", i, plc_tag_get_int32(tag, (i * ELEM_SIZE)));
+        qDebug() << "BEFORE data[" <<  i << "]=" << plc_tag_get_bit(tag, (i * elementSize));
+    }
+
+    /* now test a write */
+    for(i = 0; i < elementCount; i++) {
+        int32_t val = plc_tag_get_bit(tag, (i * elementSize));
+
+        val = 0;
+
+        qDebug() << "Setting element" <<  i << " to" << val;
+
+        plc_tag_set_bit(tag, (i * elementSize), val);
+    }
+
+    rc = plc_tag_write(tag, dataTimeout);
+
+    for(i = 0; i < elementCount; i++)
+    {
+        //fprintf(stderr, "data[%d]=%d\n", i, plc_tag_get_int32(tag, (i * ELEM_SIZE)));
+        qDebug() << "AFTER data[" <<  i << "]=" << plc_tag_get_bit(tag, (i * elementSize));
+    }
+
+    plc_tag_destroy(tag);
 }
 
 void MainBackendHelper::onSafetyStop()
@@ -89,17 +338,15 @@ void MainBackendHelper::onMoveBack()
     qDebug() << "MainBackendHelper::onMoveBack()";
 }
 
-void MainBackendHelper::onRequestPLCStatus()
+void MainBackendHelper::onGetPLCStatus()
 {
-    qDebug() << "MainBackendHelper::onRequestPLCStatus()" << QDateTime::currentDateTime();
+    qDebug() << "MainBackendHelper::onGetPLCStatus()" << QDateTime::currentDateTime();
 
-    //protocol=ab-eip&gateway=%s&plc=Micro800&name=
-    int i = 0, rc = 0, elementCount = 10, elementSize = 4, dataTimeout = 5000;
-    QString plcTagPath = "protocol=ab-eip&gateway=192.168.40.62&plc=Micro800&elem_size=1&elem_count=1&name=DENNIS_TAG";
+    int i = 0, rc = 0, elementCount = 1, elementSize = 1, dataTimeout = 5000;
+    QString plcTagPath = "protocol=ab-eip&gateway=192.168.40.62&plc=Micro800&elem_size=1&elem_count=1&name=PLC_RUN";
     auto tag = plc_tag_create(plcTagPath.toUtf8().constData(), dataTimeout);
 
     qDebug() << plcTagPath;
-    qDebug() << QString::number(tag);
 
     /* everything OK? */
     if(tag < 0) {
@@ -121,14 +368,49 @@ void MainBackendHelper::onRequestPLCStatus()
         return;
     }
     qDebug() << QString::number(tag);
-    /* print out the data */
+    int32_t val = plc_tag_get_bit(tag, 0);
+    qDebug() << "CURRENT PLC_RUN [" <<  val << "]";
+
+    setPLCRunTag(static_cast<bool>(val));
+
+
+
+    /*
+    int i = 0, rc = 0, elementCount = 10, elementSize = 4, dataTimeout = 5000;
+    QString plcTagPath = "protocol=ab-eip&gateway=192.168.40.62&plc=Micro800&elem_size=1&elem_count=1&name=DENNIS_TAG";
+    auto tag = plc_tag_create(plcTagPath.toUtf8().constData(), dataTimeout);
+
+    qDebug() << plcTagPath;
+    qDebug() << QString::number(tag);
+
+
+    if(tag < 0) {
+        qDebug() << "ERROR" << QString::fromUtf8(plc_tag_decode_error(tag)) << ": Could not create tag!";
+        return;
+    }
+
+    if((rc = plc_tag_status(tag)) != PLCTAG_STATUS_OK) {
+        qDebug() << "Error setting up tag internal state. Error" << QString::fromUtf8(plc_tag_decode_error(rc));
+        plc_tag_destroy(tag);
+        return;
+    }
+
+
+    rc = plc_tag_read(tag, dataTimeout);
+    if(rc != PLCTAG_STATUS_OK) {
+        qDebug() << "ERROR: Unable to read the data! Got error code" << rc << ":" << QString::fromUtf8(plc_tag_decode_error(rc));
+        plc_tag_destroy(tag);
+        return;
+    }
+    qDebug() << QString::number(tag);
+
     for(i = 0; i < elementCount; i++)
     {
         //fprintf(stderr, "data[%d]=%d\n", i, plc_tag_get_int32(tag, (i * ELEM_SIZE)));
         qDebug() << "data[" <<  i << "]=" << plc_tag_get_int32(tag, (i * elementSize));
     }
 
-    /* now test a write */
+
     for(i = 0; i < elementCount; i++) {
         int32_t val = plc_tag_get_int32(tag, (i * elementSize));
 
@@ -142,6 +424,7 @@ void MainBackendHelper::onRequestPLCStatus()
     rc = plc_tag_write(tag, dataTimeout);
 
     plc_tag_destroy(tag);
+*/
 }
 
 void MainBackendHelper::onTimeToPublish()
@@ -175,14 +458,14 @@ void MainBackendHelper::setupConnections()
     qDebug() << "MainBackendHelper::setupConnections()";
 
     connect(_getPLCStatusTimer.get(), &QTimer::timeout, [this](){
-        emit requestPLCStatus();
+        emit getPLCStatus();
     });
 
     connect(_publishTimer.get(), &QTimer::timeout, [this](){
         emit timeToPublish();
     });
 
-    connect(this, &MainBackendHelper::requestPLCStatus, this, &MainBackendHelper::onRequestPLCStatus);
+    connect(this, &MainBackendHelper::getPLCStatus, this, &MainBackendHelper::onGetPLCStatus);
     connect(this, &MainBackendHelper::timeToPublish, this, &MainBackendHelper::onTimeToPublish);
 
 
@@ -197,7 +480,7 @@ void MainBackendHelper::startTimers()
     _getPLCStatusTimer->start((1000/frequency));
 
     frequency= 1; //number of times per second
-    _publishTimer->start((1000/frequency));
+    //_publishTimer->start((1000/frequency));
 }
 
 

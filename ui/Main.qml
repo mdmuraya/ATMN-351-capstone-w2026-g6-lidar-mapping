@@ -102,8 +102,9 @@ ApplicationWindow {
                         ColumnLayout {
                             anchors.fill: parent
                             Button {
+                                id: startButton
                                 text: qsTr("START")
-                                Material.background: Material.Green
+                                Material.background: startButton.down ? Material.Grey : Material.Green
                                 Material.foreground: "white"
                                 Layout.alignment: Qt.AlignHCenter
                                 font {
@@ -111,7 +112,13 @@ ApplicationWindow {
                                     pointSize: 14
                                 }
                                 onClicked: {
-                                    MainBackendHelper.onStartScan();
+                                    MainBackendHelper.onStartClicked();
+                                }
+                                onPressed: {
+                                    MainBackendHelper.onStartPressed();
+                                }
+                                onReleased: {
+                                    MainBackendHelper.onStartReleased();
                                 }
                             }
 
@@ -125,7 +132,13 @@ ApplicationWindow {
                                     pointSize: 14
                                 }
                                 onClicked: {
-                                    MainBackendHelper.onStopScan();
+                                    MainBackendHelper.onStopClicked();
+                                }
+                                onPressed: {
+                                    MainBackendHelper.onStopPressed();
+                                }
+                                onReleased: {
+                                    MainBackendHelper.onStopReleased();
                                 }
                             }
 
@@ -360,6 +373,37 @@ ApplicationWindow {
                                 color: "white"
                                 Layout.alignment: Qt.AlignHCenter
                             }
+                        }
+                    }
+
+                    GroupBox {
+                        title: "PLC"
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        ColumnLayout {
+                            anchors.fill: parent
+
+
+
+                            Rectangle {
+                                    id: plcStatus
+                                    width: 150
+                                    height: 75
+                                    color: MainBackendHelper.plcRunTag ? "green..." : "transparent"
+                                    radius: 10 // Optional: adds rounded corners
+                                    anchors.centerIn: parent // Centers the rectangle within the window
+
+                                    Text {
+                                        id: plcStatusText
+                                        text: MainBackendHelper.plcRunTag ? "RUNNING..." : "OFF"
+                                        color: "white"
+                                        font.bold: true
+                                        font.pointSize: 16
+                                        anchors.centerIn: parent // Centers the text within the rectangle
+                                    }
+                                }
+
+
                         }
                     }
 

@@ -1,6 +1,7 @@
 #ifndef PLCTAG_HPP
 #define PLCTAG_HPP
 
+#include <QObject>
 #include <string>
 #include <vector>
 #include <libplctag.h>
@@ -9,7 +10,7 @@ class PLCTag: public QObject
 {
     Q_OBJECT
     public:
-        PLCTag(int plc_prot, std::string ip_address, bool debug);
+        PLCTag(QObject *parent = nullptr, int plc_prot = 1, std::string ip_address = "", bool debug = false);
         ~PLCTag();
 
         // Read
@@ -43,7 +44,6 @@ class PLCTag: public QObject
 
         // Variables
         bool debug;
-        boost::mutex mutex;
         std::string plc_protocol = "ab_eip";
         int share_session = 1; // 1: shares TCP connection with other tags at same IP address; 0: off
         int str_data_size = 82;
