@@ -32,19 +32,19 @@ class MainBackendHelper : public QObject
         explicit MainBackendHelper(QObject *parent = nullptr);
         ~MainBackendHelper();
         bool getPLCRunTag() const;
-        void setPLCRunTag(bool plcRunTagValue);
+        void setPLCRunTag(bool newValue);
 
         bool getRunStateOFF() const;
-        void setRunStateOFF(bool runStateOFFValue);
+        void setRunStateOFF(bool newValue);
 
         bool getRunStateJOG() const;
-        void setRunStateJOG(bool runStateJOGValue);
+        void setRunStateJOG(bool newValue);
 
         bool getRunStateAUTO() const;
-        void setRunStateAUTO(bool runStateAUTOValue);
+        void setRunStateAUTO(bool newValue);
 
         HMI_RUN_STATE getHMIRunStateTag() const;
-        void setHMIRunStateTag(HMI_RUN_STATE hmiRunStateTagValue);
+        void setHMIRunStateTag(HMI_RUN_STATE newValue);
 
 
 
@@ -52,11 +52,11 @@ class MainBackendHelper : public QObject
     signals:
         void getPLCStatus();
         void timeToPublish();
-        void plcRunTagChanged(bool plcRunTagValue);
-        void hmiRunStateTagChanged(HMI_RUN_STATE hmiRunStateTagValue);
-        void runStateOFFChanged(bool runStateOFFValue);
-        void runStateJOGChanged(bool runStateJOGValue);
-        void runStatAUTOChanged(bool runStateAUTOValue);
+        void plcRunTagChanged(bool newValue);
+        void hmiRunStateTagChanged(HMI_RUN_STATE newValue);
+        void runStateOFFChanged(bool newValue);
+        void runStateJOGChanged(bool newValue);
+        void runStateAUTOChanged(bool newValue);
 
     public slots:
         void onConnectToPLC();
@@ -82,11 +82,11 @@ class MainBackendHelper : public QObject
         std::shared_ptr<QTimer> _publishTimer = nullptr;
         rclcpp::Node::SharedPtr _ros2Node = nullptr;
         rclcpp::Publisher<std_msgs::msg::String>::SharedPtr _publisher = nullptr;
-        bool _plcRunTagValue = false;
+        bool _plcRunTag = false;
         HMI_RUN_STATE _hmiRunStateTagValue = HMI_RUN_STATE_OFF;
-        bool _runStateOFFValue = false;
-        bool _runStateJOGValue = false;
-        bool _runStateAUTOValue = false;
+        bool _runStateOFF = false;
+        bool _runStateJOG = false;
+        bool _runStateAUTO = false;
 
         void initializeROS2();
         void setupConnections();

@@ -41,73 +41,73 @@ MainBackendHelper::~MainBackendHelper()
 
 bool MainBackendHelper::getPLCRunTag() const
 {
-    return _plcRunTagValue;
+    return _plcRunTag;
 }
 
-void MainBackendHelper::setPLCRunTag(bool plcRunTagValue)
+void MainBackendHelper::setPLCRunTag(bool newValue)
 {
-    if (_plcRunTagValue == plcRunTagValue)
+    if (_plcRunTag == newValue)
         return;
 
 
-    _plcRunTagValue = plcRunTagValue;
-    emit plcRunTagChanged(_plcRunTagValue); // Emit signal to trigger QML updates
+    _plcRunTag = newValue;
+    emit plcRunTagChanged(_plcRunTag); // Emit signal to trigger QML updates
 }
 
 bool MainBackendHelper::getRunStateOFF() const
 {
-    return _runStateOFFValue;
+    return _runStateOFF;
 }
 
-void MainBackendHelper::setRunStateOFF(bool runStateOFFValue)
+void MainBackendHelper::setRunStateOFF(bool newValue)
 {
-    if (_runStateOFFValue == runStateOFFValue)
+    if (_runStateOFF == newValue)
         return;
 
-    _runStateOFFValue = runStateOFFValue;
-    emit runStateOFFChanged(_runStateOFFValue); // Emit signal to trigger QML updates
+    _runStateOFF = newValue;
+    emit runStateOFFChanged(_runStateOFF); // Emit signal to trigger QML updates
 }
 
 bool MainBackendHelper::getRunStateJOG() const
 {
-    return _runStateJOGValue;
+    return _runStateJOG;
 }
 
-void MainBackendHelper::setRunStateJOG(bool runStateJOGValue)
+void MainBackendHelper::setRunStateJOG(bool newValue)
 {
-    if (_runStateJOGValue == runStateJOGValue)
+    if (_runStateJOG == newValue)
         return;
 
-    _runStateJOGValue = runStateJOGValue;
-    emit runStateJOGChanged(_runStateJOGValue); // Emit signal to trigger QML updates
+    _runStateJOG = newValue;
+    emit runStateJOGChanged(_runStateJOG); // Emit signal to trigger QML updates
 }
 
 bool MainBackendHelper::getRunStateAUTO() const
 {
-    return _runStateAUTOValue;
+    return _runStateAUTO;
 }
 
-void MainBackendHelper::setRunStateAUTO(bool runStateAUTOValue)
+void MainBackendHelper::setRunStateAUTO(bool newValue)
 {
-    if (_runStateAUTOValue == runStateAUTOValue)
+    if (_runStateAUTO == newValue)
         return;
 
-    _runStateAUTOValue = runStatAUTOValue;
-    emit runStateAUTOChanged(_runStateAUTOValue); // Emit signal to trigger QML updates
+    _runStateAUTO = newValue;
+    emit runStateAUTOChanged(_runStateAUTO); // Emit signal to trigger QML updates
 }
 
-void MainBackendHelper::setHMIRunStateTag(HMI_RUN_STATE hmiRunStateTagValue)
+void MainBackendHelper::setHMIRunStateTag(HMI_RUN_STATE newValue)
 {
-    if (_hmiRunStateTagValue == hmiRunStateTagValue)
+    if (_hmiRunStateTag == newValue)
         return;
 
-    _hmiRunStateTagValue = hmiRunStateTagValue;
-    emit hmiRunStateTagChanged(_hmiRunStateTagValue); // Emit signal to trigger QML updates
+    _hmiRunStateTag = newValue;
+    emit hmiRunStateTagChanged(_hmiRunStateTag); // Emit signal to trigger QML updates
 }
 
 MainBackendHelper::HMI_RUN_STATE MainBackendHelper::getHMIRunStateTag() const
 {
-    return _hmiRunStateTagValue;
+    return _hmiRunStateTag;
 }
 
 void MainBackendHelper::onConnectToPLC()
