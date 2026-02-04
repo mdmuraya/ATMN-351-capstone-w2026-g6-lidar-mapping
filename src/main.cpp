@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
         Qt::QueuedConnection);
 
     engine.rootContext()->setContextProperty("MainBackendHelper", mainBackendHelper.get());
-    engine.loadFromModule("LIDARMapping_HMI", "Main");
+    engine.loadFromModule("LIDAR_Mapping_HMI", "Main");
 
     auto returnValue = qGuiApplication.exec();
 
