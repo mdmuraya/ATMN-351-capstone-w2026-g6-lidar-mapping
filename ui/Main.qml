@@ -71,8 +71,26 @@ ApplicationWindow {
                         ColumnLayout {
                             anchors.fill: parent
 
-                            Item { Layout.fillWidth: true }
+                            //Item { Layout.fillWidth: true }
 
+                            Rectangle {
+                                id: runState
+                                width: 150
+                                height: 75
+                                color: MainBackendHelper.runState ? "green..." : "transparent"
+                                radius: 10 // Optional: adds rounded corners
+                                Layout.fillWidth: true
+
+                                Text {
+                                    id: plcStatusText
+                                    text: MainBackendHelper.runState ? MainBackendHelper.runStateJOG ? "RUNNING - JOG" : MainBackendHelper.runStateAUTO ? "RUNNING - AUTO" : "RUNNING - UNKNOWN" : "OFF"
+                                    color: "white"
+                                    font.bold: true
+                                    font.pointSize: 12
+                                    anchors.centerIn: parent // Centers the text within the rectangle
+                                }
+                            }
+/*
                             RadioButton {
                                 id: runStateOFF
                                 text: "OFF"
@@ -94,7 +112,7 @@ ApplicationWindow {
                                 onCheckedChanged: MainBackendHelper.runStateAUTO = checked
                                 //Binding { target: MainBackendHelper; property: "runStateAUTO"; value: runStateAUTO.checked }
                             }
-                            /*
+
 
                             Label {
                                 text: qsTr("MANUAL")
@@ -115,7 +133,7 @@ ApplicationWindow {
                             }
                             */
 
-                            Item { Layout.fillWidth: true }
+                            //Item { Layout.fillWidth: true }
 
                         }
                     }
@@ -399,7 +417,7 @@ ApplicationWindow {
                             }
                         }
                     }
-
+                    /*
                     GroupBox {
                         title: "PLC"
                         Layout.fillWidth: true
@@ -410,27 +428,27 @@ ApplicationWindow {
 
 
                             Rectangle {
-                                    id: plcStatus
-                                    width: 150
-                                    height: 75
-                                    color: MainBackendHelper.plcRunTag ? "green..." : "transparent"
-                                    radius: 10 // Optional: adds rounded corners
-                                    anchors.centerIn: parent // Centers the rectangle within the window
+                                id: plcStatus
+                                width: 150
+                                height: 75
+                                color: MainBackendHelper.plcRunTag ? "green..." : "transparent"
+                                radius: 10 // Optional: adds rounded corners
+                                anchors.centerIn: parent // Centers the rectangle within the window
 
-                                    Text {
-                                        id: plcStatusText
-                                        text: MainBackendHelper.plcRunTag ? "RUNNING..." : "OFF"
-                                        color: "white"
-                                        font.bold: true
-                                        font.pointSize: 16
-                                        anchors.centerIn: parent // Centers the text within the rectangle
-                                    }
+                                Text {
+                                    id: plcStatusText
+                                    text: MainBackendHelper.plcRunTag ? "RUNNING..." : "OFF"
+                                    color: "white"
+                                    font.bold: true
+                                    font.pointSize: 16
+                                    anchors.centerIn: parent // Centers the text within the rectangle
                                 }
+                            }
 
 
                         }
                     }
-
+*/
 
                 }
             }

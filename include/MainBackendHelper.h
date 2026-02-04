@@ -22,21 +22,20 @@ class MainBackendHelper : public QObject
     Q_OBJECT
     //QML_ELEMENT
     //QML_SINGLETON
-    Q_PROPERTY(bool plcRunTag READ getPLCRunTag WRITE setPLCRunTag NOTIFY plcRunTagChanged)
+    //Q_PROPERTY(bool plcRunTag READ getPLCRunTag WRITE setPLCRunTag NOTIFY plcRunTagChanged)
     Q_PROPERTY(HMI_RUN_STATE hmiRunState READ getHMIRunStateTag WRITE setHMIRunStateTag NOTIFY hmiRunStateTagChanged)
-    Q_PROPERTY(bool runStateOFF READ getRunStateOFF WRITE setRunStateOFF NOTIFY runStateOFFChanged)
+    Q_PROPERTY(bool runState READ getRunState WRITE setRunState NOTIFY runStateChanged)
     Q_PROPERTY(bool runStateJOG READ getRunStateJOG WRITE setRunStateJOG NOTIFY runStateJOGChanged)
     Q_PROPERTY(bool runStateAUTO READ getRunStateAUTO WRITE setRunStateAUTO NOTIFY runStateAUTOChanged)
 
     public:
         explicit MainBackendHelper(QObject *parent = nullptr);
         ~MainBackendHelper();
-        bool getPLCRunTag() const;
-        void setPLCRunTag(bool newValue);
+        //bool getPLCRunTag() const;
+        //void setPLCRunTag(bool newValue);
 
-        bool getRunStateOFF() const;
-        void setRunStateOFF(bool newValue);
-
+        bool getRunState() const;
+        void setRunState(bool newValue);
         bool getRunStateJOG() const;
         void setRunStateJOG(bool newValue);
 
@@ -52,9 +51,9 @@ class MainBackendHelper : public QObject
     signals:
         void getPLCStatus();
         void timeToPublish();
-        void plcRunTagChanged(bool newValue);
+        //void plcRunTagChanged(bool newValue);
         void hmiRunStateTagChanged(HMI_RUN_STATE newValue);
-        void runStateOFFChanged(bool newValue);
+        void runStateChanged(bool newValue);
         void runStateJOGChanged(bool newValue);
         void runStateAUTOChanged(bool newValue);
 
@@ -82,15 +81,16 @@ class MainBackendHelper : public QObject
         std::shared_ptr<QTimer> _publishTimer = nullptr;
         rclcpp::Node::SharedPtr _ros2Node = nullptr;
         rclcpp::Publisher<std_msgs::msg::String>::SharedPtr _publisher = nullptr;
-        bool _plcRunTag = false;
-        HMI_RUN_STATE _hmiRunStateTagValue = HMI_RUN_STATE_OFF;
-        bool _runStateOFF = false;
+        HMI_RUN_STATE _hmiRunStateTag = HMI_RUN_STATE_OFF;
+        bool _runState = false;
         bool _runStateJOG = false;
         bool _runStateAUTO = false;
 
         void initializeROS2();
         void setupConnections();
         void startTimers();
+
+        bool getPLCTag(QString tagName, bool &tagValue);
 };
 
 #endif // MAINBACKENDHELPER_H

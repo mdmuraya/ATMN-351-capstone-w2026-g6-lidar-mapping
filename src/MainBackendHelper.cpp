@@ -38,7 +38,7 @@ MainBackendHelper::~MainBackendHelper()
         rclcpp::shutdown();
     }
 }
-
+/*
 bool MainBackendHelper::getPLCRunTag() const
 {
     return _plcRunTag;
@@ -53,19 +53,19 @@ void MainBackendHelper::setPLCRunTag(bool newValue)
     _plcRunTag = newValue;
     emit plcRunTagChanged(_plcRunTag); // Emit signal to trigger QML updates
 }
-
-bool MainBackendHelper::getRunStateOFF() const
+*/
+bool MainBackendHelper::getRunState() const
 {
-    return _runStateOFF;
+    return _runState;
 }
 
-void MainBackendHelper::setRunStateOFF(bool newValue)
+void MainBackendHelper::setRunState(bool newValue)
 {
-    if (_runStateOFF == newValue)
+    if (_runState == newValue)
         return;
 
-    _runStateOFF = newValue;
-    emit runStateOFFChanged(_runStateOFF); // Emit signal to trigger QML updates
+    _runState = newValue;
+    emit runStateChanged(_runState); // Emit signal to trigger QML updates
 }
 
 bool MainBackendHelper::getRunStateJOG() const
@@ -105,7 +105,7 @@ void MainBackendHelper::setHMIRunStateTag(HMI_RUN_STATE newValue)
     emit hmiRunStateTagChanged(_hmiRunStateTag); // Emit signal to trigger QML updates
 }
 
-MainBackendHelper::HMI_RUN_STATE MainBackendHelper::getHMIRunStateTag() const
+HMI_RUN_STATE MainBackendHelper::getHMIRunStateTag() const
 {
     return _hmiRunStateTag;
 }
@@ -399,37 +399,29 @@ void MainBackendHelper::onMoveBack()
 void MainBackendHelper::onGetPLCStatus()
 {
     qDebug() << "MainBackendHelper::onGetPLCStatus()" << QDateTime::currentDateTime();
+    //here we will get all the PLC tags
 
-    int i = 0, rc = 0, elementCount = 1, elementSize = 1, dataTimeout = 5000;
-    QString plcTagPath = "protocol=ab-eip&gateway=192.168.40.62&plc=Micro800&elem_size=1&elem_count=1&name=System_Running";
-    auto tag = plc_tag_create(plcTagPath.toUtf8().constData(), dataTimeout);
+    bool tagValue=false;
 
-    qDebug() << plcTagPath;
+    if(getPLCTag("System_Running", tagValue))
+    {
+        setRunState(tagValue);
+    }    
 
-    /* everything OK? */
-    if(tag < 0) {
-        qDebug() << "ERROR" << QString::fromUtf8(plc_tag_decode_error(tag)) << ": Could not create tag!";
-        return;
+    if(getPLCTag("PHY_Selector_Run_AUTO", tagValue))
+    {
+        if(tagValue)
+        {
+            setRunStateAUTO(true);
+            setRunStateJOG(false);
+        }
+        else
+        {
+            setRunStateAUTO(false);
+            setRunStateJOG(true);
+        }
     }
 
-    if((rc = plc_tag_status(tag)) != PLCTAG_STATUS_OK) {
-        qDebug() << "Error setting up tag internal state. Error" << QString::fromUtf8(plc_tag_decode_error(rc));
-        plc_tag_destroy(tag);
-        return;
-    }
-
-    /* get the data */
-    rc = plc_tag_read(tag, dataTimeout);
-    if(rc != PLCTAG_STATUS_OK) {
-        qDebug() << "ERROR: Unable to read the data! Got error code" << rc << ":" << QString::fromUtf8(plc_tag_decode_error(rc));
-        plc_tag_destroy(tag);
-        return;
-    }
-    qDebug() << QString::number(tag);
-    int32_t val = plc_tag_get_bit(tag, 0);
-    qDebug() << "CURRENT PLC_RUN [" <<  val << "]";
-
-    setPLCRunTag(static_cast<bool>(val));
 
 
 
@@ -539,6 +531,47 @@ void MainBackendHelper::startTimers()
 
     frequency= 1; //number of times per second
     //_publishTimer->start((1000/frequency));
+}
+
+bool MainBackendHelper::getPLCTag(QString tagName, bool &tagValue)
+{
+    qDebug() << "MainBackendHelper::getPLCBooleanTag()" << QDateTime::currentDateTime();
+
+    int rc = 0, dataTimeout = 2000;
+    QString plcTagPath = QString("protocol=ab-eip&gateway=192.168.40.62&plc=Micro800&elem_size=1&elem_count=1&name=") + tagName;
+    auto tag = plc_tag_create(plcTagPath.toUtf8().constData(), dataTimeout);
+
+    qDebug() << plcTagPath;
+
+    /* everything OK? */
+    if(tag < 0)
+    {
+        qDebug() << "ERROR" << QString::fromUtf8(plc_tag_decode_error(tag)) << ": Could not create tag!";
+        return false;
+    }
+
+    if((rc = plc_tag_status(tag)) != PLCTAG_STATUS_OK)
+    {
+        qDebug() << "Error setting up tag internal state. Error" << QString::fromUtf8(plc_tag_decode_error(rc));
+        plc_tag_destroy(tag);
+        return false;
+    }
+
+    /* get the data */
+    rc = plc_tag_read(tag, dataTimeout);
+    if(rc != PLCTAG_STATUS_OK)
+    {
+        qDebug() << "ERROR: Unable to read the data! Got error code" << rc << ":" << QString::fromUtf8(plc_tag_decode_error(rc));
+        plc_tag_destroy(tag);
+        return false;
+    }
+    qDebug() << QString::number(tag);
+
+    tagValue = static_cast<bool>(plc_tag_get_bit(tag, 0));
+
+    return true;
+
+
 }
 
 
