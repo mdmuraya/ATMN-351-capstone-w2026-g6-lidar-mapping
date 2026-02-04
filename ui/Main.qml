@@ -66,12 +66,35 @@ ApplicationWindow {
                     Layout.horizontalStretchFactor: 1
 
                     GroupBox {
-                        title: "Start Mode"
+                        title: "System State"
                         Layout.fillWidth: true                        
-                        RowLayout {
+                        ColumnLayout {
                             anchors.fill: parent
 
                             Item { Layout.fillWidth: true }
+
+                            RadioButton {
+                                id: runStateOFF
+                                text: "OFF"
+                                checked: MainBackendHelper.runStateOFF;
+                                onCheckedChanged: MainBackendHelper.runStateOFF = checked
+                            }
+
+                            RadioButton {
+                                id: runStateJOG
+                                text: "RUN - JOG"
+                                checked: MainBackendHelper.runStateJOG;
+                                onCheckedChanged: MainBackendHelper.runStateJOG = checked
+                            }
+
+                            RadioButton {
+                                id: runStateAUTO
+                                text: "RUN - AUTO"
+                                checked: MainBackendHelper.runStateAUTO;
+                                onCheckedChanged: MainBackendHelper.runStateAUTO = checked
+                                //Binding { target: MainBackendHelper; property: "runStateAUTO"; value: runStateAUTO.checked }
+                            }
+                            /*
 
                             Label {
                                 text: qsTr("MANUAL")
@@ -90,6 +113,7 @@ ApplicationWindow {
                                     pointSize: 14
                                 }
                             }
+                            */
 
                             Item { Layout.fillWidth: true }
 

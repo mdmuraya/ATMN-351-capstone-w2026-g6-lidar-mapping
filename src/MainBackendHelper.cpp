@@ -48,8 +48,66 @@ void MainBackendHelper::setPLCRunTag(bool plcRunTagValue)
 {
     if (_plcRunTagValue == plcRunTagValue)
         return;
+
+
     _plcRunTagValue = plcRunTagValue;
     emit plcRunTagChanged(_plcRunTagValue); // Emit signal to trigger QML updates
+}
+
+bool MainBackendHelper::getRunStateOFF() const
+{
+    return _runStateOFFValue;
+}
+
+void MainBackendHelper::setRunStateOFF(bool runStateOFFValue)
+{
+    if (_runStateOFFValue == runStateOFFValue)
+        return;
+
+    _runStateOFFValue = runStateOFFValue;
+    emit runStateOFFChanged(_runStateOFFValue); // Emit signal to trigger QML updates
+}
+
+bool MainBackendHelper::getRunStateJOG() const
+{
+    return _runStateJOGValue;
+}
+
+void MainBackendHelper::setRunStateJOG(bool runStateJOGValue)
+{
+    if (_runStateJOGValue == runStateJOGValue)
+        return;
+
+    _runStateJOGValue = runStateJOGValue;
+    emit runStateJOGChanged(_runStateJOGValue); // Emit signal to trigger QML updates
+}
+
+bool MainBackendHelper::getRunStateAUTO() const
+{
+    return _runStateAUTOValue;
+}
+
+void MainBackendHelper::setRunStateAUTO(bool runStateAUTOValue)
+{
+    if (_runStateAUTOValue == runStateAUTOValue)
+        return;
+
+    _runStateAUTOValue = runStatAUTOValue;
+    emit runStateAUTOChanged(_runStateAUTOValue); // Emit signal to trigger QML updates
+}
+
+void MainBackendHelper::setHMIRunStateTag(HMI_RUN_STATE hmiRunStateTagValue)
+{
+    if (_hmiRunStateTagValue == hmiRunStateTagValue)
+        return;
+
+    _hmiRunStateTagValue = hmiRunStateTagValue;
+    emit hmiRunStateTagChanged(_hmiRunStateTagValue); // Emit signal to trigger QML updates
+}
+
+MainBackendHelper::HMI_RUN_STATE MainBackendHelper::getHMIRunStateTag() const
+{
+    return _hmiRunStateTagValue;
 }
 
 void MainBackendHelper::onConnectToPLC()
@@ -343,7 +401,7 @@ void MainBackendHelper::onGetPLCStatus()
     qDebug() << "MainBackendHelper::onGetPLCStatus()" << QDateTime::currentDateTime();
 
     int i = 0, rc = 0, elementCount = 1, elementSize = 1, dataTimeout = 5000;
-    QString plcTagPath = "protocol=ab-eip&gateway=192.168.40.62&plc=Micro800&elem_size=1&elem_count=1&name=PLC_RUN";
+    QString plcTagPath = "protocol=ab-eip&gateway=192.168.40.62&plc=Micro800&elem_size=1&elem_count=1&name=System_Running";
     auto tag = plc_tag_create(plcTagPath.toUtf8().constData(), dataTimeout);
 
     qDebug() << plcTagPath;
