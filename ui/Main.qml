@@ -1,28 +1,32 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import QtQuick.Dialogs
 import QtQuick.Controls.Material
-import LIDARMapping
+//import LIDARMapping
 
 ApplicationWindow {
-    id: applicationWindowId
-    width: 1900
-    minimumWidth: 1500
-    height: 980
-    minimumHeight: 980
+    id: applicationWindow
+    width: 1600
+    minimumWidth: 1600
+    height: 850
+    minimumHeight: 850
     color: "#E0DFDB"
     visible: true
-    title: qsTr("LIDAR Mapping HMI")
-
+    title: qsTr("Humber Polytechnic: Electromechanical Engineering Technology: Winter 2026 Capstone: Group 6: LIDAR Mapping HMI")
     //flags: Qt.Window | Qt.FramelessWindowHint
 
+    // A flag to indicate if the closing action is confirmned
+    property bool quitConfirmed: false
+
+    /*
     header: Rectangle {
         height: 60
         color: "gray"
     }
-
+    */
     contentData: Rectangle {
-        id: contentDataId
+        id: contentDataContainer
         anchors.fill: parent
         anchors.margins: 5
         color: "transparent"
@@ -58,15 +62,57 @@ ApplicationWindow {
                 */
 
                 ColumnLayout {
-                    id: columnLayoutControlsId
+                    id: columnLayoutControls
                     Layout.horizontalStretchFactor: 1
 
-                    Frame {
-                        Layout.fillWidth: true
-                        RowLayout {
+                    GroupBox {
+                        title: "System State"
+                        Layout.fillWidth: true                        
+                        ColumnLayout {
                             anchors.fill: parent
 
-                            Item { Layout.fillWidth: true }
+                            //Item { Layout.fillWidth: true }
+
+                            Rectangle {
+                                id: runState
+                                width: 150
+                                height: 75
+                                color: MainBackendHelper.runState ? "green..." : "transparent"
+                                radius: 10 // Optional: adds rounded corners
+                                Layout.fillWidth: true
+
+                                Text {
+                                    id: plcStatusText
+                                    text: MainBackendHelper.runState ? MainBackendHelper.runStateJOG ? "RUNNING - JOG" : MainBackendHelper.runStateAUTO ? "RUNNING - AUTO" : "RUNNING - UNKNOWN" : "OFF"
+                                    color: "white"
+                                    font.bold: true
+                                    font.pointSize: 12
+                                    anchors.centerIn: parent // Centers the text within the rectangle
+                                }
+                            }
+/*
+                            RadioButton {
+                                id: runStateOFF
+                                text: "OFF"
+                                checked: MainBackendHelper.runStateOFF;
+                                onCheckedChanged: MainBackendHelper.runStateOFF = checked
+                            }
+
+                            RadioButton {
+                                id: runStateJOG
+                                text: "RUN - JOG"
+                                checked: MainBackendHelper.runStateJOG;
+                                onCheckedChanged: MainBackendHelper.runStateJOG = checked
+                            }
+
+                            RadioButton {
+                                id: runStateAUTO
+                                text: "RUN - AUTO"
+                                checked: MainBackendHelper.runStateAUTO;
+                                onCheckedChanged: MainBackendHelper.runStateAUTO = checked
+                                //Binding { target: MainBackendHelper; property: "runStateAUTO"; value: runStateAUTO.checked }
+                            }
+
 
                             Label {
                                 text: qsTr("MANUAL")
@@ -85,19 +131,22 @@ ApplicationWindow {
                                     pointSize: 14
                                 }
                             }
+                            */
 
-                            Item { Layout.fillWidth: true }
+                            //Item { Layout.fillWidth: true }
 
                         }
                     }
 
-                    Frame {
+                    GroupBox {
+                        title: "Actions"
                         Layout.fillWidth: true
                         ColumnLayout {
                             anchors.fill: parent
                             Button {
+                                id: startButton
                                 text: qsTr("START")
-                                Material.background: Material.Green
+                                Material.background: startButton.down ? Material.Grey : Material.Green
                                 Material.foreground: "white"
                                 Layout.alignment: Qt.AlignHCenter
                                 font {
@@ -105,7 +154,13 @@ ApplicationWindow {
                                     pointSize: 14
                                 }
                                 onClicked: {
-                                    MainBackendHelper.onStartScan();
+                                    MainBackendHelper.onStartClicked();
+                                }
+                                onPressed: {
+                                    MainBackendHelper.onStartPressed();
+                                }
+                                onReleased: {
+                                    MainBackendHelper.onStartReleased();
                                 }
                             }
 
@@ -119,7 +174,13 @@ ApplicationWindow {
                                     pointSize: 14
                                 }
                                 onClicked: {
-                                    MainBackendHelper.onStopScan();
+                                    MainBackendHelper.onStopClicked();
+                                }
+                                onPressed: {
+                                    MainBackendHelper.onStopPressed();
+                                }
+                                onReleased: {
+                                    MainBackendHelper.onStopReleased();
                                 }
                             }
 
@@ -141,7 +202,8 @@ ApplicationWindow {
 
                     Item { Layout.fillHeight: true }
 
-                    Frame {
+                    GroupBox {
+                        title: "Jog"
                         Layout.fillWidth: true
                         ColumnLayout {
                             anchors.fill: parent
@@ -200,7 +262,8 @@ ApplicationWindow {
                     }
                 }
 
-                Frame {
+                GroupBox {
+                    title: "Scan Area"
                     Layout.fillWidth: true
                     Layout.fillHeight: true
                     Layout.horizontalStretchFactor: 98
@@ -283,7 +346,7 @@ ApplicationWindow {
                                 // Define the background (the progress bar track)
                                 background: Rectangle {
                                     Layout.fillWidth: true
-                                    implicitHeight: 50
+                                    implicitHeight: 20
                                     color: "#e6e6e6" // Light gray track color
                                     radius: 5
                                     border.color: "#cccccc"
@@ -308,7 +371,7 @@ ApplicationWindow {
                             // Add a Text label to show the percentage value
                             Text {
                                 text: progressBar.value.toFixed(0) + "% complete"
-                                font.pointSize: 14
+                                font.pointSize: 12
                                 horizontalAlignment: Text.AlignHCenter
                                 Layout.fillWidth: true
                             }
@@ -321,7 +384,8 @@ ApplicationWindow {
                     Layout.horizontalStretchFactor: 1
 
                     // Items inside a Layout should use Layout attached properties, not anchors
-                    Frame {
+                    GroupBox {
+                        title: "Indicator Lights"
                         Layout.fillWidth: true
                         Layout.fillHeight: true
                         ColumnLayout {
@@ -353,7 +417,38 @@ ApplicationWindow {
                             }
                         }
                     }
+                    /*
+                    GroupBox {
+                        title: "PLC"
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        ColumnLayout {
+                            anchors.fill: parent
 
+
+
+                            Rectangle {
+                                id: plcStatus
+                                width: 150
+                                height: 75
+                                color: MainBackendHelper.plcRunTag ? "green..." : "transparent"
+                                radius: 10 // Optional: adds rounded corners
+                                anchors.centerIn: parent // Centers the rectangle within the window
+
+                                Text {
+                                    id: plcStatusText
+                                    text: MainBackendHelper.plcRunTag ? "RUNNING..." : "OFF"
+                                    color: "white"
+                                    font.bold: true
+                                    font.pointSize: 16
+                                    anchors.centerIn: parent // Centers the text within the rectangle
+                                }
+                            }
+
+
+                        }
+                    }
+*/
 
                 }
             }
@@ -378,19 +473,48 @@ ApplicationWindow {
                 Item { Layout.fillWidth: true }
 
                 Button {
-                    text: qsTr("Quit Application")
+                    text: qsTr("Quit HMI Application")
+                    font {
+                        bold: true
+                        pointSize: 12
+                    }
                     onClicked: {
-                        Qt.quit()
+                        confirmQuitDialog.open()
                     }
                 }
 
             }
         }
     }
-
+    /*
     footer: Rectangle {
-        height: 60
+        height: 40
         color: "gray"
+    }
+    */
+
+    MessageDialog {
+        id: confirmQuitDialog
+        title: qsTr("Confirm")
+        text: "Do you want to quit?"
+        //: StandardIcon.Question
+        buttons: MessageDialog.Yes | MessageDialog.No
+
+        // Handler for when the user clicks the "OK" button or dismisses the dialog
+        onAccepted: {
+            applicationWindow.quitConfirmed = true;
+            applicationWindow.close();
+            Qt.quit()
+        }
+    }
+
+    // Handler for the window's closing signal
+    onClosing: (close) => {
+        // If not confirmed, ignore the close event and show the dialog
+        if (!quitConfirmed) {
+            close.accepted = false; // Prevent the window from closing immediately
+            confirmQuitDialog.open(); // Open the confirmation dialog
+        }
     }
 }
 
