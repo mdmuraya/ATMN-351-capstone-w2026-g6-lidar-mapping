@@ -22,8 +22,6 @@ class MainBackendHelper : public QObject
     Q_OBJECT
     //QML_ELEMENT
     //QML_SINGLETON
-    //Q_PROPERTY(bool plcRunTag READ getPLCRunTag WRITE setPLCRunTag NOTIFY plcRunTagChanged)
-    Q_PROPERTY(HMI_RUN_STATE hmiRunState READ getHMIRunStateTag WRITE setHMIRunStateTag NOTIFY hmiRunStateTagChanged)
     Q_PROPERTY(bool runState READ getRunState WRITE setRunState NOTIFY runStateChanged)
     Q_PROPERTY(bool runStateJOG READ getRunStateJOG WRITE setRunStateJOG NOTIFY runStateJOGChanged)
     Q_PROPERTY(bool runStateAUTO READ getRunStateAUTO WRITE setRunStateAUTO NOTIFY runStateAUTOChanged)
@@ -31,28 +29,17 @@ class MainBackendHelper : public QObject
     public:
         explicit MainBackendHelper(QObject *parent = nullptr);
         ~MainBackendHelper();
-        //bool getPLCRunTag() const;
-        //void setPLCRunTag(bool newValue);
 
         bool getRunState() const;
         void setRunState(bool newValue);
         bool getRunStateJOG() const;
         void setRunStateJOG(bool newValue);
-
         bool getRunStateAUTO() const;
         void setRunStateAUTO(bool newValue);
-
-        HMI_RUN_STATE getHMIRunStateTag() const;
-        void setHMIRunStateTag(HMI_RUN_STATE newValue);
-
-
-
 
     signals:
         void getPLCStatus();
         void timeToPublish();
-        //void plcRunTagChanged(bool newValue);
-        void hmiRunStateTagChanged(HMI_RUN_STATE newValue);
         void runStateChanged(bool newValue);
         void runStateJOGChanged(bool newValue);
         void runStateAUTOChanged(bool newValue);
@@ -81,7 +68,6 @@ class MainBackendHelper : public QObject
         std::shared_ptr<QTimer> _publishTimer = nullptr;
         rclcpp::Node::SharedPtr _ros2Node = nullptr;
         rclcpp::Publisher<std_msgs::msg::String>::SharedPtr _publisher = nullptr;
-        HMI_RUN_STATE _hmiRunStateTag = HMI_RUN_STATE_OFF;
         bool _runState = false;
         bool _runStateJOG = false;
         bool _runStateAUTO = false;
@@ -90,7 +76,9 @@ class MainBackendHelper : public QObject
         void setupConnections();
         void startTimers();
 
-        bool getPLCTag(QString tagName, bool &tagValue);
+        bool getPLCTag(QString tagName, int32_t &tag);
+        bool readPLCTag(QString tagName, bool &tagValue);
+        bool writePLCTag(QString tagName, bool tagValue);
 };
 
 #endif // MAINBACKENDHELPER_H
