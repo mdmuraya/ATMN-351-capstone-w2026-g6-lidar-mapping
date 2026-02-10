@@ -6,7 +6,20 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON) # Enforce C++23 support
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # set(CMAKE_PREFIX_PATH "/opt/Qt/6.10.1/gcc_64")
-set(Qt6_DIR "/opt/Qt/6.10.2/gcc_arm64/lib/cmake/Qt6")
+
+if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64" OR CMAKE_SYSTEM_PROCESSOR STREQUAL "AMD64")
+    message(STATUS "Target architecture is x64")
+    # Add x64 specific code here
+    set(Qt6_DIR "/opt/Qt/6.10.2/gcc_64/lib/cmake/Qt6")
+elseif(CMAKE_SYSTEM_PROCESSOR STREQUAL "arm64" OR CMAKE_SYSTEM_PROCESSOR STREQUAL "aarch64")
+    message(STATUS "Target architecture is ARM64")
+    # Add ARM64 specific code here
+    set(Qt6_DIR "/opt/Qt/6.10.2/gcc_arm64/lib/cmake/Qt6")
+else()
+    message(STATUS "Target architecture is unknown or not explicitly handled: ${CMAKE_SYSTEM_PROCESSOR}")
+endif()
+
+
 # Define the paths to the external library files
 set(EXTERNAL_LIB_DIR "lib")
 set(EXTERNAL_INC_DIR "include")
