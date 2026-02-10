@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON) # Enforce C++23 support
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # set(CMAKE_PREFIX_PATH "/opt/Qt/6.10.1/gcc_64")
-set(Qt6_DIR "/opt/Qt/6.10.2/gcc_64/lib/cmake/Qt6")
+set(Qt6_DIR "/opt/Qt/6.10.2/gcc_arm64/lib/cmake/Qt6")
 # Define the paths to the external library files
 set(EXTERNAL_LIB_DIR "lib")
 set(EXTERNAL_INC_DIR "include")

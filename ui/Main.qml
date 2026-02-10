@@ -7,7 +7,7 @@ import QtQuick.Controls.Material
 
 ApplicationWindow {
     id: applicationWindow
-    width: 1600
+    width: 1960
     minimumWidth: 1600
     height: 850
     minimumHeight: 850
