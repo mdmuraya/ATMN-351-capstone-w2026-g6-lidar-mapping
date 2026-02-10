@@ -5,6 +5,7 @@
 #include <QVariantList>
 #include <QTimer>
 #include <QQmlEngine>
+#include <QHash>
 
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
@@ -71,6 +72,7 @@ class MainBackendHelper : public QObject
         bool _runState = false;
         bool _runStateJOG = false;
         bool _runStateAUTO = false;
+        QHash<QString, int> _PLCTags;
 
         void initializeROS2();
         void setupConnections();

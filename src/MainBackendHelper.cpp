@@ -191,7 +191,7 @@ void MainBackendHelper::onGetPLCStatus()
 
     /*
     int i = 0, rc = 0, elementCount = 10, elementSize = 4, dataTimeout = 5000;
-    QString plcTagPath = "protocol=ab-eip&gateway=192.168.40.62&plc=Micro800&elem_size=1&elem_count=1&name=DENNIS_TAG";
+    QString plcTagPath = "protocol=ab-eip&gateway=&plc=Micro800&elem_size=1&elem_count=1&name=DENNIS_TAG";
     auto tag = plc_tag_create(plcTagPath.toUtf8().constData(), dataTimeout);
 
     qDebug() << plcTagPath;
@@ -299,8 +299,14 @@ bool MainBackendHelper::getPLCTag(QString tagName, int32_t &tag)
 {
     qDebug() << "MainBackendHelper::getPLCTag()" << QDateTime::currentDateTime();
 
+    if (_PLCTags.contains(tagName)) {
+        qDebug() << "Key" << tagName << "found.";
+        tag = _PLCTags.value(tagName);
+        return true;
+    }
+
     int rc = 0, dataTimeout = 2000;
-    QString plcTagPath = QString("protocol=ab-eip&gateway=192.168.40.62&plc=Micro800&elem_size=1&elem_count=1&name=") + tagName;
+    QString plcTagPath = QString("protocol=ab-eip&gateway=10.111.36.194&plc=Micro800&elem_size=1&elem_count=1&name=") + tagName;
     tag = plc_tag_create(plcTagPath.toUtf8().constData(), dataTimeout);
 
     qDebug() << plcTagPath;
@@ -318,6 +324,8 @@ bool MainBackendHelper::getPLCTag(QString tagName, int32_t &tag)
         plc_tag_destroy(tag);
         return false;
     }
+
+    _PLCTags.insert(tagName, tag);
 
     return true;
 
