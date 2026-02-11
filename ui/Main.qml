@@ -77,13 +77,13 @@ ApplicationWindow {
                                 id: runState
                                 width: 150
                                 height: 75
-                                color: MainBackendHelper.runState ? "green..." : "transparent"
+                                color: plcTag.runState ? "green..." : "transparent"
                                 radius: 10 // Optional: adds rounded corners
                                 Layout.fillWidth: true
 
                                 Text {
                                     id: plcStatusText
-                                    text: MainBackendHelper.runState ? (MainBackendHelper.runStateAUTO ? "RUNNING - AUTO" : "RUNNING - JOG") : "OFF"
+                                    text: plcTag.runState ? (plcTag.runStateAUTO ? "RUNNING - AUTO" : "RUNNING - JOG") : "OFF"
                                     color: "white"
                                     font.bold: true
                                     font.pointSize: 12
@@ -103,7 +103,7 @@ ApplicationWindow {
                             Button {
                                 id: startButton
                                 text: qsTr("START")
-                                enabled: (!MainBackendHelper.runState)
+                                enabled: (!plcTag.runState)
                                 Material.background: startButton.down ? Material.Grey : Material.Green
                                 Material.foreground: "white"
                                 Layout.alignment: Qt.AlignHCenter
@@ -112,14 +112,14 @@ ApplicationWindow {
                                     pointSize: 14
                                 }
                                 onPressedChanged: {
-                                    MainBackendHelper.startButtonPressedChanged(pressed);
+                                    plcTag.startButtonPressedChanged(pressed);
                                 }
                             }
 
                             Button {
                                 id: stopButton
                                 text: qsTr("STOP")
-                                enabled: MainBackendHelper.runState
+                                enabled: plcTag.runState
                                 Material.background: Material.Red
                                 Material.foreground: "white"
                                 Layout.alignment: Qt.AlignHCenter
@@ -128,14 +128,14 @@ ApplicationWindow {
                                     pointSize: 14
                                 }
                                 onPressedChanged: {
-                                    MainBackendHelper.stopButtonPressedChanged(pressed);
+                                    plcTag.stopButtonPressedChanged(pressed);
                                 }
                             }
 
                             Button {
                                 id: resetButton
                                 text: qsTr("RESET")
-                                enabled: (!MainBackendHelper.runState)
+                                enabled: (!plcTag.runState)
                                 Material.background: Material.Blue
                                 Material.foreground: "white"
                                 Layout.alignment: Qt.AlignHCenter
@@ -144,7 +144,7 @@ ApplicationWindow {
                                     pointSize: 14
                                 }
                                 onPressedChanged: {
-                                    MainBackendHelper.resetButtonPressedChanged(pressed);
+                                    plcTag.resetButtonPressedChanged(pressed);
                                 }
                             }
                         }
@@ -159,11 +159,11 @@ ApplicationWindow {
                             anchors.fill: parent
                             RoundButton {
                                 text: qsTr("\u2B9D") //move left
-                                enabled: (MainBackendHelper.runState && (!MainBackendHelper.runStateAUTO))
+                                enabled: (plcTag.runState && (!plcTag.runStateAUTO))
                                 Material.background: Material.Yellow
                                 Layout.alignment: Qt.AlignHCenter
                                 onPressedChanged: {
-                                    MainBackendHelper.moveLeftButtonPressedChanged(pressed);
+                                    plcTag.moveLeftButtonPressedChanged(pressed);
                                 }
                             }
 
@@ -172,16 +172,16 @@ ApplicationWindow {
                                 Item { Layout.fillWidth: true }
                                 RoundButton {
                                     text: qsTr("\u2B9C") //move back
-                                    enabled: (MainBackendHelper.runState && (!MainBackendHelper.runStateAUTO))
+                                    enabled: (plcTag.runState && (!plcTag.runStateAUTO))
                                     Material.background: Material.Yellow
                                     onPressedChanged: {
-                                        MainBackendHelper.moveBackButtonPressedChanged(pressed);
+                                        plcTag.moveBackButtonPressedChanged(pressed);
                                     }
                                 }
 
                                 RoundButton {
                                     text: qsTr("HOME")
-                                    enabled: (MainBackendHelper.runState && (!MainBackendHelper.runStateAUTO))
+                                    enabled: (plcTag.runState && (!plcTag.runStateAUTO))
                                     Material.background: "black"
                                     Material.foreground: "white"
                                     font {
@@ -189,16 +189,16 @@ ApplicationWindow {
                                         pointSize: 12
                                     }
                                     onPressedChanged: {
-                                        MainBackendHelper.moveToHomeButtonPressedChanged(pressed);
+                                        plcTag.moveToHomeButtonPressedChanged(pressed);
                                     }
                                 }
 
                                 RoundButton {
                                     text: qsTr("\u2B9E") //move forward
-                                    enabled: (MainBackendHelper.runState && (!MainBackendHelper.runStateAUTO))
+                                    enabled: (plcTag.runState && (!plcTag.runStateAUTO))
                                     Material.background: Material.Yellow
                                     onPressedChanged: {
-                                        MainBackendHelper.moveForwardButtonPressedChanged(pressed);
+                                        plcTag.moveForwardButtonPressedChanged(pressed);
                                     }
                                 }
                                 Item { Layout.fillWidth: true }
@@ -206,11 +206,11 @@ ApplicationWindow {
 
                             RoundButton {
                                 text: qsTr("\u2B9F") //move right
-                                enabled: (MainBackendHelper.runState && (!MainBackendHelper.runStateAUTO))
+                                enabled: (plcTag.runState && (!plcTag.runStateAUTO))
                                 Material.background: Material.Yellow
                                 Layout.alignment: Qt.AlignHCenter
                                 onPressedChanged: {
-                                    MainBackendHelper.moveRightButtonPressedChanged(pressed);
+                                    plcTag.moveRightButtonPressedChanged(pressed);
                                 }
                             }
                         }
@@ -351,7 +351,7 @@ ApplicationWindow {
                                 Layout.alignment: Qt.AlignHCenter
                                 Binding on color {
                                     value: "red"
-                                    when: MainBackendHelper.redPilotLight
+                                    when: plcTag.redPilotLight
                                 }
                             }
                             PilotLight {
@@ -360,7 +360,7 @@ ApplicationWindow {
                                 Layout.alignment: Qt.AlignHCenter
                                 Binding on color {
                                     value: "#FFBF00"
-                                    when: MainBackendHelper.amberPilotLight
+                                    when: plcTag.amberPilotLight
                                 }
                             }
                             PilotLight {
@@ -369,7 +369,7 @@ ApplicationWindow {
                                 Layout.alignment: Qt.AlignHCenter
                                 Binding on color {
                                     value: "green"
-                                    when: MainBackendHelper.greenPilotLight
+                                    when: plcTag.greenPilotLight
                                 }
                             }
                             PilotLight {
@@ -378,7 +378,7 @@ ApplicationWindow {
                                 Layout.alignment: Qt.AlignHCenter
                                 Binding on color {
                                     value: "blue"
-                                    when: MainBackendHelper.bluePilotLight
+                                    when: plcTag.bluePilotLight
                                 }
                             }
                             PilotLight {
@@ -387,7 +387,7 @@ ApplicationWindow {
                                 Layout.alignment: Qt.AlignHCenter
                                 Binding on color {
                                     value: "white"
-                                    when: MainBackendHelper.whitePilotLight
+                                    when: plcTag.whitePilotLight
                                 }
                             }
                         }
@@ -406,13 +406,13 @@ ApplicationWindow {
                                 id: plcStatus
                                 width: 150
                                 height: 75
-                                color: MainBackendHelper.plcRunTag ? "green..." : "transparent"
+                                color: plcTag.plcRunTag ? "green..." : "transparent"
                                 radius: 10 // Optional: adds rounded corners
                                 anchors.centerIn: parent // Centers the rectangle within the window
 
                                 Text {
                                     id: plcStatusText
-                                    text: MainBackendHelper.plcRunTag ? "RUNNING..." : "OFF"
+                                    text: plcTag.plcRunTag ? "RUNNING..." : "OFF"
                                     color: "white"
                                     font.bold: true
                                     font.pointSize: 16

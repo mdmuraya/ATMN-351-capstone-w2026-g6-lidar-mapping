@@ -1,17 +1,30 @@
 #include <QDebug>
 #include <QTime>
+#include <QTimer>
 
 #include "include/PLCTag.hpp"
 #include "include/libplctag.h"
 
 
 
-PLCTag::PLCTag(QObject *parent, QString plcAddress, QString plcType) :
+PLCTag::PLCTag(QObject *parent, QString plcAddress, QString plcType, QString plcProgramName) :
     QObject (parent),
     _plcAddress(plcAddress),
-    _plcType(plcType)
+    _plcType(plcType),
+    _plcProgramName(plcProgramName)
 {
-    qDebug() << QString("PLCTag::PLCTag(") + plcAddress + QString(", ") + plcType + QString(")");
+    qDebug() << QString("PLCTag::PLCTag()") << _plcAddress << _plcType << _plcProgramName;
+
+    _getPLCStatusTimer = std::make_unique<QTimer>();
+
+    connect(_getPLCStatusTimer.get(), &QTimer::timeout, [this](){
+        getPLCStatus();
+    });
+
+    //connect(this, &PLCTag::getPLCStatus, this, &PLCTag::onGetPLCStatus);
+
+    int frequency = 5; //number of times per second
+    _getPLCStatusTimer->start((1000/frequency));
 }
 
 
@@ -19,7 +32,8 @@ PLCTag::~PLCTag()
 {
     qDebug() << "PLCTag::~PLCTag()";
 
-    for (auto [tagName, tag] : _PLCTags.asKeyValueRange()) { // asKeyValueRange() available from Qt 6.3
+    for (auto [tagName, tag] : _PLCTags.asKeyValueRange())
+    {
         qDebug() << "DESTRYOING Tag: Name:" << tagName << "Value:" << tag;
         plc_tag_destroy(tag);
     }
@@ -38,7 +52,7 @@ int32_t PLCTag::getPLCTag(QString tagName)
     qDebug() << "Key " << tagName << " NOT FOUND. Creating...";
 
     QString plcTagPath = QString("protocol=ab-eip&gateway=") + _plcAddress + QString("&plc=") + _plcType + QString("&elem_size=1&elem_count=1&name=") + tagName;
-    //QString plcTagPath = _plcTagPathBase + tagName;
+
     int32_t tag = plc_tag_create(plcTagPath.toUtf8().constData(), _dataTimeout);
 
     qDebug() << plcTagPath;
@@ -114,7 +128,186 @@ bool PLCTag::writePLCTag(QString tagName, bool tagValue)
     return false;
 }
 
+void PLCTag::getPLCStatus()
+{
+    qDebug() << "PLCTag::getPLCStatus()" << QDateTime::currentDateTime();
+    //here we will get all the PLC tags
+    _getPLCStatusTimer->stop();
 
+    bool tagValue = false;
+
+    readPLCTag(_plcProgramName + "System_Running", tagValue) ? setRunState(tagValue) : setRunState(getRunState());
+    readPLCTag(_plcProgramName + "PHY_Selector_Run_AUTO", tagValue) ? setRunStateAUTO(tagValue) : setRunStateAUTO(getRunStateAUTO());
+    readPLCTag(_plcProgramName + "Red_Pilot_Light", tagValue) ? setRedPilotLight(tagValue) : setRedPilotLight(getRedPilotLight());
+    readPLCTag(_plcProgramName + "Amber_Pilot_Light", tagValue) ? setAmberPilotLight(tagValue) : setAmberPilotLight(getAmberPilotLight());
+    readPLCTag(_plcProgramName + "Green_Pilot_Light", tagValue) ? setGreenPilotLight(tagValue) : setGreenPilotLight(getGreenPilotLight());
+    readPLCTag(_plcProgramName + "Blue_Pilot_Light", tagValue) ? setBluePilotLight(tagValue) :  setBluePilotLight(getBluePilotLight());
+    readPLCTag(_plcProgramName + "White_Pilot_Light", tagValue) ? setWhitePilotLight(tagValue) : setWhitePilotLight(getWhitePilotLight());
+
+    _getPLCStatusTimer->start();
+
+}
+
+
+bool PLCTag::getRunState() const
+{
+    return _runState;
+}
+
+void PLCTag::setRunState(bool newValue)
+{
+    if (_runState == newValue)
+        return;
+
+    _runState = newValue;
+    emit runStateChanged(_runState); // Emit signal to trigger QML updates
+}
+
+bool PLCTag::getRunStateAUTO() const
+{
+    return _runStateAUTO;
+}
+
+void PLCTag::setRunStateAUTO(bool newValue)
+{
+    if (_runStateAUTO == newValue)
+        return;
+
+    _runStateAUTO = newValue;
+    emit runStateAUTOChanged(_runStateAUTO); // Emit signal to trigger QML updates
+}
+
+void PLCTag::startButtonPressedChanged(bool pressed)
+{
+    qDebug() << "PLCTag::startButtonPressedChanged()";
+
+    writePLCTag(_plcProgramName + "HMI_Start_PB",pressed);
+}
+
+void PLCTag::stopButtonPressedChanged(bool pressed)
+{
+    qDebug() << "PLCTag::stopButtonPressedChanged()";
+
+    writePLCTag(_plcProgramName + "HMI_Stop_PB",pressed);
+}
+
+void PLCTag::resetButtonPressedChanged(bool pressed)
+{
+    qDebug() << "PLCTag::resetButtonPressedChanged()";
+
+    writePLCTag(_plcProgramName + "HMI_Reset_PB",pressed);
+}
+
+void PLCTag::moveToHomeButtonPressedChanged(bool pressed)
+{
+    qDebug() << "PLCTag::moveToHomeButtonPressedChanged()";
+
+    writePLCTag(_plcProgramName + "HMI_Home_PB",pressed);
+}
+
+void PLCTag::moveLeftButtonPressedChanged(bool pressed)
+{
+    qDebug() << "PLCTag::moveLeftButtonPressedChanged()";
+
+    writePLCTag(_plcProgramName + "HMI_MoveLeft_PB",pressed);
+}
+
+void PLCTag::moveBackButtonPressedChanged(bool pressed)
+{
+    qDebug() << "PLCTag::moveBackButtonPressedChanged()";
+
+    writePLCTag(_plcProgramName + "HMI_MoveBack_PB",pressed);
+}
+
+void PLCTag::moveForwardButtonPressedChanged(bool pressed)
+{
+    qDebug() << "PLCTag::moveForwardButtonPressedChanged()";
+
+    writePLCTag(_plcProgramName + "HMI_MoveForward_PB",pressed);
+}
+
+void PLCTag::moveRightButtonPressedChanged(bool pressed)
+{
+    qDebug() << "PLCTag::moveRightButtonPressedChanged()";
+
+    writePLCTag(_plcProgramName + "HMI_MoveRight_PB",pressed);
+}
+
+
+bool PLCTag::getRedPilotLight() const
+{
+    return _redPilotLight;
+}
+
+void PLCTag::setRedPilotLight(bool newValue)
+{
+    if (_redPilotLight == newValue)
+        return;
+
+    _redPilotLight = newValue;
+    emit redPilotLightChanged(_redPilotLight);
+}
+
+bool PLCTag::getAmberPilotLight() const
+{
+    return _amberPilotLight;
+}
+
+void PLCTag::setAmberPilotLight(bool newValue)
+{
+    if (_amberPilotLight == newValue)
+        return;
+
+    _amberPilotLight = newValue;
+    emit amberPilotLightChanged(_amberPilotLight);
+}
+
+bool PLCTag::getGreenPilotLight() const
+{
+    return _greenPilotLight;
+}
+
+void PLCTag::setGreenPilotLight(bool newValue)
+{
+    if (_greenPilotLight == newValue)
+        return;
+
+    _greenPilotLight = newValue;
+    emit greenPilotLightChanged(_greenPilotLight);
+}
+
+bool PLCTag::getBluePilotLight() const
+{
+    return _bluePilotLight;
+}
+
+void PLCTag::setBluePilotLight(bool newValue)
+{
+    if (_bluePilotLight == newValue)
+        return;
+
+    _bluePilotLight = newValue;
+    emit bluePilotLightChanged(_bluePilotLight);
+}
+
+bool PLCTag::getWhitePilotLight() const
+{
+    return _whitePilotLight;
+}
+
+void PLCTag::setWhitePilotLight(bool newValue)
+{
+    if (_whitePilotLight == newValue)
+        return;
+
+    _whitePilotLight = newValue;
+    emit whitePilotLightChanged(_whitePilotLight);
+}
+
+void PLCTag::onConnectToPLC()
+{
+
+}
 
 /*
     int i = 0, rc = 0, elementCount = 10, elementSize = 4, dataTimeout = 5000;

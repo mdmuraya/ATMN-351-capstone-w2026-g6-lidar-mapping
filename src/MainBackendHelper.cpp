@@ -25,7 +25,6 @@ MainBackendHelper::MainBackendHelper(QObject *parent) : QObject (parent)
     }
 }
 
-
 MainBackendHelper::~MainBackendHelper()
 {
     qDebug() << "MainBackendHelper::~MainBackendHelper()";
@@ -35,167 +34,19 @@ MainBackendHelper::~MainBackendHelper()
     }
 }
 
-bool MainBackendHelper::getRunState() const
+void MainBackendHelper::publishToROS2()
 {
-    return _runState;
-}
-
-void MainBackendHelper::setRunState(bool newValue)
-{
-    if (_runState == newValue)
-        return;
-
-    _runState = newValue;
-    emit runStateChanged(_runState); // Emit signal to trigger QML updates
-}
-
-bool MainBackendHelper::getRunStateAUTO() const
-{
-    return _runStateAUTO;
-}
-
-void MainBackendHelper::setRunStateAUTO(bool newValue)
-{
-    if (_runStateAUTO == newValue)
-        return;
-
-    _runStateAUTO = newValue;
-    emit runStateAUTOChanged(_runStateAUTO); // Emit signal to trigger QML updates
-}
-
-void MainBackendHelper::onConnectToPLC()
-{
-    qDebug() << "MainBackendHelper::onConnectToPLC()";
-}
-
-void MainBackendHelper::startButtonPressedChanged(bool pressed)
-{
-    qDebug() << "MainBackendHelper::startButtonPressedChanged()";
-
-    _PLCTag->writePLCTag(_plcProgramName + "HMI_Start_PB",pressed);
-}
-
-void MainBackendHelper::stopButtonPressedChanged(bool pressed)
-{
-    qDebug() << "MainBackendHelper::stopButtonPressedChanged()";
-
-    _PLCTag->writePLCTag(_plcProgramName + "HMI_Stop_PB",pressed);
-}
-
-void MainBackendHelper::resetButtonPressedChanged(bool pressed)
-{
-    qDebug() << "MainBackendHelper::resetButtonPressedChanged()";
-
-    _PLCTag->writePLCTag(_plcProgramName + "HMI_Reset_PB",pressed);
-}
-
-void MainBackendHelper::moveToHomeButtonPressedChanged(bool pressed)
-{
-    qDebug() << "MainBackendHelper::moveToHomeButtonPressedChanged()";
-
-    _PLCTag->writePLCTag(_plcProgramName + "HMI_Home_PB",pressed);
-}
-
-void MainBackendHelper::moveLeftButtonPressedChanged(bool pressed)
-{
-    qDebug() << "MainBackendHelper::moveLeftButtonPressedChanged()";
-
-    _PLCTag->writePLCTag(_plcProgramName + "HMI_MoveLeft_PB",pressed);
-}
-
-void MainBackendHelper::moveBackButtonPressedChanged(bool pressed)
-{
-    qDebug() << "MainBackendHelper::moveBackButtonPressedChanged()";
-
-    _PLCTag->writePLCTag(_plcProgramName + "HMI_MoveBack_PB",pressed);
-}
-
-void MainBackendHelper::moveForwardButtonPressedChanged(bool pressed)
-{
-    qDebug() << "MainBackendHelper::moveForwardButtonPressedChanged()";
-
-    _PLCTag->writePLCTag(_plcProgramName + "HMI_MoveForward_PB",pressed);
-}
-
-void MainBackendHelper::moveRightButtonPressedChanged(bool pressed)
-{
-    qDebug() << "MainBackendHelper::moveRightButtonPressedChanged()";
-
-    _PLCTag->writePLCTag(_plcProgramName + "HMI_MoveRight_PB",pressed);
-}
-
-void MainBackendHelper::onGetPLCStatus()
-{
-
-    qDebug() << "MainBackendHelper::onGetPLCStatus()" << QDateTime::currentDateTime();
-    //here we will get all the PLC tags
-    _getPLCStatusTimer->stop();
-
-    bool tagValue = false;
-
-    _PLCTag->readPLCTag(_plcProgramName + "System_Running", tagValue) ? setRunState(tagValue) : setRunState(getRunState());
-    _PLCTag->readPLCTag(_plcProgramName + "PHY_Selector_Run_AUTO", tagValue) ? setRunStateAUTO(tagValue) : setRunStateAUTO(getRunStateAUTO());
-    _PLCTag->readPLCTag(_plcProgramName + "Red_Pilot_Light", tagValue) ? setRedPilotLight(tagValue) : setRedPilotLight(getRedPilotLight());
-    _PLCTag->readPLCTag(_plcProgramName + "Amber_Pilot_Light", tagValue) ? setAmberPilotLight(tagValue) : setAmberPilotLight(getAmberPilotLight());
-    _PLCTag->readPLCTag(_plcProgramName + "Green_Pilot_Light", tagValue) ? setGreenPilotLight(tagValue) : setGreenPilotLight(getGreenPilotLight());
-    _PLCTag->readPLCTag(_plcProgramName + "Blue_Pilot_Light", tagValue) ? setBluePilotLight(tagValue) :  setBluePilotLight(getBluePilotLight());
-    _PLCTag->readPLCTag(_plcProgramName + "White_Pilot_Light", tagValue) ? setWhitePilotLight(tagValue) : setWhitePilotLight(getWhitePilotLight());
-
-    /*
-
-
-    if(_PLCTag->readPLCTag(_plcProgramName + "System_Running", tagValue))
-    {
-        setRunState(tagValue);
-    }    
-
-    if(_PLCTag->readPLCTag(_plcProgramName + "PHY_Selector_Run_AUTO", tagValue))
-    {
-        setRunStateAUTO(tagValue);
-    }
-
-    if(_PLCTag->readPLCTag(_plcProgramName + "Red_Pilot_Light", tagValue))
-    {
-        setRedPilotLight(tagValue);
-    }
-
-    if(_PLCTag->readPLCTag(_plcProgramName + "Amber_Pilot_Light", tagValue))
-    {
-        setAmberPilotLight(tagValue);
-    }
-
-    if(_PLCTag->readPLCTag(_plcProgramName + "Green_Pilot_Light", tagValue))
-    {
-        setGreenPilotLight(tagValue);
-    }
-
-    if(_PLCTag->readPLCTag(_plcProgramName + "Blue_Pilot_Light", tagValue))
-    {
-        setBluePilotLight(tagValue);
-    }
-
-
-    if(_PLCTag->readPLCTag(_plcProgramName + "White_Pilot_Light", tagValue))
-    {
-        setWhitePilotLight(tagValue);
-    }
-    */
-    _getPLCStatusTimer->start();
-}
-
-void MainBackendHelper::onTimeToPublish()
-{
-    qDebug() << "MainBackendHelper::onTimeToPublish()" << QDateTime::currentDateTime();
+    qDebug() << "MainBackendHelper::publishToROS2()" << QDateTime::currentDateTime();
 
     if (!rclcpp::ok()) {
         qDebug() << "ROS is not running!";
-        _publishTimer->stop();
+        _ros2PublishTimer->stop();
         return;
     }
 
     auto message = std_msgs::msg::String();
     message.data = "Hello, ROS 2! ";
-    _publisher->publish(message);
+    _ros2Publisher->publish(message);
 
     qDebug() << "Published:" <<  message.data;
     rclcpp::spin_some(_ros2Node);
@@ -212,17 +63,18 @@ bool MainBackendHelper::initialize(QGuiApplication *qGuiApplication)
         []() { QCoreApplication::exit(-1); },
         Qt::QueuedConnection);
 
+    _PLCTag = std::make_unique<PLCTag>(this, _plcAddress, _plcType, _plcProgramName);
+    _ros2PublishTimer = std::make_shared<QTimer>();
+
+    _QQmlApplicationEngine.rootContext()->setContextProperty("plcTag", _PLCTag.get());
     _QQmlApplicationEngine.rootContext()->setContextProperty("MainBackendHelper", this);
+
     _QQmlApplicationEngine.loadFromModule("LIDAR_Mapping_HMI", "Main");
 
     if(_QQmlApplicationEngine.rootObjects().isEmpty())
     {
         return false;
     }
-
-    _getPLCStatusTimer = std::make_unique<QTimer>();
-    _publishTimer = std::make_shared<QTimer>();
-    _PLCTag = std::make_unique<PLCTag>(this, _plcAddress, _plcType);
 
     setupConnections();
     initializeROS2();
@@ -231,11 +83,16 @@ bool MainBackendHelper::initialize(QGuiApplication *qGuiApplication)
     return true;
 }
 
+void MainBackendHelper::onConnectToPLC()
+{
+
+}
+
 void MainBackendHelper::initializeROS2()
 {
     rclcpp::init(0, nullptr);
     _ros2Node = rclcpp::Node::make_shared("LIDARMapping_HMI_App");
-    _publisher = _ros2Node->create_publisher<std_msgs::msg::String>("LIDARMapping_HMI_App_topic", 10);
+    _ros2Publisher = _ros2Node->create_publisher<std_msgs::msg::String>("LIDARMapping_HMI_App_topic", 10);
 
 }
 
@@ -243,16 +100,11 @@ void MainBackendHelper::setupConnections()
 {
     qDebug() << "MainBackendHelper::setupConnections()";
 
-    connect(_getPLCStatusTimer.get(), &QTimer::timeout, [this](){
-        emit getPLCStatus();
+    connect(_ros2PublishTimer.get(), &QTimer::timeout, [this](){
+        publishToROS2();
     });
 
-    connect(_publishTimer.get(), &QTimer::timeout, [this](){
-        emit timeToPublish();
-    });
-
-    connect(this, &MainBackendHelper::getPLCStatus, this, &MainBackendHelper::onGetPLCStatus);
-    connect(this, &MainBackendHelper::timeToPublish, this, &MainBackendHelper::onTimeToPublish);
+    //connect(this, &MainBackendHelper::timeToPublish, this, &MainBackendHelper::onTimeToPublish);
 
 }
 
@@ -260,11 +112,9 @@ void MainBackendHelper::startTimers()
 {
     qDebug() << "MainBackendHelper::startTimers()";
 
-    int frequency = 5; //number of times per second
-    _getPLCStatusTimer->start((1000/frequency));
+    int frequency = 1; //number of times per second
 
-    frequency= 1; //number of times per second
-    //_publishTimer->start((1000/frequency));
+    _ros2PublishTimer->start((1000/frequency));
 }
 
 
@@ -275,72 +125,3 @@ void MainBackendHelper::startTimers()
 
 
 
-bool MainBackendHelper::getRedPilotLight() const
-{
-    return _redPilotLight;
-}
-
-void MainBackendHelper::setRedPilotLight(bool newValue)
-{
-    if (_redPilotLight == newValue)
-        return;
-
-    _redPilotLight = newValue;
-    emit redPilotLightChanged(_redPilotLight);
-}
-
-bool MainBackendHelper::getAmberPilotLight() const
-{
-    return _amberPilotLight;
-}
-
-void MainBackendHelper::setAmberPilotLight(bool newValue)
-{
-    if (_amberPilotLight == newValue)
-        return;
-
-    _amberPilotLight = newValue;
-    emit amberPilotLightChanged(_amberPilotLight);
-}
-
-bool MainBackendHelper::getGreenPilotLight() const
-{
-    return _greenPilotLight;
-}
-
-void MainBackendHelper::setGreenPilotLight(bool newValue)
-{
-    if (_greenPilotLight == newValue)
-        return;
-
-    _greenPilotLight = newValue;
-    emit greenPilotLightChanged(_greenPilotLight);
-}
-
-bool MainBackendHelper::getBluePilotLight() const
-{
-    return _bluePilotLight;
-}
-
-void MainBackendHelper::setBluePilotLight(bool newValue)
-{
-    if (_bluePilotLight == newValue)
-        return;
-
-    _bluePilotLight = newValue;
-    emit bluePilotLightChanged(_bluePilotLight);
-}
-
-bool MainBackendHelper::getWhitePilotLight() const
-{
-    return _whitePilotLight;
-}
-
-void MainBackendHelper::setWhitePilotLight(bool newValue)
-{
-    if (_whitePilotLight == newValue)
-        return;
-
-    _whitePilotLight = newValue;
-    emit whitePilotLightChanged(_whitePilotLight);
-}
