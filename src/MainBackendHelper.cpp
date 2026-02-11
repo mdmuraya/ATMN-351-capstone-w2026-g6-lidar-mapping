@@ -144,6 +144,32 @@ void MainBackendHelper::onGetPLCStatus()
         setRunStateAUTO(tagValue);
     }
 
+    if(_PLCTag->readPLCTag(_plcProgramName + "Red_Pilot_Light", tagValue))
+    {
+        setRedPilotLight(tagValue);
+    }
+
+    if(_PLCTag->readPLCTag(_plcProgramName + "Amber_Pilot_Light", tagValue))
+    {
+        setAmberPilotLight(tagValue);
+    }
+
+    if(_PLCTag->readPLCTag(_plcProgramName + "Green_Pilot_Light", tagValue))
+    {
+        setGreenPilotLight(tagValue);
+    }
+
+    if(_PLCTag->readPLCTag(_plcProgramName + "Blue_Pilot_Light", tagValue))
+    {
+        setBluePilotLight(tagValue);
+    }
+
+
+    if(_PLCTag->readPLCTag(_plcProgramName + "White_Pilot_Light", tagValue))
+    {
+        setWhitePilotLight(tagValue);
+    }
+
     _getPLCStatusTimer->start();
 }
 
@@ -238,3 +264,73 @@ void MainBackendHelper::startTimers()
 
 
 
+
+bool MainBackendHelper::getRedPilotLight() const
+{
+    return _redPilotLight;
+}
+
+void MainBackendHelper::setRedPilotLight(bool newValue)
+{
+    if (_redPilotLight == newValue)
+        return;
+
+    _redPilotLight = newValue;
+    emit redPilotLightChanged(newValue);
+}
+
+bool MainBackendHelper::getAmberPilotLight() const
+{
+    return _amberPilotLight;
+}
+
+void MainBackendHelper::setAmberPilotLight(bool newValue)
+{
+    if (_amberPilotLight == newValue)
+        return;
+
+    _amberPilotLight = newValue;
+    emit amberPilotLightChanged(newValue);
+}
+
+bool MainBackendHelper::getGreenPilotLight() const
+{
+    return _greenPilotLight;
+}
+
+void MainBackendHelper::setGreenPilotLight(bool newValue)
+{
+    if (_greenPilotLight == newValue)
+        return;
+
+    _greenPilotLight = newValue;
+    emit greenPilotLightChanged(newValue);
+}
+
+bool MainBackendHelper::getBluePilotLight() const
+{
+    return _bluePilotLight;
+}
+
+void MainBackendHelper::setBluePilotLight(bool newValue)
+{
+    if (_bluePilotLight == newValue)
+        return;
+
+    _bluePilotLight = newValue;
+    emit bluePilotLightChanged(newValue);
+}
+
+bool MainBackendHelper::getWhitePilotLight() const
+{
+    return _whitePilotLight;
+}
+
+void MainBackendHelper::setWhitePilotLight(bool newValue)
+{
+    if (_whitePilotLight == newValue)
+        return;
+
+    _whitePilotLight = newValue;
+    emit whitePilotLightChanged(newValue);
+}

@@ -90,49 +90,6 @@ ApplicationWindow {
                                     anchors.centerIn: parent // Centers the text within the rectangle
                                 }
                             }
-/*
-                            RadioButton {
-                                id: runStateOFF
-                                text: "OFF"
-                                checked: MainBackendHelper.runStateOFF;
-                                onCheckedChanged: MainBackendHelper.runStateOFF = checked
-                            }
-
-                            RadioButton {
-                                id: runStateJOG
-                                text: "RUN - JOG"
-                                checked: MainBackendHelper.runStateJOG;
-                                onCheckedChanged: MainBackendHelper.runStateJOG = checked
-                            }
-
-                            RadioButton {
-                                id: runStateAUTO
-                                text: "RUN - AUTO"
-                                checked: MainBackendHelper.runStateAUTO;
-                                onCheckedChanged: MainBackendHelper.runStateAUTO = checked
-                                //Binding { target: MainBackendHelper; property: "runStateAUTO"; value: runStateAUTO.checked }
-                            }
-
-
-                            Label {
-                                text: qsTr("MANUAL")
-                                font {
-                                    bold: true
-                                    pointSize: 14
-                                }
-                            }
-                            Switch {
-                               checked: false
-                            }
-                            Label {
-                                text: qsTr("AUTO")
-                                font {
-                                    bold: true
-                                    pointSize: 14
-                                }
-                            }
-                            */
-
                             //Item { Layout.fillWidth: true }
 
                         }
@@ -146,6 +103,7 @@ ApplicationWindow {
                             Button {
                                 id: startButton
                                 text: qsTr("START")
+                                enabled: (!MainBackendHelper.runState)
                                 Material.background: startButton.down ? Material.Grey : Material.Green
                                 Material.foreground: "white"
                                 Layout.alignment: Qt.AlignHCenter
@@ -159,7 +117,9 @@ ApplicationWindow {
                             }
 
                             Button {
+                                id: stopButton
                                 text: qsTr("STOP")
+                                enabled: MainBackendHelper.runState
                                 Material.background: Material.Red
                                 Material.foreground: "white"
                                 Layout.alignment: Qt.AlignHCenter
@@ -173,7 +133,9 @@ ApplicationWindow {
                             }
 
                             Button {
+                                id: resetButton
                                 text: qsTr("RESET")
+                                enabled: (!MainBackendHelper.runState)
                                 Material.background: Material.Blue
                                 Material.foreground: "white"
                                 Layout.alignment: Qt.AlignHCenter
@@ -197,6 +159,7 @@ ApplicationWindow {
                             anchors.fill: parent
                             RoundButton {
                                 text: qsTr("\u2B9D") //move left
+                                enabled: (MainBackendHelper.runState && (!MainBackendHelper.runStateAUTO))
                                 Material.background: Material.Yellow
                                 Layout.alignment: Qt.AlignHCenter
                                 onPressedChanged: {
@@ -209,6 +172,7 @@ ApplicationWindow {
                                 Item { Layout.fillWidth: true }
                                 RoundButton {
                                     text: qsTr("\u2B9C") //move back
+                                    enabled: (MainBackendHelper.runState && (!MainBackendHelper.runStateAUTO))
                                     Material.background: Material.Yellow
                                     onPressedChanged: {
                                         MainBackendHelper.moveBackButtonPressedChanged(pressed);
@@ -217,6 +181,7 @@ ApplicationWindow {
 
                                 RoundButton {
                                     text: qsTr("HOME")
+                                    enabled: (MainBackendHelper.runState && (!MainBackendHelper.runStateAUTO))
                                     Material.background: "black"
                                     Material.foreground: "white"
                                     font {
@@ -230,6 +195,7 @@ ApplicationWindow {
 
                                 RoundButton {
                                     text: qsTr("\u2B9E") //move forward
+                                    enabled: (MainBackendHelper.runState && (!MainBackendHelper.runStateAUTO))
                                     Material.background: Material.Yellow
                                     onPressedChanged: {
                                         MainBackendHelper.moveForwardButtonPressedChanged(pressed);
@@ -240,6 +206,7 @@ ApplicationWindow {
 
                             RoundButton {
                                 text: qsTr("\u2B9F") //move right
+                                enabled: (MainBackendHelper.runState && (!MainBackendHelper.runStateAUTO))
                                 Material.background: Material.Yellow
                                 Layout.alignment: Qt.AlignHCenter
                                 onPressedChanged: {
@@ -380,28 +347,48 @@ ApplicationWindow {
                             anchors.fill: parent
                             PilotLight {
                                 id: redPilotLight
-                                color: "red"
+                                //color: "red"
                                 Layout.alignment: Qt.AlignHCenter
+                                Binding on color {
+                                    value: "red"
+                                    when: MainBackendHelper.redPilotLight
+                                }
                             }
                             PilotLight {
                                 id: amberPilotLight
-                                color: "#FFBF00"
+                                //color: "#FFBF00"
                                 Layout.alignment: Qt.AlignHCenter
+                                Binding on color {
+                                    value: "#FFBF00"
+                                    when: MainBackendHelper.amberPilotLight
+                                }
                             }
                             PilotLight {
                                 id: greenPilotLight
-                                color: "green"
+                                //color: "green"
                                 Layout.alignment: Qt.AlignHCenter
+                                Binding on color {
+                                    value: "green"
+                                    when: MainBackendHelper.greenPilotLight
+                                }
                             }
                             PilotLight {
                                 id: bluePilotLight
-                                color: "blue"
+                                //color: "blue"
                                 Layout.alignment: Qt.AlignHCenter
+                                Binding on color {
+                                    value: "blue"
+                                    when: MainBackendHelper.bluePilotLight
+                                }
                             }
                             PilotLight {
                                 id: whitePilotLight
-                                color: "white"
+                                //color: "white"
                                 Layout.alignment: Qt.AlignHCenter
+                                Binding on color {
+                                    value: "white"
+                                    when: MainBackendHelper.whitePilotLight
+                                }
                             }
                         }
                     }
