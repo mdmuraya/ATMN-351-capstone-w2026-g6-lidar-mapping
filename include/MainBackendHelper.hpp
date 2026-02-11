@@ -1,6 +1,8 @@
 #ifndef MAINBACKENDHELPER_H
 #define MAINBACKENDHELPER_H
 
+#include <QGuiApplication>
+#include <QQmlApplicationEngine>
 #include <QObject>
 #include <QVariantList>
 #include <QTimer>
@@ -23,6 +25,7 @@ class MainBackendHelper : public QObject
     public:
         explicit MainBackendHelper(QObject *parent = nullptr);
         ~MainBackendHelper();
+        bool initialize(QGuiApplication *qGuiApplication);
 
         bool getRunState() const;
         void setRunState(bool newValue);
@@ -37,6 +40,15 @@ class MainBackendHelper : public QObject
 
     public slots:
         void onConnectToPLC();
+        void startButtonPressedChanged(bool pressed);
+        void stopButtonPressedChanged(bool pressed);
+        void resetButtonPressedChanged(bool pressed);
+        void moveToHomeButtonPressedChanged(bool pressed);
+        void moveLeftButtonPressedChanged(bool pressed);
+        void moveBackButtonPressedChanged(bool pressed);
+        void moveForwardButtonPressedChanged(bool pressed);
+        void moveRightButtonPressedChanged(bool pressed);
+        /*
         void onStartClicked();
         void onStartPressed();
         void onStartReleased();
@@ -50,10 +62,12 @@ class MainBackendHelper : public QObject
         void onMoveRight();
         void onMoveForward();
         void onMoveBack();
+        */
         void onGetPLCStatus();
         void onTimeToPublish();
 
     private:
+        QQmlApplicationEngine _QQmlApplicationEngine;
         QDateTime _dateTimeOnApplicationStart = QDateTime::currentDateTime();
         std::unique_ptr<QTimer> _getPLCStatusTimer = nullptr;
         std::shared_ptr<QTimer> _publishTimer = nullptr;

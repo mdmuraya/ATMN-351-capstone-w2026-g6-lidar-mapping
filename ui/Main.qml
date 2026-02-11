@@ -153,14 +153,8 @@ ApplicationWindow {
                                     bold: true
                                     pointSize: 14
                                 }
-                                onClicked: {
-                                    MainBackendHelper.onStartClicked();
-                                }
-                                onPressed: {
-                                    MainBackendHelper.onStartPressed();
-                                }
-                                onReleased: {
-                                    MainBackendHelper.onStartReleased();
+                                onPressedChanged: {
+                                    MainBackendHelper.startButtonPressedChanged(pressed);
                                 }
                             }
 
@@ -173,14 +167,8 @@ ApplicationWindow {
                                     bold: true
                                     pointSize: 14
                                 }
-                                onClicked: {
-                                    MainBackendHelper.onStopClicked();
-                                }
-                                onPressed: {
-                                    MainBackendHelper.onStopPressed();
-                                }
-                                onReleased: {
-                                    MainBackendHelper.onStopReleased();
+                                onPressedChanged: {
+                                    MainBackendHelper.stopButtonPressedChanged(pressed);
                                 }
                             }
 
@@ -193,8 +181,8 @@ ApplicationWindow {
                                     bold: true
                                     pointSize: 14
                                 }
-                                onClicked: {
-                                    MainBackendHelper.onResetSystem();
+                                onPressedChanged: {
+                                    MainBackendHelper.resetButtonPressedChanged(pressed);
                                 }
                             }
                         }
@@ -211,8 +199,8 @@ ApplicationWindow {
                                 text: qsTr("\u2B9D") //move left
                                 Material.background: Material.Yellow
                                 Layout.alignment: Qt.AlignHCenter
-                                onClicked: {
-                                    MainBackendHelper.onMoveLeft();
+                                onPressedChanged: {
+                                    MainBackendHelper.moveLeftButtonPressedChanged(pressed);
                                 }
                             }
 
@@ -222,8 +210,8 @@ ApplicationWindow {
                                 RoundButton {
                                     text: qsTr("\u2B9C") //move back
                                     Material.background: Material.Yellow
-                                    onClicked: {
-                                        MainBackendHelper.onMoveBack();
+                                    onPressedChanged: {
+                                        MainBackendHelper.moveBackButtonPressedChanged(pressed);
                                     }
                                 }
 
@@ -235,16 +223,16 @@ ApplicationWindow {
                                         bold: true
                                         pointSize: 12
                                     }
-                                    onClicked: {
-                                        MainBackendHelper.onMoveToHome();
+                                    onPressedChanged: {
+                                        MainBackendHelper.moveToHomeButtonPressedChanged(pressed);
                                     }
                                 }
 
                                 RoundButton {
                                     text: qsTr("\u2B9E") //move forward
                                     Material.background: Material.Yellow
-                                    onClicked: {
-                                        MainBackendHelper.onMoveForward();
+                                    onPressedChanged: {
+                                        MainBackendHelper.moveForwardButtonPressedChanged(pressed);
                                     }
                                 }
                                 Item { Layout.fillWidth: true }
@@ -254,8 +242,8 @@ ApplicationWindow {
                                 text: qsTr("\u2B9F") //move right
                                 Material.background: Material.Yellow
                                 Layout.alignment: Qt.AlignHCenter
-                                onClicked: {
-                                    MainBackendHelper.onMoveRight();
+                                onPressedChanged: {
+                                    MainBackendHelper.moveRightButtonPressedChanged(pressed);
                                 }
                             }
                         }

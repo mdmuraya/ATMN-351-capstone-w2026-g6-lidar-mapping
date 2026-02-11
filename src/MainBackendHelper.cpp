@@ -1,4 +1,5 @@
 #include <QCoreApplication>
+#include <QQmlContext>
 #include <QDebug>
 #include <QVariantList>
 
@@ -22,14 +23,6 @@ MainBackendHelper::MainBackendHelper(QObject *parent) : QObject (parent)
     if (QCoreApplication::arguments().count() > 1) {
         qDebug() << "Second argument:" << QCoreApplication::arguments().at(1);
     }
-
-    _getPLCStatusTimer = std::make_unique<QTimer>();
-    _publishTimer = std::make_shared<QTimer>();
-    _PLCTag = std::make_unique<PLCTag>(parent, _plcAddress, _plcType);
-
-    setupConnections();
-    initializeROS2();
-    startTimers();
 }
 
 
@@ -75,77 +68,60 @@ void MainBackendHelper::onConnectToPLC()
     qDebug() << "MainBackendHelper::onConnectToPLC()";
 }
 
-void MainBackendHelper::onStartClicked()
+void MainBackendHelper::startButtonPressedChanged(bool pressed)
 {
-    qDebug() << "MainBackendHelper::onStartClicked()";
+    qDebug() << "MainBackendHelper::startButtonPressedChanged()";
+
+    _PLCTag->writePLCTag(_plcProgramName + "HMI_Start_PB",pressed);
 }
 
-void MainBackendHelper::onStartPressed()
+void MainBackendHelper::stopButtonPressedChanged(bool pressed)
 {
-    qDebug() << "MainBackendHelper::onStartPressed()";
+    qDebug() << "MainBackendHelper::stopButtonPressedChanged()";
 
-    _PLCTag->writePLCTag(_plcProgramName + "HMI_Start_PB",true);
+    _PLCTag->writePLCTag(_plcProgramName + "HMI_Stop_PB",pressed);
 }
 
-void MainBackendHelper::onStartReleased()
+void MainBackendHelper::resetButtonPressedChanged(bool pressed)
 {
-    qDebug() << "MainBackendHelper::onStartReleased()";
+    qDebug() << "MainBackendHelper::resetButtonPressedChanged()";
 
-    _PLCTag->writePLCTag(_plcProgramName + "HMI_Start_PB",false);
+    _PLCTag->writePLCTag(_plcProgramName + "HMI_Reset_PB",pressed);
 }
 
-void MainBackendHelper::onResetSystem()
+void MainBackendHelper::moveToHomeButtonPressedChanged(bool pressed)
 {
-    qDebug() << "MainBackendHelper::onResetSystem()";
+    qDebug() << "MainBackendHelper::moveToHomeButtonPressedChanged()";
+
+    _PLCTag->writePLCTag(_plcProgramName + "HMI_Home_PB",pressed);
 }
 
-void MainBackendHelper::onStopClicked()
+void MainBackendHelper::moveLeftButtonPressedChanged(bool pressed)
 {
-    qDebug() << "MainBackendHelper::onStopClicked()";
+    qDebug() << "MainBackendHelper::moveLeftButtonPressedChanged()";
+
+    _PLCTag->writePLCTag(_plcProgramName + "HMI_MoveLeft_PB",pressed);
 }
 
-void MainBackendHelper::onStopPressed()
+void MainBackendHelper::moveBackButtonPressedChanged(bool pressed)
 {
-    qDebug() << "MainBackendHelper::onStopPressed()";
+    qDebug() << "MainBackendHelper::moveBackButtonPressedChanged()";
 
-    _PLCTag->writePLCTag(_plcProgramName + "HMI_Stop_PB",true);
+    _PLCTag->writePLCTag(_plcProgramName + "HMI_MoveBack_PB",pressed);
 }
 
-void MainBackendHelper::onStopReleased()
+void MainBackendHelper::moveForwardButtonPressedChanged(bool pressed)
 {
-    qDebug() << "MainBackendHelper::onStopReleased()";
+    qDebug() << "MainBackendHelper::moveForwardButtonPressedChanged()";
 
-    _PLCTag->writePLCTag(_plcProgramName + "HMI_Stop_PB",false);
+    _PLCTag->writePLCTag(_plcProgramName + "HMI_MoveForward_PB",pressed);
 }
 
-void MainBackendHelper::onSafetyStop()
+void MainBackendHelper::moveRightButtonPressedChanged(bool pressed)
 {
-    qDebug() << "MainBackendHelper::onSafetyStop()";
-}
+    qDebug() << "MainBackendHelper::moveRightButtonPressedChanged()";
 
-void MainBackendHelper::onMoveToHome()
-{
-    qDebug() << "MainBackendHelper::onMoveToHome()";
-}
-
-void MainBackendHelper::onMoveLeft()
-{
-    qDebug() << "MainBackendHelper::onMoveLeft()";
-}
-
-void MainBackendHelper::onMoveRight()
-{
-    qDebug() << "MainBackendHelper::onMoveRight()";
-}
-
-void MainBackendHelper::onMoveForward()
-{
-    qDebug() << "MainBackendHelper::onMoveForward()";
-}
-
-void MainBackendHelper::onMoveBack()
-{
-    qDebug() << "MainBackendHelper::onMoveBack()";
+    _PLCTag->writePLCTag(_plcProgramName + "HMI_MoveRight_PB",pressed);
 }
 
 void MainBackendHelper::onGetPLCStatus()
@@ -187,6 +163,36 @@ void MainBackendHelper::onTimeToPublish()
 
     qDebug() << "Published:" <<  message.data;
     rclcpp::spin_some(_ros2Node);
+}
+
+bool MainBackendHelper::initialize(QGuiApplication *qGuiApplication)
+{
+    qDebug() << "MainBackendHelper::initialize()" << QDateTime::currentDateTime();
+
+    QObject::connect(
+        &_QQmlApplicationEngine,
+        &QQmlApplicationEngine::objectCreationFailed,
+        qGuiApplication,
+        []() { QCoreApplication::exit(-1); },
+        Qt::QueuedConnection);
+
+    _QQmlApplicationEngine.rootContext()->setContextProperty("MainBackendHelper", this);
+    _QQmlApplicationEngine.loadFromModule("LIDAR_Mapping_HMI", "Main");
+
+    if(_QQmlApplicationEngine.rootObjects().isEmpty())
+    {
+        return false;
+    }
+
+    _getPLCStatusTimer = std::make_unique<QTimer>();
+    _publishTimer = std::make_shared<QTimer>();
+    _PLCTag = std::make_unique<PLCTag>(this, _plcAddress, _plcType);
+
+    setupConnections();
+    initializeROS2();
+    startTimers();
+
+    return true;
 }
 
 void MainBackendHelper::initializeROS2()
