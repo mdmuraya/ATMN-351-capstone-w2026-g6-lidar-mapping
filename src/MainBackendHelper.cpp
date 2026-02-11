@@ -2,15 +2,14 @@
 #include <QDebug>
 #include <QVariantList>
 
-#include "include/MainBackendHelper.h"
 #include "include/libplctag.h"
+
+#include "include/MainBackendHelper.hpp"
+
 
 #define REQUIRED_VERSION 2, 4, 0
 
-MainBackendHelper::MainBackendHelper(QObject *parent) :
-    QObject (parent),
-    _getPLCStatusTimer (std::make_unique<QTimer>()),
-    _publishTimer (std::make_shared<QTimer>())
+MainBackendHelper::MainBackendHelper(QObject *parent) : QObject (parent)
 {
     qDebug() << "MainBackendHelper::MainBackendHelper()";
     qDebug() << "Total arguments:" << QCoreApplication::arguments().count();
@@ -23,6 +22,10 @@ MainBackendHelper::MainBackendHelper(QObject *parent) :
     if (QCoreApplication::arguments().count() > 1) {
         qDebug() << "Second argument:" << QCoreApplication::arguments().at(1);
     }
+
+    _getPLCStatusTimer = std::make_unique<QTimer>();
+    _publishTimer = std::make_shared<QTimer>();
+    _PLCTag = std::make_unique<PLCTag>(parent, _plcAddress, _plcType);
 
     setupConnections();
     initializeROS2();
@@ -53,20 +56,6 @@ void MainBackendHelper::setRunState(bool newValue)
     emit runStateChanged(_runState); // Emit signal to trigger QML updates
 }
 
-bool MainBackendHelper::getRunStateJOG() const
-{
-    return _runStateJOG;
-}
-
-void MainBackendHelper::setRunStateJOG(bool newValue)
-{
-    if (_runStateJOG == newValue)
-        return;
-
-    _runStateJOG = newValue;
-    emit runStateJOGChanged(_runStateJOG); // Emit signal to trigger QML updates
-}
-
 bool MainBackendHelper::getRunStateAUTO() const
 {
     return _runStateAUTO;
@@ -95,14 +84,14 @@ void MainBackendHelper::onStartPressed()
 {
     qDebug() << "MainBackendHelper::onStartPressed()";
 
-    writePLCTag("HMI_Start_PB",true);
+    _PLCTag->writePLCTag(_plcProgramName + "HMI_Start_PB",true);
 }
 
 void MainBackendHelper::onStartReleased()
 {
     qDebug() << "MainBackendHelper::onStartReleased()";
 
-    writePLCTag("HMI_Start_PB",false);
+    _PLCTag->writePLCTag(_plcProgramName + "HMI_Start_PB",false);
 }
 
 void MainBackendHelper::onResetSystem()
@@ -119,14 +108,14 @@ void MainBackendHelper::onStopPressed()
 {
     qDebug() << "MainBackendHelper::onStopPressed()";
 
-    writePLCTag("HMI_Stop_PB",true);
+    _PLCTag->writePLCTag(_plcProgramName + "HMI_Stop_PB",true);
 }
 
 void MainBackendHelper::onStopReleased()
 {
     qDebug() << "MainBackendHelper::onStopReleased()";
 
-    writePLCTag("HMI_Stop_PB",false);
+    _PLCTag->writePLCTag(_plcProgramName + "HMI_Stop_PB",false);
 }
 
 void MainBackendHelper::onSafetyStop()
@@ -164,81 +153,22 @@ void MainBackendHelper::onGetPLCStatus()
 
     qDebug() << "MainBackendHelper::onGetPLCStatus()" << QDateTime::currentDateTime();
     //here we will get all the PLC tags
+    _getPLCStatusTimer->stop();
 
     bool tagValue=false;
 
 
-    if(readPLCTag("System_Running", tagValue))
+    if(_PLCTag->readPLCTag(_plcProgramName + "System_Running", tagValue))
     {
         setRunState(tagValue);
     }    
 
-    if(readPLCTag("PHY_Selector_Run_AUTO", tagValue))
+    if(_PLCTag->readPLCTag(_plcProgramName + "PHY_Selector_Run_AUTO", tagValue))
     {
-        if(tagValue)
-        {
-            setRunStateAUTO(true);
-            setRunStateJOG(false);
-        }
-        else
-        {
-            setRunStateAUTO(false);
-            setRunStateJOG(true);
-        }
+        setRunStateAUTO(tagValue);
     }
 
-
-
-    /*
-    int i = 0, rc = 0, elementCount = 10, elementSize = 4, dataTimeout = 5000;
-    QString plcTagPath = "protocol=ab-eip&gateway=&plc=Micro800&elem_size=1&elem_count=1&name=DENNIS_TAG";
-    auto tag = plc_tag_create(plcTagPath.toUtf8().constData(), dataTimeout);
-
-    qDebug() << plcTagPath;
-    qDebug() << QString::number(tag);
-
-
-    if(tag < 0) {
-        qDebug() << "ERROR" << QString::fromUtf8(plc_tag_decode_error(tag)) << ": Could not create tag!";
-        return;
-    }
-
-    if((rc = plc_tag_status(tag)) != PLCTAG_STATUS_OK) {
-        qDebug() << "Error setting up tag internal state. Error" << QString::fromUtf8(plc_tag_decode_error(rc));
-        plc_tag_destroy(tag);
-        return;
-    }
-
-
-    rc = plc_tag_read(tag, dataTimeout);
-    if(rc != PLCTAG_STATUS_OK) {
-        qDebug() << "ERROR: Unable to read the data! Got error code" << rc << ":" << QString::fromUtf8(plc_tag_decode_error(rc));
-        plc_tag_destroy(tag);
-        return;
-    }
-    qDebug() << QString::number(tag);
-
-    for(i = 0; i < elementCount; i++)
-    {
-        //fprintf(stderr, "data[%d]=%d\n", i, plc_tag_get_int32(tag, (i * ELEM_SIZE)));
-        qDebug() << "data[" <<  i << "]=" << plc_tag_get_int32(tag, (i * elementSize));
-    }
-
-
-    for(i = 0; i < elementCount; i++) {
-        int32_t val = plc_tag_get_int32(tag, (i * elementSize));
-
-        val = val + 1;
-
-        qDebug() << "Setting element" <<  i << " to" << val;
-
-        plc_tag_set_int32(tag, (i * elementSize), val);
-    }
-
-    rc = plc_tag_write(tag, dataTimeout);
-
-    plc_tag_destroy(tag);
-*/
+    _getPLCStatusTimer->start();
 }
 
 void MainBackendHelper::onTimeToPublish()

@@ -83,7 +83,7 @@ ApplicationWindow {
 
                                 Text {
                                     id: plcStatusText
-                                    text: MainBackendHelper.runState ? MainBackendHelper.runStateJOG ? "RUNNING - JOG" : MainBackendHelper.runStateAUTO ? "RUNNING - AUTO" : "RUNNING - UNKNOWN" : "OFF"
+                                    text: MainBackendHelper.runState ? (MainBackendHelper.runStateAUTO ? "RUNNING - AUTO" : "RUNNING - JOG") : "OFF"
                                     color: "white"
                                     font.bold: true
                                     font.pointSize: 12

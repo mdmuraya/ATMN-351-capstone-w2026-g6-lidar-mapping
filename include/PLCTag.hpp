@@ -8,21 +8,24 @@
 class PLCTag : public QObject
 {
     Q_OBJECT
-
 public:
-    explicit PLCTag(QObject *parent = nullptr);
+    explicit PLCTag(QObject *parent = nullptr, QString plcAddress = "", QString plcType = "");
     ~PLCTag();
+
+    int32_t getPLCTag(QString tagName);
+    bool readPLCTag(QString tagName, bool &tagValue);
+    bool writePLCTag(QString tagName, bool tagValue);
 
 signals:
 
 public slots:
 
 private:
-    QHash<QString, int> _PLCTags;
+    QString _plcAddress = "";
+    QString _plcType = "";
+    int32_t _dataTimeout = 5000;
+    QHash<QString, int32_t> _PLCTags;
 
-    bool getPLCTag(QString tagName, int32_t &tag);
-    bool readPLCTag(QString tagName, bool &tagValue);
-    bool writePLCTag(QString tagName, bool tagValue);
 };
 
 #endif // PLCTAG_HPP

@@ -2,7 +2,7 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 
-#include "include/MainBackendHelper.h"
+#include "include/MainBackendHelper.hpp"
 
 int main(int argc, char *argv[])
 {
