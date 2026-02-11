@@ -131,7 +131,17 @@ void MainBackendHelper::onGetPLCStatus()
     //here we will get all the PLC tags
     _getPLCStatusTimer->stop();
 
-    bool tagValue=false;
+    bool tagValue = false;
+
+    _PLCTag->readPLCTag(_plcProgramName + "System_Running", tagValue) ? setRunState(tagValue) : setRunState(getRunState());
+    _PLCTag->readPLCTag(_plcProgramName + "PHY_Selector_Run_AUTO", tagValue) ? setRunStateAUTO(tagValue) : setRunStateAUTO(getRunStateAUTO());
+    _PLCTag->readPLCTag(_plcProgramName + "Red_Pilot_Light", tagValue) ? setRedPilotLight(tagValue) : setRedPilotLight(getRedPilotLight());
+    _PLCTag->readPLCTag(_plcProgramName + "Amber_Pilot_Light", tagValue) ? setAmberPilotLight(tagValue) : setAmberPilotLight(getAmberPilotLight());
+    _PLCTag->readPLCTag(_plcProgramName + "Green_Pilot_Light", tagValue) ? setGreenPilotLight(tagValue) : setGreenPilotLight(getGreenPilotLight());
+    _PLCTag->readPLCTag(_plcProgramName + "Blue_Pilot_Light", tagValue) ? setBluePilotLight(tagValue) :  setBluePilotLight(getBluePilotLight());
+    _PLCTag->readPLCTag(_plcProgramName + "White_Pilot_Light", tagValue) ? setWhitePilotLight(tagValue) : setWhitePilotLight(getWhitePilotLight());
+
+    /*
 
 
     if(_PLCTag->readPLCTag(_plcProgramName + "System_Running", tagValue))
@@ -169,7 +179,7 @@ void MainBackendHelper::onGetPLCStatus()
     {
         setWhitePilotLight(tagValue);
     }
-
+    */
     _getPLCStatusTimer->start();
 }
 
@@ -276,7 +286,7 @@ void MainBackendHelper::setRedPilotLight(bool newValue)
         return;
 
     _redPilotLight = newValue;
-    emit redPilotLightChanged(newValue);
+    emit redPilotLightChanged(_redPilotLight);
 }
 
 bool MainBackendHelper::getAmberPilotLight() const
@@ -290,7 +300,7 @@ void MainBackendHelper::setAmberPilotLight(bool newValue)
         return;
 
     _amberPilotLight = newValue;
-    emit amberPilotLightChanged(newValue);
+    emit amberPilotLightChanged(_amberPilotLight);
 }
 
 bool MainBackendHelper::getGreenPilotLight() const
@@ -304,7 +314,7 @@ void MainBackendHelper::setGreenPilotLight(bool newValue)
         return;
 
     _greenPilotLight = newValue;
-    emit greenPilotLightChanged(newValue);
+    emit greenPilotLightChanged(_greenPilotLight);
 }
 
 bool MainBackendHelper::getBluePilotLight() const
@@ -318,7 +328,7 @@ void MainBackendHelper::setBluePilotLight(bool newValue)
         return;
 
     _bluePilotLight = newValue;
-    emit bluePilotLightChanged(newValue);
+    emit bluePilotLightChanged(_bluePilotLight);
 }
 
 bool MainBackendHelper::getWhitePilotLight() const
@@ -332,5 +342,5 @@ void MainBackendHelper::setWhitePilotLight(bool newValue)
         return;
 
     _whitePilotLight = newValue;
-    emit whitePilotLightChanged(newValue);
+    emit whitePilotLightChanged(_whitePilotLight);
 }
