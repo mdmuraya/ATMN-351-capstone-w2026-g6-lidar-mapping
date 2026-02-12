@@ -8,6 +8,8 @@
 class PLCTag : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(QString plcAddress READ getPLCAddress)
+    Q_PROPERTY(bool plcIsConnected READ getPLCIsConnected WRITE setPLCIsConnected NOTIFY plcIsConnectedChanged)
     Q_PROPERTY(bool runState READ getRunState WRITE setRunState NOTIFY runStateChanged)
     Q_PROPERTY(bool runStateAUTO READ getRunStateAUTO WRITE setRunStateAUTO NOTIFY runStateAUTOChanged)
     Q_PROPERTY(bool redPilotLight READ getRedPilotLight WRITE setRedPilotLight NOTIFY redPilotLightChanged)
@@ -19,6 +21,11 @@ class PLCTag : public QObject
 public:
     explicit PLCTag(QObject *parent = nullptr, QString plcAddress = "", QString plcType = "", QString plcProgramName = "");
     ~PLCTag();
+
+    QString getPLCAddress() const;
+
+    bool getPLCIsConnected() const;
+    void setPLCIsConnected(bool newValue);
 
     bool getRunState() const;
     void setRunState(bool newValue);
@@ -43,6 +50,7 @@ public:
 
 
 signals:
+    void plcIsConnectedChanged(bool newValue);
     void runStateChanged(bool newValue);
     void runStateAUTOChanged(bool newValue);
     void redPilotLightChanged(bool newValue);
@@ -67,8 +75,9 @@ private:
     QString _plcAddress = "";
     QString _plcType = "";
     QString _plcProgramName = "";
-    int32_t _dataTimeout = 5000;
+    int32_t _dataTimeout = 3000;
     QHash<QString, int32_t> _PLCTags;
+    bool _plcIsConnected = false;
     bool _runState = false;
     bool _runStateAUTO = false;
     bool _redPilotLight = false;
@@ -80,7 +89,7 @@ private:
     void getPLCStatus();
     int32_t getPLCTag(QString tagName);
     bool readPLCTag(QString tagName, bool &tagValue);
-    int32_t readPLCTag(QString tagName, int32_t &tagValue);
+    uint64_t readPLCTag(QString tagName, uint64_t &tagValue);
     bool writePLCTag(QString tagName, bool tagValue);
 
 };

@@ -66,7 +66,8 @@ ApplicationWindow {
                     Layout.horizontalStretchFactor: 1
 
                     GroupBox {
-                        title: "System State"
+                        title: "PLC Connection"
+                        enabled: plcTag?.plcIsConnected
                         Layout.fillWidth: true                        
                         ColumnLayout {
                             anchors.fill: parent
@@ -74,17 +75,87 @@ ApplicationWindow {
                             //Item { Layout.fillWidth: true }
 
                             Rectangle {
-                                id: runState
                                 width: 150
-                                height: 75
-                                color: plcTag?.runState ? "green..." : "transparent"
-                                radius: 10 // Optional: adds rounded corners
+                                height: 50
+                                color: "black"
+                                radius: 5 // Optional: adds rounded corners
                                 Layout.fillWidth: true
+                                border {
+                                    width: 1
+                                    color: "black"
+                                }
+                                Text {
+                                    text: "Address: " + plcTag?.plcAddress
+                                    color: "white"
+                                    font.bold: true
+                                    font.pointSize: 12
+                                    anchors.centerIn: parent // Centers the text within the rectangle
+                                }
+                            }
+                            Rectangle {
+                                width: 150
+                                height: 50
+                                color: plcTag?.plcIsConnected ? "green" : "transparent"
+                                radius: 5 // Optional: adds rounded corners
+                                Layout.fillWidth: true
+                                border {
+                                    width: 1
+                                    color: "black"
+                                }
+                                Text {
+                                    text: plcTag?.plcIsConnected ? "CONNECTED" : "NOT CONNECTED"
+                                    color: plcTag?.plcIsConnected ? "white" : "black"
+                                    font.bold: true
+                                    font.pointSize: 12
+                                    anchors.centerIn: parent // Centers the text within the rectangle
+                                }
+                            }
+                            //Item { Layout.fillWidth: true }
 
+                        }
+                    }
+
+                    GroupBox {
+                        title: "System State"
+                        enabled: plcTag?.plcIsConnected
+                        Layout.fillWidth: true
+                        ColumnLayout {
+                            anchors.fill: parent
+
+                            //Item { Layout.fillWidth: true }
+
+                            Rectangle {
+                                width: 150
+                                height: 50
+                                color: plcTag?.plcIsConnected ? (plcTag?.runState ? "green" : "transparent") : "transparent"
+                                radius: 5 // Optional: adds rounded corners
+                                Layout.fillWidth: true
+                                border {
+                                    width: 1
+                                    color: "black"
+                                }
                                 Text {
                                     id: plcStatusText
-                                    text: plcTag?.runState ? (plcTag?.runStateAUTO ? "RUNNING - AUTO" : "RUNNING - JOG") : "OFF"
-                                    color: "white"
+                                    text: plcTag?.plcIsConnected ? (plcTag?.runState ? "RUNNING" : "OFF") : "??"
+                                    color: plcTag?.plcIsConnected ? (plcTag?.runState ? "white" : "black") : "black"
+                                    font.bold: true
+                                    font.pointSize: 12
+                                    anchors.centerIn: parent // Centers the text within the rectangle
+                                }
+                            }
+                            Rectangle {
+                                width: 150
+                                height: 50
+                                color: plcTag?.plcIsConnected ? (plcTag?.runStateAUTO ? "green" : "blue") : "transparent"
+                                radius: 5 // Optional: adds rounded corners
+                                Layout.fillWidth: true
+                                border {
+                                    width: 1
+                                    color: "black"
+                                }
+                                Text {
+                                    text: plcTag?.plcIsConnected ? (plcTag?.runStateAUTO ? "AUTO" : "JOG") : "??"
+                                    color: plcTag?.plcIsConnected ? "white" : "black"
                                     font.bold: true
                                     font.pointSize: 12
                                     anchors.centerIn: parent // Centers the text within the rectangle
@@ -97,6 +168,7 @@ ApplicationWindow {
 
                     GroupBox {
                         title: "Actions"
+                        enabled: plcTag?.plcIsConnected
                         Layout.fillWidth: true
                         ColumnLayout {
                             anchors.fill: parent
@@ -154,13 +226,14 @@ ApplicationWindow {
 
                     GroupBox {
                         title: "Jog"
+                        enabled: plcTag?.plcIsConnected
                         Layout.fillWidth: true
                         ColumnLayout {
                             anchors.fill: parent
                             RoundButton {
                                 text: qsTr("\u2B9D") //move left
                                 enabled: ((plcTag?.runState ?? false) && (!(plcTag?.runStateAUTO ?? false)))
-                                Material.background: Material.Yellow
+                                Material.background: Material.Blue
                                 Layout.alignment: Qt.AlignHCenter
                                 onPressedChanged: {
                                     plcTag?.moveLeftButtonPressedChanged(pressed);
@@ -173,7 +246,7 @@ ApplicationWindow {
                                 RoundButton {
                                     text: qsTr("\u2B9C") //move back
                                     enabled: ((plcTag?.runState ?? false) && (!(plcTag?.runStateAUTO ?? false)))
-                                    Material.background: Material.Yellow
+                                    Material.background: Material.Blue
                                     onPressedChanged: {
                                         plcTag?.moveBackButtonPressedChanged(pressed);
                                     }
@@ -182,7 +255,7 @@ ApplicationWindow {
                                 RoundButton {
                                     text: qsTr("HOME")
                                     enabled: ((plcTag?.runState ?? false) && (!(plcTag?.runStateAUTO ?? false)))
-                                    Material.background: "black"
+                                    Material.background: Material.Blue
                                     Material.foreground: "white"
                                     font {
                                         bold: true
@@ -196,7 +269,7 @@ ApplicationWindow {
                                 RoundButton {
                                     text: qsTr("\u2B9E") //move forward
                                     enabled: ((plcTag?.runState ?? false) && (!(plcTag?.runStateAUTO ?? false)))
-                                    Material.background: Material.Yellow
+                                    Material.background: Material.Blue
                                     onPressedChanged: {
                                         plcTag?.moveForwardButtonPressedChanged(pressed);
                                     }
@@ -207,7 +280,7 @@ ApplicationWindow {
                             RoundButton {
                                 text: qsTr("\u2B9F") //move right
                                 enabled: ((plcTag?.runState ?? false) && (!(plcTag?.runStateAUTO ?? false)))
-                                Material.background: Material.Yellow
+                                Material.background: Material.Blue
                                 Layout.alignment: Qt.AlignHCenter
                                 onPressedChanged: {
                                     plcTag?.moveRightButtonPressedChanged(pressed);
@@ -219,6 +292,7 @@ ApplicationWindow {
 
                 GroupBox {
                     title: "Scan Area"
+                    enabled: plcTag?.plcIsConnected
                     Layout.fillWidth: true
                     Layout.fillHeight: true
                     Layout.horizontalStretchFactor: 98
@@ -341,6 +415,7 @@ ApplicationWindow {
                     // Items inside a Layout should use Layout attached properties, not anchors
                     GroupBox {
                         title: "Indicator Lights"
+                        enabled: plcTag?.plcIsConnected
                         Layout.fillWidth: true
                         Layout.fillHeight: true
                         ColumnLayout {

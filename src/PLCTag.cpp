@@ -15,6 +15,7 @@ PLCTag::PLCTag(QObject *parent, QString plcAddress, QString plcType, QString plc
 {
     qDebug() << QString("PLCTag::PLCTag()") << _plcAddress << _plcType << _plcProgramName;
 
+
     _getPLCStatusTimer = std::make_unique<QTimer>();
 
     connect(_getPLCStatusTimer.get(), &QTimer::timeout, [this](){
@@ -39,6 +40,8 @@ PLCTag::~PLCTag()
     }
     _PLCTags.clear();
 }
+
+
 
 int32_t PLCTag::getPLCTag(QString tagName)
 {
@@ -103,7 +106,7 @@ bool PLCTag::readPLCTag(QString tagName, bool &tagValue)
     return false;
 }
 
-int32_t PLCTag::readPLCTag(QString tagName, int32_t &tagValue)
+uint64_t PLCTag::readPLCTag(QString tagName, uint64_t &tagValue)
 {
     qDebug() << "PLCTag::readPLCTag()" << QDateTime::currentDateTime();
 
@@ -121,7 +124,7 @@ int32_t PLCTag::readPLCTag(QString tagName, int32_t &tagValue)
             return false;
         }
         qDebug() << QString::number(tag);
-        tagValue = (plc_tag_get_int32(tag, 0));
+        tagValue = (plc_tag_get_uint64(tag, 0));
 
         return true;
     }
@@ -161,10 +164,11 @@ void PLCTag::getPLCStatus()
     _getPLCStatusTimer->stop();
 
     bool boolTagValue = false;
-    int32_t int32TagValue = 0;
+    uint64_t uint64TagValue = 0;
 
-    if(readPLCTag(_plcProgramName + "PLC_Heart_Beat", int32TagValue))
+    if(readPLCTag(_plcProgramName + "PLC_Heart_Beat", uint64TagValue))
     {
+        setPLCIsConnected(true);
         readPLCTag(_plcProgramName + "System_Running", boolTagValue) ? setRunState(boolTagValue) : (void)0; // do nothiing if false
         readPLCTag(_plcProgramName + "PHY_Selector_Run_AUTO", boolTagValue) ? setRunStateAUTO(boolTagValue) : (void)0; // do nothiing if false
         readPLCTag(_plcProgramName + "Red_Pilot_Light", boolTagValue) ? setRedPilotLight(boolTagValue) : (void)0; // do nothiing if false
@@ -173,11 +177,34 @@ void PLCTag::getPLCStatus()
         readPLCTag(_plcProgramName + "Blue_Pilot_Light", boolTagValue) ? setBluePilotLight(boolTagValue) :  (void)0; // do nothiing if false
         readPLCTag(_plcProgramName + "White_Pilot_Light", boolTagValue) ? setWhitePilotLight(boolTagValue) : (void)0; // do nothiing if false
     }
+    else
+    {
+        setPLCIsConnected(false);
+    }
 
     _getPLCStatusTimer->start();
 
 }
 
+
+QString PLCTag::getPLCAddress() const
+{
+    return _plcAddress;
+}
+
+bool PLCTag::getPLCIsConnected() const
+{
+    return _plcIsConnected;
+}
+
+void PLCTag::setPLCIsConnected(bool newValue)
+{
+    if (_plcIsConnected == newValue)
+        return;
+
+    _plcIsConnected = newValue;
+    emit plcIsConnectedChanged(_runState); // Emit signal to trigger QML updates
+}
 
 bool PLCTag::getRunState() const
 {
