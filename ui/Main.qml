@@ -77,13 +77,13 @@ ApplicationWindow {
                                 id: runState
                                 width: 150
                                 height: 75
-                                color: plcTag.runState ? "green..." : "transparent"
+                                color: plcTag?.runState ? "green..." : "transparent"
                                 radius: 10 // Optional: adds rounded corners
                                 Layout.fillWidth: true
 
                                 Text {
                                     id: plcStatusText
-                                    text: plcTag.runState ? (plcTag.runStateAUTO ? "RUNNING - AUTO" : "RUNNING - JOG") : "OFF"
+                                    text: plcTag?.runState ? (plcTag?.runStateAUTO ? "RUNNING - AUTO" : "RUNNING - JOG") : "OFF"
                                     color: "white"
                                     font.bold: true
                                     font.pointSize: 12
@@ -103,7 +103,7 @@ ApplicationWindow {
                             Button {
                                 id: startButton
                                 text: qsTr("START")
-                                enabled: (!plcTag.runState)
+                                enabled: (!plcTag?.runState)
                                 Material.background: startButton.down ? Material.Grey : Material.Green
                                 Material.foreground: "white"
                                 Layout.alignment: Qt.AlignHCenter
@@ -112,14 +112,14 @@ ApplicationWindow {
                                     pointSize: 14
                                 }
                                 onPressedChanged: {
-                                    plcTag.startButtonPressedChanged(pressed);
+                                    plcTag?.startButtonPressedChanged(pressed);
                                 }
                             }
 
                             Button {
                                 id: stopButton
                                 text: qsTr("STOP")
-                                enabled: plcTag.runState
+                                enabled: plcTag?.runState ?? false
                                 Material.background: Material.Red
                                 Material.foreground: "white"
                                 Layout.alignment: Qt.AlignHCenter
@@ -128,14 +128,14 @@ ApplicationWindow {
                                     pointSize: 14
                                 }
                                 onPressedChanged: {
-                                    plcTag.stopButtonPressedChanged(pressed);
+                                    plcTag?.stopButtonPressedChanged(pressed);
                                 }
                             }
 
                             Button {
                                 id: resetButton
                                 text: qsTr("RESET")
-                                enabled: (!plcTag.runState)
+                                enabled: (!plcTag?.runState)
                                 Material.background: Material.Blue
                                 Material.foreground: "white"
                                 Layout.alignment: Qt.AlignHCenter
@@ -144,7 +144,7 @@ ApplicationWindow {
                                     pointSize: 14
                                 }
                                 onPressedChanged: {
-                                    plcTag.resetButtonPressedChanged(pressed);
+                                    plcTag?.resetButtonPressedChanged(pressed);
                                 }
                             }
                         }
@@ -159,11 +159,11 @@ ApplicationWindow {
                             anchors.fill: parent
                             RoundButton {
                                 text: qsTr("\u2B9D") //move left
-                                enabled: (plcTag.runState && (!plcTag.runStateAUTO))
+                                enabled: ((plcTag?.runState ?? false) && (!(plcTag?.runStateAUTO ?? false)))
                                 Material.background: Material.Yellow
                                 Layout.alignment: Qt.AlignHCenter
                                 onPressedChanged: {
-                                    plcTag.moveLeftButtonPressedChanged(pressed);
+                                    plcTag?.moveLeftButtonPressedChanged(pressed);
                                 }
                             }
 
@@ -172,16 +172,16 @@ ApplicationWindow {
                                 Item { Layout.fillWidth: true }
                                 RoundButton {
                                     text: qsTr("\u2B9C") //move back
-                                    enabled: (plcTag.runState && (!plcTag.runStateAUTO))
+                                    enabled: ((plcTag?.runState ?? false) && (!(plcTag?.runStateAUTO ?? false)))
                                     Material.background: Material.Yellow
                                     onPressedChanged: {
-                                        plcTag.moveBackButtonPressedChanged(pressed);
+                                        plcTag?.moveBackButtonPressedChanged(pressed);
                                     }
                                 }
 
                                 RoundButton {
                                     text: qsTr("HOME")
-                                    enabled: (plcTag.runState && (!plcTag.runStateAUTO))
+                                    enabled: ((plcTag?.runState ?? false) && (!(plcTag?.runStateAUTO ?? false)))
                                     Material.background: "black"
                                     Material.foreground: "white"
                                     font {
@@ -189,16 +189,16 @@ ApplicationWindow {
                                         pointSize: 12
                                     }
                                     onPressedChanged: {
-                                        plcTag.moveToHomeButtonPressedChanged(pressed);
+                                        plcTag?.moveToHomeButtonPressedChanged(pressed);
                                     }
                                 }
 
                                 RoundButton {
                                     text: qsTr("\u2B9E") //move forward
-                                    enabled: (plcTag.runState && (!plcTag.runStateAUTO))
+                                    enabled: ((plcTag?.runState ?? false) && (!(plcTag?.runStateAUTO ?? false)))
                                     Material.background: Material.Yellow
                                     onPressedChanged: {
-                                        plcTag.moveForwardButtonPressedChanged(pressed);
+                                        plcTag?.moveForwardButtonPressedChanged(pressed);
                                     }
                                 }
                                 Item { Layout.fillWidth: true }
@@ -206,11 +206,11 @@ ApplicationWindow {
 
                             RoundButton {
                                 text: qsTr("\u2B9F") //move right
-                                enabled: (plcTag.runState && (!plcTag.runStateAUTO))
+                                enabled: ((plcTag?.runState ?? false) && (!(plcTag?.runStateAUTO ?? false)))
                                 Material.background: Material.Yellow
                                 Layout.alignment: Qt.AlignHCenter
                                 onPressedChanged: {
-                                    plcTag.moveRightButtonPressedChanged(pressed);
+                                    plcTag?.moveRightButtonPressedChanged(pressed);
                                 }
                             }
                         }
@@ -351,7 +351,7 @@ ApplicationWindow {
                                 Layout.alignment: Qt.AlignHCenter
                                 Binding on color {
                                     value: "red"
-                                    when: plcTag.redPilotLight
+                                    when: plcTag?.redPilotLight ?? false
                                 }
                             }
                             PilotLight {
@@ -360,7 +360,7 @@ ApplicationWindow {
                                 Layout.alignment: Qt.AlignHCenter
                                 Binding on color {
                                     value: "#FFBF00"
-                                    when: plcTag.amberPilotLight
+                                    when: plcTag?.amberPilotLight ?? false
                                 }
                             }
                             PilotLight {
@@ -369,7 +369,7 @@ ApplicationWindow {
                                 Layout.alignment: Qt.AlignHCenter
                                 Binding on color {
                                     value: "green"
-                                    when: plcTag.greenPilotLight
+                                    when: plcTag?.greenPilotLight ?? false
                                 }
                             }
                             PilotLight {
@@ -378,7 +378,7 @@ ApplicationWindow {
                                 Layout.alignment: Qt.AlignHCenter
                                 Binding on color {
                                     value: "blue"
-                                    when: plcTag.bluePilotLight
+                                    when: plcTag?.bluePilotLight ?? false
                                 }
                             }
                             PilotLight {
@@ -387,7 +387,7 @@ ApplicationWindow {
                                 Layout.alignment: Qt.AlignHCenter
                                 Binding on color {
                                     value: "white"
-                                    when: plcTag.whitePilotLight
+                                    when: plcTag?.whitePilotLight ?? false
                                 }
                             }
                         }

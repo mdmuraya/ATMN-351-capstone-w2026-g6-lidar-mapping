@@ -103,6 +103,32 @@ bool PLCTag::readPLCTag(QString tagName, bool &tagValue)
     return false;
 }
 
+int32_t PLCTag::readPLCTag(QString tagName, int32_t &tagValue)
+{
+    qDebug() << "PLCTag::readPLCTag()" << QDateTime::currentDateTime();
+
+    int32_t tag = getPLCTag(tagName);
+
+    if(tag > 0)
+    {
+        /* get the data */
+        int rc = plc_tag_read(tag, _dataTimeout);
+        if(rc != PLCTAG_STATUS_OK)
+        {
+            qDebug() << "ERROR: Unable to read the data! Got error code" << rc << ":" << QString::fromUtf8(plc_tag_decode_error(rc));
+            _PLCTags.remove(tagName);
+            plc_tag_destroy(tag);
+            return false;
+        }
+        qDebug() << QString::number(tag);
+        tagValue = (plc_tag_get_int32(tag, 0));
+
+        return true;
+    }
+
+    return false;
+}
+
 bool PLCTag::writePLCTag(QString tagName, bool tagValue)
 {
     qDebug() << "PLCTag::writePLCTag()" << QDateTime::currentDateTime();
@@ -134,15 +160,19 @@ void PLCTag::getPLCStatus()
     //here we will get all the PLC tags
     _getPLCStatusTimer->stop();
 
-    bool tagValue = false;
+    bool boolTagValue = false;
+    int32_t int32TagValue = 0;
 
-    readPLCTag(_plcProgramName + "System_Running", tagValue) ? setRunState(tagValue) : setRunState(getRunState());
-    readPLCTag(_plcProgramName + "PHY_Selector_Run_AUTO", tagValue) ? setRunStateAUTO(tagValue) : setRunStateAUTO(getRunStateAUTO());
-    readPLCTag(_plcProgramName + "Red_Pilot_Light", tagValue) ? setRedPilotLight(tagValue) : setRedPilotLight(getRedPilotLight());
-    readPLCTag(_plcProgramName + "Amber_Pilot_Light", tagValue) ? setAmberPilotLight(tagValue) : setAmberPilotLight(getAmberPilotLight());
-    readPLCTag(_plcProgramName + "Green_Pilot_Light", tagValue) ? setGreenPilotLight(tagValue) : setGreenPilotLight(getGreenPilotLight());
-    readPLCTag(_plcProgramName + "Blue_Pilot_Light", tagValue) ? setBluePilotLight(tagValue) :  setBluePilotLight(getBluePilotLight());
-    readPLCTag(_plcProgramName + "White_Pilot_Light", tagValue) ? setWhitePilotLight(tagValue) : setWhitePilotLight(getWhitePilotLight());
+    if(readPLCTag(_plcProgramName + "PLC_Heart_Beat", int32TagValue))
+    {
+        readPLCTag(_plcProgramName + "System_Running", boolTagValue) ? setRunState(boolTagValue) : (void)0; // do nothiing if false
+        readPLCTag(_plcProgramName + "PHY_Selector_Run_AUTO", boolTagValue) ? setRunStateAUTO(boolTagValue) : (void)0; // do nothiing if false
+        readPLCTag(_plcProgramName + "Red_Pilot_Light", boolTagValue) ? setRedPilotLight(boolTagValue) : (void)0; // do nothiing if false
+        readPLCTag(_plcProgramName + "Amber_Pilot_Light", boolTagValue) ? setAmberPilotLight(boolTagValue) : (void)0; // do nothiing if false
+        readPLCTag(_plcProgramName + "Green_Pilot_Light", boolTagValue) ? setGreenPilotLight(boolTagValue) : (void)0; // do nothiing if false
+        readPLCTag(_plcProgramName + "Blue_Pilot_Light", boolTagValue) ? setBluePilotLight(boolTagValue) :  (void)0; // do nothiing if false
+        readPLCTag(_plcProgramName + "White_Pilot_Light", boolTagValue) ? setWhitePilotLight(boolTagValue) : (void)0; // do nothiing if false
+    }
 
     _getPLCStatusTimer->start();
 

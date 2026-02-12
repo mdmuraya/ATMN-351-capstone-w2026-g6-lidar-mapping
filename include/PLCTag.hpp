@@ -80,6 +80,7 @@ private:
     void getPLCStatus();
     int32_t getPLCTag(QString tagName);
     bool readPLCTag(QString tagName, bool &tagValue);
+    int32_t readPLCTag(QString tagName, int32_t &tagValue);
     bool writePLCTag(QString tagName, bool tagValue);
 
 };
