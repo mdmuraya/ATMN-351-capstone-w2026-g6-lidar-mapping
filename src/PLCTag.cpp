@@ -54,7 +54,9 @@ int32_t PLCTag::getPLCTag(QString tagName)
 
     qDebug() << "Key " << tagName << " NOT FOUND. Creating...";
 
-    QString plcTagPath = QString("protocol=ab-eip&gateway=") + _plcAddress + QString("&path=1,0&plc=") + _plcType + QString("&elem_size=1&elem_count=1&name=") + tagName;
+
+    QString plcPath = (QString::compare(_plcType, "controllogix", Qt::CaseInsensitive) == 0 ) ? QString("&path=1,0") : "";
+    QString plcTagPath = QString("protocol=ab-eip&gateway=") + _plcAddress + plcPath + QString("&plc=") + _plcType + QString("&elem_size=1&elem_count=1&name=") + tagName;
 
     int32_t tag = plc_tag_create(plcTagPath.toUtf8().constData(), _dataTimeout);
 
