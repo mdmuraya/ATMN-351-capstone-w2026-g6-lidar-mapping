@@ -304,13 +304,13 @@ ApplicationWindow {
                             id: rectScanArea
                             Layout.fillWidth: true
                             Layout.fillHeight: true
-                            //color: "#F7F7DA"
                             color: "transparent"
 
                             Rectangle {
                                 anchors.centerIn: parent
                                 width: rectScanArea.width * 0.93
                                 height: rectScanArea.height * 0.93
+                                color: "#F7F7DA"
                                 border {
                                     width: 1
                                     color: "black"
@@ -557,7 +557,7 @@ ApplicationWindow {
                                 Layout.alignment: Qt.AlignHCenter
                                 borderColor: "white"
                                 Binding on color {
-                                    value: whitePilotLight.borderColor
+                                    value: greenPilotLight.borderColor
                                     when: plcTag?.whitePilotLight ?? false
                                 }
                             }
