@@ -420,6 +420,7 @@ ApplicationWindow {
                                     height: parent.height
                                     radius: 5
                                     color: "#4CAF50" // Green fill color
+
                                 }
                             }
                         }
@@ -517,121 +518,56 @@ ApplicationWindow {
                             anchors.fill: parent
                             PilotLight {
                                 id: redPilotLight
-                                //color: "red"
                                 Layout.alignment: Qt.AlignHCenter
+                                borderColor: "red"
                                 Binding on color {
-                                    value: "red"
+                                    value: redPilotLight.borderColor
                                     when: plcTag?.redPilotLight ?? false
                                 }
                             }
                             PilotLight {
                                 id: amberPilotLight
-                                //color: "#FFBF00"
                                 Layout.alignment: Qt.AlignHCenter
+                                borderColor: "#FFBF00"
                                 Binding on color {
-                                    value: "#FFBF00"
+                                    value: amberPilotLight.borderColor
                                     when: plcTag?.amberPilotLight ?? false
                                 }
                             }
                             PilotLight {
                                 id: greenPilotLight
-                                //color: "green"
                                 Layout.alignment: Qt.AlignHCenter
+                                borderColor: "green"
                                 Binding on color {
-                                    value: "green"
+                                    value: greenPilotLight.borderColor
                                     when: plcTag?.greenPilotLight ?? false
                                 }
                             }
                             PilotLight {
                                 id: bluePilotLight
-                                //color: "blue"
                                 Layout.alignment: Qt.AlignHCenter
+                                borderColor: "blue"
                                 Binding on color {
-                                    value: "blue"
+                                    value: bluePilotLight.borderColor
                                     when: plcTag?.bluePilotLight ?? false
                                 }
                             }
                             PilotLight {
                                 id: whitePilotLight
-                                //color: "white"
                                 Layout.alignment: Qt.AlignHCenter
+                                borderColor: "white"
                                 Binding on color {
-                                    value: "white"
+                                    value: whitePilotLight.borderColor
                                     when: plcTag?.whitePilotLight ?? false
                                 }
                             }
                         }
                     }
 
-                    RowLayout {
-                        Item {
-                           Layout.fillWidth: true
-
-                           Rectangle {
-                                // Position the line
-                                // Set width and height to create a line
-                                width: parent.width // Stretches across the parent width
-                                height: 1            // Makes it a thin horizontal line
-                                color: "black"        // Set the line color
-                            }
-                        }
-                    }
-                    RowLayout {
-                        Item { Layout.fillWidth: true }
-
-                        Button {
-                            text: qsTr("Quit HMI Application")
-                            Material.background: "black"
-                            Material.foreground: "white"
-                            font {
-                                bold: true
-                                pointSize: 12
-                            }
-                            onClicked: {
-                                confirmQuitDialog.open()
-                            }
-                        }
-
-                    }
-
-
-                    /*
-                    GroupBox {
-                        title: "PLC"
-                        Layout.fillWidth: true
-                        Layout.fillHeight: true
-                        ColumnLayout {
-                            anchors.fill: parent
-
-
-
-                            Rectangle {
-                                id: plcStatus
-                                width: 150
-                                height: 75
-                                color: plcTag.plcRunTag ? "green..." : "transparent"
-                                radius: 10 // Optional: adds rounded corners
-                                anchors.centerIn: parent // Centers the rectangle within the window
-
-                                Text {
-                                    id: plcStatusText
-                                    text: plcTag.plcRunTag ? "RUNNING..." : "OFF"
-                                    color: "white"
-                                    font.bold: true
-                                    font.pointSize: 16
-                                    anchors.centerIn: parent // Centers the text within the rectangle
-                                }
-                            }
-
-
-                        }
-                    }
-*/
-
                 }
             }
 
-            /*
+
             Item { Layout.fillHeight: true }
 
             RowLayout {
@@ -653,6 +589,8 @@ ApplicationWindow {
 
                 Button {
                     text: qsTr("Quit HMI Application")
+                    Material.background: "black"
+                    Material.foreground: "white"
                     font {
                         bold: true
                         pointSize: 12
@@ -663,7 +601,7 @@ ApplicationWindow {
                 }
 
             }
-            */
+
         }
     }
     /*
