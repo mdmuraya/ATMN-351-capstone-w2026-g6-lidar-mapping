@@ -304,53 +304,67 @@ ApplicationWindow {
                             id: rectScanArea
                             Layout.fillWidth: true
                             Layout.fillHeight: true
-                            color: "#F7F7DA"
-                            Text {
+                            //color: "#F7F7DA"
+                            color: "transparent"
+
+                            Rectangle {
                                 anchors.centerIn: parent
-                                text: qsTr("THIS IS THE SCAN AREA")
-                                font {
-                                    bold: true
-                                    pointSize: 20
+                                width: rectScanArea.width * 0.93
+                                height: rectScanArea.height * 0.93
+                                border {
+                                    width: 1
+                                    color: "black"
+                                }
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: qsTr("THIS IS THE SCAN AREA")
+                                    font {
+                                        bold: true
+                                        pointSize: 20
+                                    }
                                 }
                             }
+
 
                             Text {
                                 anchors.top: parent.top
                                 anchors.horizontalCenter: parent.horizontalCenter
-                                text: qsTr("\u2B9D")
+                                text: qsTr("\u2B9D = LEFT")
                                 font {
                                     bold: true
-                                    pointSize: 12
+                                    pointSize: 10
                                 }
                             }
 
                             Text {
                                 anchors.bottom: parent.bottom
                                 anchors.horizontalCenter: parent.horizontalCenter
-                                text: qsTr("\u2B9F")
+                                text: qsTr("\u2B9F = RIGHT")
                                 font {
                                     bold: true
-                                    pointSize: 12
+                                    pointSize: 10
                                 }
                             }
 
                             Text {
                                 anchors.right: parent.right
                                 anchors.verticalCenter: parent.verticalCenter
-                                text: qsTr("\u2B9E")
+                                text: qsTr("\u2B9F = FRONT")
+                                rotation: 270
                                 font {
                                     bold: true
-                                    pointSize: 12
+                                    pointSize: 10
                                 }
                             }
 
                             Text {
                                 anchors.left: parent.left
                                 anchors.verticalCenter: parent.verticalCenter
-                                text: qsTr("\u2B9C")
+                                text: qsTr("\u2B9D = BACK")
+                                rotation: 270
                                 font {
                                     bold: true
-                                    pointSize: 12
+                                    pointSize: 10
                                 }
                             }
 
@@ -360,51 +374,63 @@ ApplicationWindow {
                                 text: qsTr("HOME")
                                 font {
                                     bold: true
-                                    pointSize: 12
+                                    pointSize: 10
+                                }
+                            }
+                        }
+                        RowLayout {
+                            Item {
+                               Layout.fillWidth: true
+
+                               Rectangle {
+                                    // Position the line
+                                    // Set width and height to create a line
+                                    width: parent.width // Stretches across the parent width
+                                    height: 1            // Makes it a thin horizontal line
+                                    color: "black"        // Set the line color
                                 }
                             }
                         }
 
                         ProgressBar {
-                                id: progressBar
-                                from: 0.0      // Minimum value
-                                to: 100.0     // Maximum value
-                                value: 50.36    // Current value
-                                Layout.fillWidth: true
+                            id: progressBar
+                            from: 0.0      // Minimum value
+                            to: 100.0     // Maximum value
+                            value: 50.36    // Current value
+                            Layout.fillWidth: true
 
-                                // Define the background (the progress bar track)
-                                background: Rectangle {
-                                    Layout.fillWidth: true
-                                    implicitHeight: 20
-                                    color: "#e6e6e6" // Light gray track color
+                            // Define the background (the progress bar track)
+                            background: Rectangle {
+                                Layout.fillWidth: true
+                                implicitHeight: 20
+                                color: "#e6e6e6" // Light gray track color
+                                radius: 5
+                                border.color: "#cccccc"
+                                border.width: 1
+                            }
+
+                            // Define the contentItem ( the progress indicator)
+                            contentItem: Item {
+                                //implicitWidth: 300
+                                //implicitHeight: 20
+
+                                // Use a Rectangle and bind its width to the progress bar's visual position
+                                Rectangle {
+                                    width: progressBar.visualPosition * parent.width
+                                    height: parent.height
                                     radius: 5
-                                    border.color: "#cccccc"
-                                    border.width: 1
-                                }
-
-                                // Define the contentItem ( the progress indicator)
-                                contentItem: Item {
-                                    //implicitWidth: 300
-                                    //implicitHeight: 20
-
-                                    // Use a Rectangle and bind its width to the progress bar's visual position
-                                    Rectangle {
-                                        width: progressBar.visualPosition * parent.width
-                                        height: parent.height
-                                        radius: 5
-                                        color: "#4CAF50" // Green fill color
-                                    }
+                                    color: "#4CAF50" // Green fill color
                                 }
                             }
+                        }
 
-                            // Add a Text label to show the percentage value
-                            Text {
-                                text: progressBar.value.toFixed(0) + "% complete"
-                                font.pointSize: 12
-                                horizontalAlignment: Text.AlignHCenter
-                                Layout.fillWidth: true
-                            }
-
+                        // Add a Text label to show the percentage value
+                        Text {
+                            text: progressBar.value.toFixed(0) + "% complete"
+                            font.pointSize: 12
+                            horizontalAlignment: Text.AlignHCenter
+                            Layout.fillWidth: true
+                        }
                     }
                 }
 
@@ -413,6 +439,75 @@ ApplicationWindow {
                     Layout.horizontalStretchFactor: 1
 
                     // Items inside a Layout should use Layout attached properties, not anchors
+
+                    GroupBox {
+                        title: "Alarms"
+                        enabled: plcTag?.plcIsConnected
+                        Layout.fillWidth: true
+                        ColumnLayout {
+                            anchors.fill: parent
+
+                            //Item { Layout.fillWidth: true }
+
+                            Rectangle {
+                                width: 150
+                                height: 50
+                                color: plcTag?.plcIsConnected ? (plcTag?.runState ? "red" : "transparent") : "transparent"
+                                radius: 5 // Optional: adds rounded corners
+                                Layout.fillWidth: true
+                                border {
+                                    width: 1
+                                    color: "red"
+                                }
+                                Text {
+                                    text: plcTag?.plcIsConnected ? "E-STOP" : "?? E-STOP"
+                                    color: plcTag?.plcIsConnected ? (plcTag?.runState ? "white" : "black") : "black"
+                                    font.bold: true
+                                    font.pointSize: 12
+                                    anchors.centerIn: parent // Centers the text within the rectangle
+                                }
+                            }
+                            Rectangle {
+                                width: 150
+                                height: 50
+                                color: plcTag?.plcIsConnected ? (plcTag?.runState ? "red" : "transparent") : "transparent"
+                                radius: 5 // Optional: adds rounded corners
+                                Layout.fillWidth: true
+                                border {
+                                    width: 1
+                                    color: "red"
+                                }
+                                Text {
+                                    text: plcTag?.plcIsConnected ? "LIGHT CURTAIN" : "?? LIGHT CURTAIN"
+                                    color: plcTag?.plcIsConnected ? (plcTag?.runState ? "white" : "black") : "black"
+                                    font.bold: true
+                                    font.pointSize: 12
+                                    anchors.centerIn: parent // Centers the text within the rectangle
+                                }
+                            }
+                            Rectangle {
+                                width: 150
+                                height: 50
+                                color: plcTag?.plcIsConnected ? (plcTag?.runState ? "red" : "transparent") : "transparent"
+                                radius: 5 // Optional: adds rounded corners
+                                Layout.fillWidth: true
+                                border {
+                                    width: 1
+                                    color: "red"
+                                }
+                                Text {
+                                    text: plcTag?.plcIsConnected ? "AREA SCANNER" : "?? AREA SCANNER"
+                                    color: plcTag?.plcIsConnected ? (plcTag?.runState ? "white" : "black") : "black"
+                                    font.bold: true
+                                    font.pointSize: 12
+                                    anchors.centerIn: parent // Centers the text within the rectangle
+                                }
+                            }
+                            //Item { Layout.fillWidth: true }
+
+                        }
+                    }
+
                     GroupBox {
                         title: "Indicator Lights"
                         enabled: plcTag?.plcIsConnected
@@ -467,6 +562,39 @@ ApplicationWindow {
                             }
                         }
                     }
+
+                    RowLayout {
+                        Item {
+                           Layout.fillWidth: true
+
+                           Rectangle {
+                                // Position the line
+                                // Set width and height to create a line
+                                width: parent.width // Stretches across the parent width
+                                height: 1            // Makes it a thin horizontal line
+                                color: "black"        // Set the line color
+                            }
+                        }
+                    }
+                    RowLayout {
+                        Item { Layout.fillWidth: true }
+
+                        Button {
+                            text: qsTr("Quit HMI Application")
+                            Material.background: "black"
+                            Material.foreground: "white"
+                            font {
+                                bold: true
+                                pointSize: 12
+                            }
+                            onClicked: {
+                                confirmQuitDialog.open()
+                            }
+                        }
+
+                    }
+
+
                     /*
                     GroupBox {
                         title: "PLC"
@@ -503,6 +631,7 @@ ApplicationWindow {
                 }
             }
 
+            /*
             Item { Layout.fillHeight: true }
 
             RowLayout {
@@ -534,6 +663,7 @@ ApplicationWindow {
                 }
 
             }
+            */
         }
     }
     /*
