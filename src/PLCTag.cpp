@@ -1,4 +1,6 @@
 #include <QDebug>
+#include <QFutureSynchronizer>
+#include <QtConcurrent>
 #include <QTime>
 #include <QTimer>
 
@@ -162,15 +164,17 @@ bool PLCTag::writePLCTag(QString tagName, bool tagValue)
 void PLCTag::getPLCStatus()
 {
     qDebug() << "PLCTag::getPLCStatus()" << QDateTime::currentDateTime();
-    //here we will get all the PLC tags
+    //here we will get all the PLC tags, in threads (concurrently)
     _getPLCStatusTimer->stop();
 
-    bool boolTagValue = false;
+    //bool boolTagValue = false;
     uint64_t uint64TagValue = 0;
 
     if(readPLCTag(_plcProgramName + "PLC_Heart_Beat", uint64TagValue))
     {
         setPLCIsConnected(true);
+        qDebug() << "PLC_Heart_Beat" << uint64TagValue;
+        /*
         readPLCTag(_plcProgramName + "System_Running", boolTagValue) ? setRunState(boolTagValue) : (void)0; // do nothiing if false
         readPLCTag(_plcProgramName + "PHY_Selector_Run_AUTO", boolTagValue) ? setRunStateAUTO(boolTagValue) : (void)0; // do nothiing if false
         readPLCTag(_plcProgramName + "Red_Pilot_Light", boolTagValue) ? setRedPilotLight(boolTagValue) : (void)0; // do nothiing if false
@@ -178,6 +182,61 @@ void PLCTag::getPLCStatus()
         readPLCTag(_plcProgramName + "Green_Pilot_Light", boolTagValue) ? setGreenPilotLight(boolTagValue) : (void)0; // do nothiing if false
         readPLCTag(_plcProgramName + "Blue_Pilot_Light", boolTagValue) ? setBluePilotLight(boolTagValue) :  (void)0; // do nothiing if false
         readPLCTag(_plcProgramName + "White_Pilot_Light", boolTagValue) ? setWhitePilotLight(boolTagValue) : (void)0; // do nothiing if false
+        */
+
+        QFutureSynchronizer<void> synchronizer;
+        QFuture<void> future;
+        /*QFuture<void> future;
+
+            future = QtConcurrent::run([]() {
+                bool systemRunningTagValue = false;
+                readPLCTag(_plcProgramName + "System_Running", systemRunningTagValue) ? setRunState(systemRunningTagValue) : (void)0; // do nothiing if false
+            });
+            synchronizer.addFuture(future);
+        */
+        future = QtConcurrent::run([this]() {
+            bool boolTagValue = false;
+            readPLCTag(_plcProgramName + "System_Running", boolTagValue) ? setRunState(boolTagValue) : (void)0; // do nothiing if false
+        });
+        synchronizer.addFuture(future);
+
+        future = QtConcurrent::run([this]() {
+            bool boolTagValue = false;
+            readPLCTag(_plcProgramName + "PHY_Selector_Run_AUTO", boolTagValue) ? setRunStateAUTO(boolTagValue) : (void)0; // do nothiing if false
+        });
+        synchronizer.addFuture(future);
+
+        future = QtConcurrent::run([this]() {
+            bool boolTagValue = false;
+            readPLCTag(_plcProgramName + "Red_Pilot_Light", boolTagValue) ? setRedPilotLight(boolTagValue) : (void)0; // do nothiing if false
+        });
+        synchronizer.addFuture(future);
+
+        future = QtConcurrent::run([this]() {
+            bool boolTagValue = false;
+            readPLCTag(_plcProgramName + "Amber_Pilot_Light", boolTagValue) ? setAmberPilotLight(boolTagValue) : (void)0; // do nothiing if false
+        });
+        synchronizer.addFuture(future);
+
+        future = QtConcurrent::run([this]() {
+            bool boolTagValue = false;
+            readPLCTag(_plcProgramName + "Green_Pilot_Light", boolTagValue) ? setGreenPilotLight(boolTagValue) : (void)0; // do nothiing if false
+        });
+        synchronizer.addFuture(future);
+
+        future = QtConcurrent::run([this]() {
+            bool boolTagValue = false;
+            readPLCTag(_plcProgramName + "Blue_Pilot_Light", boolTagValue) ? setBluePilotLight(boolTagValue) :  (void)0; // do nothiing if false
+        });
+        synchronizer.addFuture(future);
+
+        future = QtConcurrent::run([this]() {
+            bool boolTagValue = false;
+            readPLCTag(_plcProgramName + "White_Pilot_Light", boolTagValue) ? setWhitePilotLight(boolTagValue) : (void)0; // do nothiing if false
+        });
+        synchronizer.addFuture(future);
+
+
     }
     else
     {

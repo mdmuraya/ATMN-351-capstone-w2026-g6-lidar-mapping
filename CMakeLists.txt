@@ -40,7 +40,7 @@ else()
     set(USE_ROS OFF)
 endif()
 
-find_package(Qt6 6.8 REQUIRED COMPONENTS Quick QuickControls2)
+find_package(Qt6 6.8 REQUIRED COMPONENTS Quick QuickControls2 Concurrent)
 
 if(Qt6_FOUND)
     message(STATUS "Qt6 found. Building with Qt support.")
@@ -105,7 +105,7 @@ if(USE_QT)
     endif()
 
     target_link_libraries(${PROJECT_NAME}_App
-        PRIVATE Qt6::Quick
+        PRIVATE Qt6::Quick Qt6::Concurrent
      )
 
     target_link_libraries(${PROJECT_NAME}_App PRIVATE libplctag)

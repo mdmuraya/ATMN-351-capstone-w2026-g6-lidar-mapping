@@ -35,7 +35,7 @@ class MainBackendHelper : public QObject
         rclcpp::Node::SharedPtr _ros2Node = nullptr;
         rclcpp::Publisher<std_msgs::msg::String>::SharedPtr _ros2Publisher = nullptr;
         std::unique_ptr<PLCTag> _PLCTag = nullptr;
-        QString _plcAddress = "192.168.40.62"; //"10.116.204.159";
+        QString _plcAddress = "192.168.40.62"; //"10.111.42.192";//
         QString _plcType = "micro800";//controllogix //micro800
         QString _plcProgramName = ""; //"Program:MainProgram.";
 
