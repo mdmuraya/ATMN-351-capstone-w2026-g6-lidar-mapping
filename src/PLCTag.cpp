@@ -60,7 +60,7 @@ int32_t PLCTag::getPLCTag(QString tagName)
     QString plcPath = (QString::compare(_plcType, "controllogix", Qt::CaseInsensitive) == 0 ) ? QString("&path=1,0") : "";
     QString plcTagPath = QString("protocol=ab-eip&gateway=") + _plcAddress + plcPath + QString("&plc=") + _plcType + QString("&elem_size=1&elem_count=1&name=") + tagName;
 
-    int32_t tag = plc_tag_create(plcTagPath.toUtf8().constData(), _dataTimeout);
+    int32_t tag = plc_tag_create(plcTagPath.toUtf8().constData(), 5000 /*wait forr 5 seconds*/);
 
     qDebug() << plcTagPath;
 
@@ -93,7 +93,7 @@ bool PLCTag::readPLCTag(QString tagName, bool &tagValue)
     if(tag > 0)
     {
         /* get the data */
-        int rc = plc_tag_read(tag, _dataTimeout);
+        int rc = plc_tag_read(tag, _getPLCStatusTimer->interval());
         if(rc != PLCTAG_STATUS_OK)
         {
             qDebug() << "ERROR: Unable to read the data! Got error code" << rc << ":" << QString::fromUtf8(plc_tag_decode_error(rc));
@@ -116,10 +116,11 @@ uint64_t PLCTag::readPLCTag(QString tagName, uint64_t &tagValue)
 
     int32_t tag = getPLCTag(tagName);
 
+
     if(tag > 0)
     {
         /* get the data */
-        int rc = plc_tag_read(tag, _dataTimeout);
+        int rc = plc_tag_read(tag, _getPLCStatusTimer->interval());
         if(rc != PLCTAG_STATUS_OK)
         {
             qDebug() << "ERROR: Unable to read the data! Got error code" << rc << ":" << QString::fromUtf8(plc_tag_decode_error(rc));
@@ -146,7 +147,7 @@ bool PLCTag::writePLCTag(QString tagName, bool tagValue)
     {
         plc_tag_set_bit(tag, 0, static_cast<int32_t>(tagValue));
 
-        if(plc_tag_write(tag, _dataTimeout) != PLCTAG_STATUS_OK) {
+        if(plc_tag_write(tag, 3000 /*wait for 3 seconds*/) != PLCTAG_STATUS_OK) {
             //plc_tag_destroy(tag);
             qDebug() << "PLCTag::writePLCTag() FAIL";
             return false;

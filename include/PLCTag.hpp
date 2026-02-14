@@ -74,8 +74,7 @@ private:
     std::unique_ptr<QTimer> _getPLCStatusTimer = nullptr;
     QString _plcAddress = "";
     QString _plcType = "";
-    QString _plcProgramName = "";
-    int32_t _dataTimeout = 3000;
+    QString _plcProgramName = "";    
     QHash<QString, int32_t> _PLCTags;
     bool _plcIsConnected = false;
     bool _runState = false;
