@@ -7,7 +7,7 @@
 int main(int argc, char *argv[])
 {
     qInfo() << "***************************************";
-    qInfo() << "*** LIDAR Mapping HMI App starting up... ***";
+    qInfo() << "*** LIDAR Mapping HMI starting up... ***";
     qInfo() << "***************************************";
 
     QGuiApplication qGuiApplication(argc, argv);
@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
     if( !mainBackendHelper.initialize(&qGuiApplication))
     {
         qCritical() << "*****************************************************************************";
-        qCritical() << "*** Could not instantiate MainBackendHelper. LIDAR Mapping HMI App aborting... ***";
+        qCritical() << "*** Could not instantiate MainBackendHelper. LIDAR Mapping HMI aborting... ***";
         qCritical() << "*****************************************************************************";
 
         return -1;
@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
     auto returnValue = qGuiApplication.exec();
 
     qInfo() << "*******************************************************************************";
-    qInfo() << "*** LIDAR Mapping HMI App terminating with retun value:" << returnValue << "... ***";
+    qInfo() << "*** LIDAR Mapping HMI terminating with retun value:" << returnValue << "... ***";
     qInfo() << "*******************************************************************************";
 
     return returnValue;

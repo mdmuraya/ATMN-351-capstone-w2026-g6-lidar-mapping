@@ -1,11 +1,10 @@
 cmake_minimum_required(VERSION 4.2)
 
-project(LIDAR_Mapping_HMI VERSION 0.1 LANGUAGES CXX)
+project(LIDAR_Mapping VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON) # Enforce C++23 support
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-# set(CMAKE_PREFIX_PATH "/opt/Qt/6.10.1/gcc_64")
 
 if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64" OR CMAKE_SYSTEM_PROCESSOR STREQUAL "AMD64")
     message(STATUS "Target architecture is x64")
@@ -19,12 +18,9 @@ else()
     message(STATUS "Target architecture is unknown or not explicitly handled: ${CMAKE_SYSTEM_PROCESSOR}")
 endif()
 
-
 # Define the paths to the external library files
 set(EXTERNAL_LIB_DIR "lib")
-set(EXTERNAL_INC_DIR "include")
-
-
+set(EXTERNAL_INC_DIR "lib/include")
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     add_compile_options(-Wall -Wextra -Wpedantic)
@@ -69,55 +65,51 @@ if(USE_QT)
 
     qt_standard_project_setup(REQUIRES 6.8)
 
-    qt_add_executable(${PROJECT_NAME}_App
+    qt_add_executable(${PROJECT_NAME}_HMI
        ${HEADERS}
        ${SOURCES}
        ${QML_FILES}
        ${RESOURCES}
     )
 
-    qt_add_qml_module(${PROJECT_NAME}_App
+    qt_add_qml_module(${PROJECT_NAME}_HMI
        URI ${PROJECT_NAME}
-       QML_FILES ui/Main.qml
+       QML_FILES ui/HMI.qml
        QML_FILES ui/PilotLight.qml
        QML_FILES ui/DirectionButton.qml
        SOURCES include/MainBackendHelper.hpp src/MainBackendHelper.cpp
     )
-
-    add_library(libplctag STATIC IMPORTED)
+    add_subdirectory(lib/libplctag)
+    add_library(libplctag STATIC IMPORTED)    
 
     set_target_properties(libplctag PROPERTIES
-        IMPORTED_LOCATION "${CMAKE_CURRENT_SOURCE_DIR}/lib/libplctag_static.a"
-
+        IMPORTED_LOCATION "${CMAKE_CURRENT_SOURCE_DIR}/lib/libplctag/bin/libplctag_static.a"
     )
 
-
-    target_include_directories(${PROJECT_NAME}_App PRIVATE
+    target_include_directories(${PROJECT_NAME}_HMI PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/include
     )
 
-
-
     if(USE_ROS)
-        target_link_libraries(${PROJECT_NAME}_App
+        target_link_libraries(${PROJECT_NAME}_HMI
             PRIVATE rclcpp::rclcpp ${std_msgs_TARGETS}
         )
     endif()
 
-    target_link_libraries(${PROJECT_NAME}_App
+    target_link_libraries(${PROJECT_NAME}_HMI
         PRIVATE Qt6::Quick Qt6::Concurrent
-     )
+    )
 
-    target_link_libraries(${PROJECT_NAME}_App PRIVATE libplctag)
+    target_link_libraries(${PROJECT_NAME}_HMI PRIVATE libplctag)
 
 
 
     if(WIN32)
-        set_target_properties(${PROJECT_NAME}_App PROPERTIES WIN32_EXECUTABLE TRUE)
+        set_target_properties(${PROJECT_NAME}_HMI PROPERTIES WIN32_EXECUTABLE TRUE)
     endif()
 
     if(APPLE)
-        set_target_properties(${PROJECT_NAME}_App PROPERTIES
+        set_target_properties(${PROJECT_NAME}_HMI PROPERTIES
             MACOSX_BUNDLE TRUE
             MACOSX_BUNDLE_GUI_IDENTIFIER com.example.${PROJECT_NAME}
             MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
@@ -129,19 +121,19 @@ endif()
 include(GNUInstallDirs)
 
 if(USE_ROS)
-    install(TARGETS ${PROJECT_NAME}_App
-        DESTINATION lib/${PROJECT_NAME}_App
+    install(TARGETS ${PROJECT_NAME}_HMI
+        DESTINATION lib/${PROJECT_NAME}_HMI
     )
 
     install(DIRECTORY
         launch
-        DESTINATION share/${PROJECT_NAME}_App
+        DESTINATION share/${PROJECT_NAME}_HMI
     )
 
     ament_package()
 else()
     if(USE_QT)
-        install(TARGETS ${PROJECT_NAME}_App
+        install(TARGETS ${PROJECT_NAME}_HMI
             BUNDLE DESTINATION .
             LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
             RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
@@ -152,5 +144,8 @@ else()
 endif()
 
 if(USE_ROS)
-    target_compile_definitions(${PROJECT_NAME}_App PRIVATE USE_ROS)
+    target_compile_definitions(${PROJECT_NAME}_HMI PRIVATE USE_ROS)
 endif()
+add_subdirectory(MyLib2)
+add_subdirectory(lib/MyLib3)
+

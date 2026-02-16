@@ -5,9 +5,7 @@
 #include <QTimer>
 
 #include "include/PLCTag.hpp"
-#include "include/libplctag.h"
-
-
+#include "lib/libplctag/include/libplctag.h"
 
 PLCTag::PLCTag(QObject *parent, QString plcAddress, QString plcType, QString plcProgramName) :
     QObject (parent),
@@ -24,12 +22,9 @@ PLCTag::PLCTag(QObject *parent, QString plcAddress, QString plcType, QString plc
         getPLCStatus();
     });
 
-    //connect(this, &PLCTag::getPLCStatus, this, &PLCTag::onGetPLCStatus);
-
     int frequency = 5; //number of times per second
     _getPLCStatusTimer->start((1000/frequency));
 }
-
 
 PLCTag::~PLCTag()
 {
@@ -42,8 +37,6 @@ PLCTag::~PLCTag()
     }
     _PLCTags.clear();
 }
-
-
 
 int32_t PLCTag::getPLCTag(QString tagName)
 {
@@ -60,7 +53,7 @@ int32_t PLCTag::getPLCTag(QString tagName)
     QString plcPath = (QString::compare(_plcType, "controllogix", Qt::CaseInsensitive) == 0 ) ? QString("&path=1,0") : "";
     QString plcTagPath = QString("protocol=ab-eip&gateway=") + _plcAddress + plcPath + QString("&plc=") + _plcType + QString("&elem_size=1&elem_count=1&name=") + tagName;
 
-    int32_t tag = plc_tag_create(plcTagPath.toUtf8().constData(), 5000 /*wait forr 5 seconds*/);
+    int32_t tag = plc_tag_create(plcTagPath.toUtf8().constData(), 5000 /*wait for a maximumm of 5 seconds*/);
 
     qDebug() << plcTagPath;
 
@@ -147,7 +140,7 @@ bool PLCTag::writePLCTag(QString tagName, bool tagValue)
     {
         plc_tag_set_bit(tag, 0, static_cast<int32_t>(tagValue));
 
-        if(plc_tag_write(tag, 3000 /*wait for 3 seconds*/) != PLCTAG_STATUS_OK) {
+        if(plc_tag_write(tag, 3000 /*wait for a maximumm of 3 seconds*/) != PLCTAG_STATUS_OK) {
             //plc_tag_destroy(tag);
             qDebug() << "PLCTag::writePLCTag() FAIL";
             return false;
@@ -175,68 +168,51 @@ void PLCTag::getPLCStatus()
     {
         setPLCIsConnected(true);
         qDebug() << "PLC_Heart_Beat" << uint64TagValue;
-        /*
-        readPLCTag(_plcProgramName + "System_Running", boolTagValue) ? setRunState(boolTagValue) : (void)0; // do nothiing if false
-        readPLCTag(_plcProgramName + "PHY_Selector_Run_AUTO", boolTagValue) ? setRunStateAUTO(boolTagValue) : (void)0; // do nothiing if false
-        readPLCTag(_plcProgramName + "Red_Pilot_Light", boolTagValue) ? setRedPilotLight(boolTagValue) : (void)0; // do nothiing if false
-        readPLCTag(_plcProgramName + "Amber_Pilot_Light", boolTagValue) ? setAmberPilotLight(boolTagValue) : (void)0; // do nothiing if false
-        readPLCTag(_plcProgramName + "Green_Pilot_Light", boolTagValue) ? setGreenPilotLight(boolTagValue) : (void)0; // do nothiing if false
-        readPLCTag(_plcProgramName + "Blue_Pilot_Light", boolTagValue) ? setBluePilotLight(boolTagValue) :  (void)0; // do nothiing if false
-        readPLCTag(_plcProgramName + "White_Pilot_Light", boolTagValue) ? setWhitePilotLight(boolTagValue) : (void)0; // do nothiing if false
-        */
 
         QFutureSynchronizer<void> synchronizer;
         QFuture<void> future;
-        /*QFuture<void> future;
 
-            future = QtConcurrent::run([]() {
-                bool systemRunningTagValue = false;
-                readPLCTag(_plcProgramName + "System_Running", systemRunningTagValue) ? setRunState(systemRunningTagValue) : (void)0; // do nothiing if false
-            });
-            synchronizer.addFuture(future);
-        */
         future = QtConcurrent::run([this]() {
-            bool boolTagValue = false;
+            bool boolTagValue = getRunState();
             readPLCTag(_plcProgramName + "System_Running", boolTagValue) ? setRunState(boolTagValue) : (void)0; // do nothiing if false
         });
         synchronizer.addFuture(future);
 
         future = QtConcurrent::run([this]() {
-            bool boolTagValue = false;
+            bool boolTagValue =getRunStateAUTO();
             readPLCTag(_plcProgramName + "PHY_Selector_Run_AUTO", boolTagValue) ? setRunStateAUTO(boolTagValue) : (void)0; // do nothiing if false
         });
         synchronizer.addFuture(future);
 
         future = QtConcurrent::run([this]() {
-            bool boolTagValue = false;
+            bool boolTagValue =getRedPilotLight();
             readPLCTag(_plcProgramName + "Red_Pilot_Light", boolTagValue) ? setRedPilotLight(boolTagValue) : (void)0; // do nothiing if false
         });
         synchronizer.addFuture(future);
 
         future = QtConcurrent::run([this]() {
-            bool boolTagValue = false;
+            bool boolTagValue = getAmberPilotLight();
             readPLCTag(_plcProgramName + "Amber_Pilot_Light", boolTagValue) ? setAmberPilotLight(boolTagValue) : (void)0; // do nothiing if false
         });
         synchronizer.addFuture(future);
 
         future = QtConcurrent::run([this]() {
-            bool boolTagValue = false;
+            bool boolTagValue = getGreenPilotLight();
             readPLCTag(_plcProgramName + "Green_Pilot_Light", boolTagValue) ? setGreenPilotLight(boolTagValue) : (void)0; // do nothiing if false
         });
         synchronizer.addFuture(future);
 
         future = QtConcurrent::run([this]() {
-            bool boolTagValue = false;
+            bool boolTagValue = getBluePilotLight();
             readPLCTag(_plcProgramName + "Blue_Pilot_Light", boolTagValue) ? setBluePilotLight(boolTagValue) :  (void)0; // do nothiing if false
         });
         synchronizer.addFuture(future);
 
         future = QtConcurrent::run([this]() {
-            bool boolTagValue = false;
+            bool boolTagValue = getWhitePilotLight();
             readPLCTag(_plcProgramName + "White_Pilot_Light", boolTagValue) ? setWhitePilotLight(boolTagValue) : (void)0; // do nothiing if false
         });
         synchronizer.addFuture(future);
-
 
     }
     else

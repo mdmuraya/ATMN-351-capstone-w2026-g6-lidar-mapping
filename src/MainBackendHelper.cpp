@@ -3,8 +3,7 @@
 #include <QDebug>
 #include <QVariantList>
 
-#include "include/libplctag.h"
-
+#include "lib/libplctag/include/libplctag.h"
 #include "include/MainBackendHelper.hpp"
 
 
@@ -69,7 +68,7 @@ bool MainBackendHelper::initialize(QGuiApplication *qGuiApplication)
     _QQmlApplicationEngine.rootContext()->setContextProperty("plcTag", _PLCTag.get());
     _QQmlApplicationEngine.rootContext()->setContextProperty("MainBackendHelper", this);
 
-    _QQmlApplicationEngine.loadFromModule("LIDAR_Mapping_HMI", "Main");
+    _QQmlApplicationEngine.loadFromModule("LIDAR_Mapping", "HMI");
 
     if(_QQmlApplicationEngine.rootObjects().isEmpty())
     {
