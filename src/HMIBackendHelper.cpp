@@ -42,8 +42,7 @@ void HMIBackendHelper::publishToROS2()
         _ros2PublishTimer->stop();
         return;
     }
-
-    auto message = std_msgs::msg::String();
+    auto message = example_interfaces::msg::String();
     message.data = "Hello, ROS 2! ";
     _ros2Publisher->publish(message);
 
@@ -91,7 +90,7 @@ void HMIBackendHelper::initializeROS2()
 {
     rclcpp::init(0, nullptr);
     _ros2Node = rclcpp::Node::make_shared("LIDARMapping_HMI");
-    _ros2Publisher = _ros2Node->create_publisher<std_msgs::msg::String>("LIDARMapping_HMI_topic", 10);
+    _ros2Publisher = _ros2Node->create_publisher<example_interfaces::msg::String>("LIDARMapping_HMI_topic", 10);
 
 }
 

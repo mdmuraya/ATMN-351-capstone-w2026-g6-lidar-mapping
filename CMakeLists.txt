@@ -50,6 +50,7 @@ if(USE_ROS)
     find_package(ament_cmake REQUIRED)
     find_package(rclcpp REQUIRED)
     find_package(std_msgs REQUIRED)
+    find_package(example_interfaces REQUIRED)
 endif()
 
 if(USE_QT)
@@ -92,17 +93,13 @@ if(USE_QT)
 
     if(USE_ROS)
         target_link_libraries(${PROJECT_NAME}_HMI
-            PRIVATE rclcpp::rclcpp ${std_msgs_TARGETS}
-        )
+            PRIVATE rclcpp::rclcpp ${std_msgs_TARGETS} ${example_interfaces_TARGETS}
+        )        
     endif()
 
     target_link_libraries(${PROJECT_NAME}_HMI
-        PRIVATE Qt6::Quick Qt6::Concurrent
+        PRIVATE Qt6::Quick Qt6::Concurrent libplctag
     )
-
-    target_link_libraries(${PROJECT_NAME}_HMI PRIVATE libplctag)
-
-
 
     if(WIN32)
         set_target_properties(${PROJECT_NAME}_HMI PROPERTIES WIN32_EXECUTABLE TRUE)

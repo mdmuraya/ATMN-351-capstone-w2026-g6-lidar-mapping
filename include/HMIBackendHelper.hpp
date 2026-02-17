@@ -10,7 +10,8 @@
 #include <QHash>
 
 #include "rclcpp/rclcpp.hpp"
-#include "std_msgs/msg/string.hpp"
+//#include "std_msgs/msg/string.hpp"
+#include "example_interfaces/msg/string.hpp"
 
 #include "include/PLCTag.hpp"
 
@@ -33,7 +34,7 @@ class HMIBackendHelper : public QObject
         QDateTime _dateTimeOnApplicationStart = QDateTime::currentDateTime();
         std::shared_ptr<QTimer> _ros2PublishTimer = nullptr;
         rclcpp::Node::SharedPtr _ros2Node = nullptr;
-        rclcpp::Publisher<std_msgs::msg::String>::SharedPtr _ros2Publisher = nullptr;
+        rclcpp::Publisher<example_interfaces::msg::String>::SharedPtr _ros2Publisher = nullptr;
         std::unique_ptr<PLCTag> _PLCTag = nullptr;
         QString _plcAddress = "192.168.40.62"; //"10.111.42.192";//
         QString _plcType = "micro800";//controllogix //micro800
