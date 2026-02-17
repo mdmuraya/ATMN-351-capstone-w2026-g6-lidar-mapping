@@ -4,14 +4,14 @@
 #include <QVariantList>
 
 #include "lib/libplctag/include/libplctag.h"
-#include "include/MainBackendHelper.hpp"
+#include "include/HMIBackendHelper.hpp"
 
 
 #define REQUIRED_VERSION 2, 4, 0
 
-MainBackendHelper::MainBackendHelper(QObject *parent) : QObject (parent)
+HMIBackendHelper::HMIBackendHelper(QObject *parent) : QObject (parent)
 {
-    qDebug() << "MainBackendHelper::MainBackendHelper()";
+    qDebug() << "HMIBackendHelper::HMIBackendHelper()";
     qDebug() << "Total arguments:" << QCoreApplication::arguments().count();
 
     for (int i = 0; i < QCoreApplication::arguments().count(); ++i) {
@@ -24,18 +24,18 @@ MainBackendHelper::MainBackendHelper(QObject *parent) : QObject (parent)
     }
 }
 
-MainBackendHelper::~MainBackendHelper()
+HMIBackendHelper::~HMIBackendHelper()
 {
-    qDebug() << "MainBackendHelper::~MainBackendHelper()";
+    qDebug() << "HMIBackendHelper::~HMIBackendHelper()";
 
     if (rclcpp::ok()) {
         rclcpp::shutdown();
     }
 }
 
-void MainBackendHelper::publishToROS2()
+void HMIBackendHelper::publishToROS2()
 {
-    qDebug() << "MainBackendHelper::publishToROS2()" << QDateTime::currentDateTime();
+    qDebug() << "HMIBackendHelper::publishToROS2()" << QDateTime::currentDateTime();
 
     if (!rclcpp::ok()) {
         qDebug() << "ROS is not running!";
@@ -51,9 +51,9 @@ void MainBackendHelper::publishToROS2()
     rclcpp::spin_some(_ros2Node);
 }
 
-bool MainBackendHelper::initialize(QGuiApplication *qGuiApplication)
+bool HMIBackendHelper::initialize(QGuiApplication *qGuiApplication)
 {
-    qDebug() << "MainBackendHelper::initialize()" << QDateTime::currentDateTime();
+    qDebug() << "HMIBackendHelper::initialize()" << QDateTime::currentDateTime();
 
     QObject::connect(
         &_QQmlApplicationEngine,
@@ -66,7 +66,7 @@ bool MainBackendHelper::initialize(QGuiApplication *qGuiApplication)
     _ros2PublishTimer = std::make_shared<QTimer>();
 
     _QQmlApplicationEngine.rootContext()->setContextProperty("plcTag", _PLCTag.get());
-    _QQmlApplicationEngine.rootContext()->setContextProperty("MainBackendHelper", this);
+    _QQmlApplicationEngine.rootContext()->setContextProperty("HMIBackendHelper", this);
 
     _QQmlApplicationEngine.loadFromModule("LIDAR_Mapping", "HMI");
 
@@ -82,34 +82,34 @@ bool MainBackendHelper::initialize(QGuiApplication *qGuiApplication)
     return true;
 }
 
-void MainBackendHelper::onConnectToPLC()
+void HMIBackendHelper::onConnectToPLC()
 {
 
 }
 
-void MainBackendHelper::initializeROS2()
+void HMIBackendHelper::initializeROS2()
 {
     rclcpp::init(0, nullptr);
-    _ros2Node = rclcpp::Node::make_shared("LIDARMapping_HMI_App");
-    _ros2Publisher = _ros2Node->create_publisher<std_msgs::msg::String>("LIDARMapping_HMI_App_topic", 10);
+    _ros2Node = rclcpp::Node::make_shared("LIDARMapping_HMI");
+    _ros2Publisher = _ros2Node->create_publisher<std_msgs::msg::String>("LIDARMapping_HMI_topic", 10);
 
 }
 
-void MainBackendHelper::setupConnections()
+void HMIBackendHelper::setupConnections()
 {
-    qDebug() << "MainBackendHelper::setupConnections()";
+    qDebug() << "HMIBackendHelper::setupConnections()";
 
     connect(_ros2PublishTimer.get(), &QTimer::timeout, [this](){
         publishToROS2();
     });
 
-    //connect(this, &MainBackendHelper::timeToPublish, this, &MainBackendHelper::onTimeToPublish);
+    //connect(this, &HMIBackendHelper::timeToPublish, this, &HMIBackendHelper::onTimeToPublish);
 
 }
 
-void MainBackendHelper::startTimers()
+void HMIBackendHelper::startTimers()
 {
-    qDebug() << "MainBackendHelper::startTimers()";
+    qDebug() << "HMIBackendHelper::startTimers()";
 
     int frequency = 1; //number of times per second
 

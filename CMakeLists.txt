@@ -77,7 +77,7 @@ if(USE_QT)
        QML_FILES ui/HMI.qml
        QML_FILES ui/PilotLight.qml
        QML_FILES ui/DirectionButton.qml
-       SOURCES include/MainBackendHelper.hpp src/MainBackendHelper.cpp
+       SOURCES include/HMIBackendHelper.hpp src/HMIBackendHelper.cpp
     )
     add_subdirectory(lib/libplctag)
     add_library(libplctag STATIC IMPORTED)    

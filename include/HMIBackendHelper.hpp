@@ -1,5 +1,5 @@
-#ifndef MAINBACKENDHELPER_H
-#define MAINBACKENDHELPER_H
+#ifndef HMIBACKENDHELPER_H
+#define HMIBACKENDHELPER_H
 
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
@@ -14,14 +14,14 @@
 
 #include "include/PLCTag.hpp"
 
-class MainBackendHelper : public QObject
+class HMIBackendHelper : public QObject
 {
     Q_OBJECT
     //QML_ELEMENT
     //QML_SINGLETON    
     public:
-        explicit MainBackendHelper(QObject *parent = nullptr);
-        ~MainBackendHelper();
+        explicit HMIBackendHelper(QObject *parent = nullptr);
+        ~HMIBackendHelper();
         bool initialize(QGuiApplication *qGuiApplication);
     signals:
         void timeToPublish();
@@ -45,4 +45,4 @@ class MainBackendHelper : public QObject
         void publishToROS2();
 };
 
-#endif // MAINBACKENDHELPER_H
+#endif // HMIBACKENDHELPER_H
