@@ -51,6 +51,7 @@ if(USE_ROS)
     find_package(rclcpp REQUIRED)
     find_package(std_msgs REQUIRED)
     find_package(example_interfaces REQUIRED)
+    find_package(sensor_msgs REQUIRED)
 endif()
 
 if(USE_QT)
@@ -93,7 +94,7 @@ if(USE_QT)
 
     if(USE_ROS)
         target_link_libraries(${PROJECT_NAME}_HMI
-            PRIVATE rclcpp::rclcpp ${std_msgs_TARGETS} ${example_interfaces_TARGETS}
+            PRIVATE rclcpp::rclcpp ${std_msgs_TARGETS} ${example_interfaces_TARGETS} ${sensor_msgs_TARGETS}
         )        
     endif()
 

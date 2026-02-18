@@ -8,6 +8,7 @@
 
 
 #define REQUIRED_VERSION 2, 4, 0
+#define RAD2DEG(x) ((x)*180./M_PI)
 
 HMIBackendHelper::HMIBackendHelper(QObject *parent) : QObject (parent)
 {
@@ -92,6 +93,10 @@ void HMIBackendHelper::initializeROS2()
     _ros2Node = rclcpp::Node::make_shared("LIDAR_Mapping_HMI");
     _ros2Publisher = _ros2Node->create_publisher<example_interfaces::msg::String>("LIDAR_Mapping_HMI_topic", 10);
 
+    _ros2LIDARScannerSubscription = _ros2Node->create_subscription<sensor_msgs::msg::LaserScan>(
+        "scan",
+        rclcpp::SensorDataQoS(),
+        std::bind(&HMIBackendHelper::scanCallBack, this, std::placeholders::_1));
 }
 
 void HMIBackendHelper::setupConnections()
@@ -104,6 +109,19 @@ void HMIBackendHelper::setupConnections()
 
     //connect(this, &HMIBackendHelper::timeToPublish, this, &HMIBackendHelper::onTimeToPublish);
 
+}
+
+
+void HMIBackendHelper::scanCallBack(sensor_msgs::msg::LaserScan::SharedPtr scan) {
+    int count = scan->scan_time / scan->time_increment;
+    printf("[SLLIDAR INFO]: I heard a laser scan %s[%d]:\n", scan->header.frame_id.c_str(), count);
+    printf("[SLLIDAR INFO]: angle_range : [%f, %f]\n", RAD2DEG(scan->angle_min),
+           RAD2DEG(scan->angle_max));
+
+    for (int i = 0; i < count; i++) {
+        float degree = RAD2DEG(scan->angle_min + scan->angle_increment * i);
+        printf("[SLLIDAR INFO]: angle-distance : [%f, %f]\n", degree, scan->ranges[i]);
+    }
 }
 
 void HMIBackendHelper::startTimers()
