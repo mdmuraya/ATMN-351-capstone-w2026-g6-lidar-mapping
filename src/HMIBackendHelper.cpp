@@ -43,7 +43,7 @@ void HMIBackendHelper::publishToROS2()
         return;
     }
     auto message = example_interfaces::msg::String();
-    message.data = "Hello, ROS 2! ";
+    message.data = QString(QString("Hello, ROS 2! ") + QDateTime::currentDateTime().toString()).toUtf8().constData();
     _ros2Publisher->publish(message);
 
     qDebug() << "Published:" <<  message.data;
@@ -89,8 +89,8 @@ void HMIBackendHelper::onConnectToPLC()
 void HMIBackendHelper::initializeROS2()
 {
     rclcpp::init(0, nullptr);
-    _ros2Node = rclcpp::Node::make_shared("LIDARMapping_HMI");
-    _ros2Publisher = _ros2Node->create_publisher<example_interfaces::msg::String>("LIDARMapping_HMI_topic", 10);
+    _ros2Node = rclcpp::Node::make_shared("LIDAR_Mapping_HMI");
+    _ros2Publisher = _ros2Node->create_publisher<example_interfaces::msg::String>("LIDAR_Mapping_HMI_topic", 10);
 
 }
 
