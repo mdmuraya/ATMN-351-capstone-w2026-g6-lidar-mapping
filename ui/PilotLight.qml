@@ -7,6 +7,7 @@ Item {
     height: containerRectangleId.height
     property alias color: containerRectangleId.color
     property alias radius:  containerRectangleId.radius
+    property alias borderColor: containerRectangleId.border.color
 
     Rectangle {
         id: containerRectangleId

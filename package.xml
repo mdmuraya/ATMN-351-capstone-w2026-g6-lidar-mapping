@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>LIDAR_Mapping_HMI</name>
+  <name>LIDAR_Mapping</name>
   <version>0.1.0</version>
   <description>TODO: Package description</description>
   <maintainer email="n01671663@humber.ca">atmn-351</maintainer>
@@ -11,6 +11,7 @@
 
   <depend>rclcpp</depend>
   <depend>std_msgs</depend>
+  <depend>example_interfaces</depend>
   <depend>pluginlib</depend>
   
   

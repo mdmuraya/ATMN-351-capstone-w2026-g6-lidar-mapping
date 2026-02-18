@@ -2,53 +2,95 @@
 #define PLCTAG_HPP
 
 #include <QObject>
-#include <string>
-#include <vector>
-#include <libplctag.h>
+#include <QHash>
 
-class PLCTag: public QObject
+
+class PLCTag : public QObject
 {
     Q_OBJECT
-    public:
-        PLCTag(QObject *parent = nullptr, int plc_prot = 1, std::string ip_address = "", bool debug = false);
-        ~PLCTag();
+    Q_PROPERTY(QString plcAddress READ getPLCAddress)
+    Q_PROPERTY(bool plcIsConnected READ getPLCIsConnected WRITE setPLCIsConnected NOTIFY plcIsConnectedChanged)
+    Q_PROPERTY(bool runState READ getRunState WRITE setRunState NOTIFY runStateChanged)
+    Q_PROPERTY(bool runStateAUTO READ getRunStateAUTO WRITE setRunStateAUTO NOTIFY runStateAUTOChanged)
+    Q_PROPERTY(bool redPilotLight READ getRedPilotLight WRITE setRedPilotLight NOTIFY redPilotLightChanged)
+    Q_PROPERTY(bool amberPilotLight READ getAmberPilotLight WRITE setAmberPilotLight NOTIFY amberPilotLightChanged)
+    Q_PROPERTY(bool greenPilotLight READ getGreenPilotLight WRITE setGreenPilotLight NOTIFY greenPilotLightChanged)
+    Q_PROPERTY(bool bluePilotLight READ getBluePilotLight WRITE setBluePilotLight NOTIFY bluePilotLightChanged)
+    Q_PROPERTY(bool whitePilotLight READ getWhitePilotLight WRITE setWhitePilotLight NOTIFY whitePilotLightChanged)
 
-        // Read
-        std::vector<float> read_tag(int tag_num, int timeout, int element_size, int element_count);
-        std::vector<std::string> read_tag_str(int tag_num, int timeout, int element_size, int element_count);
+public:
+    explicit PLCTag(QObject *parent = nullptr, QString plcAddress = "", QString plcType = "", QString plcProgramName = "");
+    ~PLCTag();
 
-        // Write
-        void write_tag(int tag_num, int timeout, int element_size, std::vector<float> fvec);
-        void write_tag_str(int tag_num, int timeout, int element_size, std::vector<std::string> fvec);
+    QString getPLCAddress() const;
 
-        // Variables
-        enum PLC_PROT // Protocols, see "check_cpu" in ab_common.c (https://github.com/kyle-github/libplctag/blob/b9e29c13a89df7b70de2f7880a770a70437cc958/src/protocols/ab/ab_common.c#L658)
-        {
-            PROT_AB_PLC = 1,	 // PLC, PLC5, SLC, SLC500
-            PROT_AB_MLGX800 = 2, // MicroLogix 800
-            PROT_AB_MLGX = 3,	 // MicroLogix 1000-1400
-            PROT_AB_LGX = 4,	 // CompactLogix, ControlLogix, FlexLogix
-        };
-        enum ELE_SIZE // element size
-        {
-            ELE_BOOL = 1,
-            ELE_INT = 2,
-            ELE_DINT_ = 4,
-            ELE_FLOAT = 4,
-            ELE_STRING = 88,
-        };
+    bool getPLCIsConnected() const;
+    void setPLCIsConnected(bool newValue);
 
-    private:
-        // Connection
-        void create_tag(int tag_num, int plc_prot, int timeout, std::string ip_address, std::string element_name, int element_size, int element_count);
+    bool getRunState() const;
+    void setRunState(bool newValue);
 
-        // Variables
-        bool debug;
-        std::string plc_protocol = "ab_eip";
-        int share_session = 1; // 1: shares TCP connection with other tags at same IP address; 0: off
-        int str_data_size = 82;
-        std::vector<int32_t> tag;
+    bool getRunStateAUTO() const;
+    void setRunStateAUTO(bool newValue);
+
+    bool getRedPilotLight() const;
+    void setRedPilotLight(bool newValue);
+
+    bool getAmberPilotLight() const;
+    void setAmberPilotLight(bool newAmberPilotLight);
+
+    bool getGreenPilotLight() const;
+    void setGreenPilotLight(bool newGreenPilotLight);
+
+    bool getBluePilotLight() const;
+    void setBluePilotLight(bool newBluePilotLight);
+
+    bool getWhitePilotLight() const;
+    void setWhitePilotLight(bool newWhitePilotLight);
+
+
+signals:
+    void plcIsConnectedChanged(bool newValue);
+    void runStateChanged(bool newValue);
+    void runStateAUTOChanged(bool newValue);
+    void redPilotLightChanged(bool newValue);
+    void amberPilotLightChanged(bool newValue);
+    void greenPilotLightChanged(bool newValue);
+    void bluePilotLightChanged(bool newValue);
+    void whitePilotLightChanged(bool newValue);
+
+public slots:
+    void onConnectToPLC();
+    void startButtonPressedChanged(bool pressed);
+    void stopButtonPressedChanged(bool pressed);
+    void resetButtonPressedChanged(bool pressed);
+    void moveToHomeButtonPressedChanged(bool pressed);
+    void moveLeftButtonPressedChanged(bool pressed);
+    void moveBackButtonPressedChanged(bool pressed);
+    void moveForwardButtonPressedChanged(bool pressed);
+    void moveRightButtonPressedChanged(bool pressed);
+
+private:
+    std::unique_ptr<QTimer> _getPLCStatusTimer = nullptr;
+    QString _plcAddress = "";
+    QString _plcType = "";
+    QString _plcProgramName = "";    
+    QHash<QString, int32_t> _PLCTags;
+    bool _plcIsConnected = false;
+    bool _runState = false;
+    bool _runStateAUTO = false;
+    bool _redPilotLight = false;
+    bool _amberPilotLight = false;
+    bool _greenPilotLight = false;
+    bool _bluePilotLight = false;
+    bool _whitePilotLight = false;
+
+    void getPLCStatus();
+    int32_t getPLCTag(QString tagName);
+    bool readPLCTag(QString tagName, bool &tagValue);
+    uint64_t readPLCTag(QString tagName, uint64_t &tagValue);
+    bool writePLCTag(QString tagName, bool tagValue);
+
 };
-
 
 #endif // PLCTAG_HPP
