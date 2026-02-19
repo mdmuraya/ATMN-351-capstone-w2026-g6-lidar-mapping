@@ -63,9 +63,11 @@ bool HMIBackendHelper::initialize(QGuiApplication *qGuiApplication)
         Qt::QueuedConnection);
 
     _PLCTag = std::make_unique<PLCTag>(this, _plcAddress, _plcType, _plcProgramName);
+    _LIDARScan2DData = std::make_unique<LIDARScan2DData>(this);
     _ros2PublishTimer = std::make_shared<QTimer>();
 
     _QQmlApplicationEngine.rootContext()->setContextProperty("plcTag", _PLCTag.get());
+    _QQmlApplicationEngine.rootContext()->setContextProperty("lidarScan2DData", _LIDARScan2DData.get());
     _QQmlApplicationEngine.rootContext()->setContextProperty("HMIBackendHelper", this);
 
     _QQmlApplicationEngine.loadFromModule("LIDAR_Mapping", "HMI");
@@ -113,15 +115,29 @@ void HMIBackendHelper::setupConnections()
 
 
 void HMIBackendHelper::scanCallBack(sensor_msgs::msg::LaserScan::SharedPtr scan) {
-    int count = scan->scan_time / scan->time_increment;
-    printf("[SLLIDAR INFO]: I heard a laser scan %s[%d]:\n", scan->header.frame_id.c_str(), count);
-    printf("[SLLIDAR INFO]: angle_range : [%f, %f]\n", RAD2DEG(scan->angle_min),
-           RAD2DEG(scan->angle_max));
 
-    for (int i = 0; i < count; i++) {
-        float degree = RAD2DEG(scan->angle_min + scan->angle_increment * i);
-        printf("[SLLIDAR INFO]: angle-distance : [%f, %f]\n", degree, scan->ranges[i]);
-    }
+    qDebug() << "HMIBackendHelper::scanCallBack()";
+
+    sensor_msgs::msg::PointCloud2 pointCloud;
+
+    qInfo() << "START: LaserScan to  PointCloud2";
+
+    _LaserProjection.projectLaser(*scan, pointCloud);
+
+    qInfo() << "DONE: LaserScan to  PointCloud2";
+
+    _LIDARScan2DData->setScanData(scan);
+
+    // int count = scan->scan_time / scan->time_increment;
+    // printf("[SLLIDAR INFO]: I heard a laser scan %s[%d]:\n", scan->header.frame_id.c_str(), count);
+    // printf("[SLLIDAR INFO]: angle_range : [%f, %f]\n", RAD2DEG(scan->angle_min),
+    //        RAD2DEG(scan->angle_max));
+
+    // for (int i = 0; i < count; i++) {
+    //     float degree = RAD2DEG(scan->angle_min + scan->angle_increment * i);
+    //     printf("[SLLIDAR INFO]: angle-distance : [%f, %f]\n", degree, scan->ranges[i]);
+    // }
+
 }
 
 void HMIBackendHelper::startTimers()

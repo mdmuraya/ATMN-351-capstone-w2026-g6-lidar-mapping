@@ -11,11 +11,14 @@
 #include <math.h>
 
 #include "rclcpp/rclcpp.hpp"
-//#include "std_msgs/msg/string.hpp"
 #include "example_interfaces/msg/string.hpp"
 #include "sensor_msgs/msg/laser_scan.hpp"
+#include "sensor_msgs/msg/point_cloud2.hpp"
+#include "laser_geometry/laser_geometry.hpp"
+//#include "tf2_ros/tf2_ros/transform_listener.hpp"
 
 #include "include/PLCTag.hpp"
+#include "include/LIDARScan2DData.hpp"
 
 class HMIBackendHelper : public QObject
 {
@@ -38,7 +41,10 @@ class HMIBackendHelper : public QObject
         rclcpp::Node::SharedPtr _ros2Node = nullptr;
         rclcpp::Publisher<example_interfaces::msg::String>::SharedPtr _ros2Publisher = nullptr;
         rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr _ros2LIDARScannerSubscription = nullptr;
+        laser_geometry::LaserProjection _LaserProjection;
+        //tf2_ros::TransformListener _TransformListener;
         std::unique_ptr<PLCTag> _PLCTag = nullptr;
+        std::unique_ptr<LIDARScan2DData> _LIDARScan2DData = nullptr;
         QString _plcAddress = "192.168.40.62"; //"10.111.42.192";//
         QString _plcType = "micro800";//controllogix //micro800
         QString _plcProgramName = ""; //"Program:MainProgram.";
