@@ -49,9 +49,10 @@ endif()
 if(USE_ROS)
     find_package(ament_cmake REQUIRED)
     find_package(rclcpp REQUIRED)
-    find_package(std_msgs REQUIRED)
     find_package(example_interfaces REQUIRED)
+    find_package(laser_geometry REQUIRED)
     find_package(sensor_msgs REQUIRED)
+    find_package(tf2_ros REQUIRED)
 endif()
 
 if(USE_QT)
@@ -94,7 +95,12 @@ if(USE_QT)
 
     if(USE_ROS)
         target_link_libraries(${PROJECT_NAME}_HMI
-            PRIVATE rclcpp::rclcpp ${std_msgs_TARGETS} ${example_interfaces_TARGETS} ${sensor_msgs_TARGETS}
+            PRIVATE
+                rclcpp::rclcpp
+                ${example_interfaces_TARGETS}
+                ${laser_geometry_TARGETS}
+                ${sensor_msgs_TARGETS}
+                ${tf2_ros_TARGETS}
         )        
     endif()
 
@@ -144,6 +150,6 @@ endif()
 if(USE_ROS)
     target_compile_definitions(${PROJECT_NAME}_HMI PRIVATE USE_ROS)
 endif()
-add_subdirectory(MyLib2)
+
 add_subdirectory(lib/MyLib3)
 

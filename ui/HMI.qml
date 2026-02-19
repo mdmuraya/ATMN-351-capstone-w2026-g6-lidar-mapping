@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick3D
 import QtQuick.Controls
 import QtQuick.Layouts
 import QtQuick.Dialogs
@@ -306,24 +307,90 @@ ApplicationWindow {
                             Layout.fillHeight: true
                             color: "transparent"
 
-                            Rectangle {
+                            // View3D {
+                            //         anchors.fill: parent
+
+                            //         PerspectiveCamera {
+                            //             z: 200
+                            //         }
+
+                            //         DirectionalLight {
+
+                            //         }
+
+                            //         Model {
+                            //             source: "#Cube"
+                            //             materials: DefaultMaterial {}
+                            //             eulerRotation.y: 20
+                            //             Node {
+                            //                 // Empty spatial Node to give 2D item
+                            //                 // a position in 3D space
+                            //                 y: 100
+                            //                 Text {
+                            //                     // 2D content in 3D
+                            //                     anchors.centerIn: parent
+                            //                     text: "Cube Label"
+                            //                     color: "white"
+                            //                 }
+                            //             }
+                            //         }
+                            //     }
+
+                            Canvas {
+                                id: scanCanvas
                                 anchors.centerIn: parent
                                 width: rectScanArea.width * 0.93
                                 height: rectScanArea.height * 0.93
-                                color: "#F7F7DA"
-                                border {
-                                    width: 1
-                                    color: "black"
-                                }
-                                Text {
-                                    anchors.centerIn: parent
-                                    text: qsTr("THIS IS THE SCAN AREA")
-                                    font {
-                                        bold: true
-                                        pointSize: 20
+                                // Define the center and radius of the circle
+                                property int centerX: width / 2
+                                property int centerY: height / 2
+                                property int radius: height * 0.4
+                                // Define the size and color for the points
+                                property int pointSize: 4
+                                property color pointColor: "green"
+
+                                onPaint: {
+                                    var ctx = getContext("2d");
+                                    ctx.clearRect(0, 0, width, height); // Clear the canvas
+
+                                    // Calculate and draw points
+                                    ////var numberOfPoints = 100;
+                                    for (var i = 0; i < lidarScan2DData.numberOfPoints; i++) {
+                                        // Calculate the angle in radians for each point
+                                        ////var angle = (i * 2 * Math.PI) / numberOfPoints;
+
+                                        // Use polar coordinates formula to find the x, y position
+                                        var x = centerX + lidarScan2DData.ranges[i] * Math.cos(lidarScan2DData.angleInDegrees);
+                                        var y = centerY + lidarScan2DData.ranges[i]  * Math.sin(lidarScan2DData.angleInDegrees);
+
+                                        // Draw a small filled circle (point) at the calculated coordinates
+                                        ctx.beginPath();
+                                        // The arc method is used to draw a full circle for each point
+                                        ctx.arc(x, y, pointSize / 2, 0, 2 * Math.PI, false);
+                                        ctx.fillStyle = pointColor;
+                                        ctx.fill();
                                     }
                                 }
                             }
+
+                            // Rectangle {
+                            //     anchors.centerIn: parent
+                            //     width: rectScanArea.width * 0.93
+                            //     height: rectScanArea.height * 0.93
+                            //     color: "#F7F7DA"
+                            //     border {
+                            //         width: 1
+                            //         color: "black"
+                            //     }
+                            //     Text {
+                            //         anchors.centerIn: parent
+                            //         text: qsTr("THIS IS THE SCAN AREA")
+                            //         font {
+                            //             bold: true
+                            //             pointSize: 20
+                            //         }
+                            //     }
+                            // }
 
 
                             Text {
@@ -632,6 +699,16 @@ ApplicationWindow {
         if (!quitConfirmed) {
             close.accepted = false; // Prevent the window from closing immediately
             confirmQuitDialog.open(); // Open the confirmation dialog
+        }
+    }
+
+    Connections {
+        target: lidarScan2DData // The context property name
+        // Signal handler format: on<SignalName>
+        onScanDataChanged: {
+            //console.log("QML received signal:", message, value)
+            //statusText.text = "Received: " + message + " with value " + value
+            scanCanvas.requestPaint();
         }
     }
 }

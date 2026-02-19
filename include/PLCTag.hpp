@@ -37,16 +37,16 @@ public:
     void setRedPilotLight(bool newValue);
 
     bool getAmberPilotLight() const;
-    void setAmberPilotLight(bool newAmberPilotLight);
+    void setAmberPilotLight(bool newValue);
 
     bool getGreenPilotLight() const;
-    void setGreenPilotLight(bool newGreenPilotLight);
+    void setGreenPilotLight(bool newValue);
 
     bool getBluePilotLight() const;
-    void setBluePilotLight(bool newBluePilotLight);
+    void setBluePilotLight(bool newValue);
 
     bool getWhitePilotLight() const;
-    void setWhitePilotLight(bool newWhitePilotLight);
+    void setWhitePilotLight(bool newValue);
 
 
 signals:

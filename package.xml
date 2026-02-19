@@ -10,9 +10,11 @@
   <buildtool_depend>ament_cmake</buildtool_depend>
 
   <depend>rclcpp</depend>
-  <depend>std_msgs</depend>
   <depend>example_interfaces</depend>
   <depend>pluginlib</depend>
+  <depend>laser_geometry</depend>
+  <depend>sensor_msgs</depend>
+  <depend>tf2_ros</depend>
   
   
   <build_depend>qt6-base-dev</build_depend>
