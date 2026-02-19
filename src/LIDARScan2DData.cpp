@@ -23,6 +23,12 @@ float LIDARScan2DData::getAngleInDegrees() const
     return _angleInDegrees;
 }
 
+
+float LIDARScan2DData::getAngleInRadians() const
+{
+    return _angleInRadians;
+}
+
 std::vector<float> LIDARScan2DData::getRanges() const
 {
     return _ranges;
@@ -36,14 +42,15 @@ void LIDARScan2DData::setScanData(sensor_msgs::msg::LaserScan::SharedPtr scanDat
     _numberOfPoints = scanData->scan_time / scanData->time_increment;
     _ranges = scanData->ranges;
 
-    printf("[SLLIDAR INFO]: I heard a laser scan %s[%d]:\n", scanData->header.frame_id.c_str(), _numberOfPoints);
-    printf("[SLLIDAR INFO]: angle_range : [%f, %f]\n", RAD2DEG(scanData->angle_min),
-           RAD2DEG(scanData->angle_max));
+    //printf("[SLLIDAR INFO]: I heard a laser scan %s[%d]:\n", scanData->header.frame_id.c_str(), _numberOfPoints);
+    //printf("[SLLIDAR INFO]: angle_range : [%f, %f]\n", RAD2DEG(scanData->angle_min),
+           //RAD2DEG(scanData->angle_max));
 
     for (uint32_t i = 0; i < _numberOfPoints; i++) {
-        _angleInDegrees = RAD2DEG(scanData->angle_min + scanData->angle_increment * i);
+        _angleInRadians = (scanData->angle_min + scanData->angle_increment * i);
+        _angleInDegrees = RAD2DEG(_angleInRadians);
 
-        printf("[SLLIDAR INFO]: angle-distance : [%f, %f]\n", _angleInDegrees, _ranges[i]);
+        printf("[SLLIDAR INFO]: angle-distance : [%f, %f, %f]\n", _angleInRadians, _angleInDegrees, _ranges[i]);
     }
 
     emit scanDataChanged();

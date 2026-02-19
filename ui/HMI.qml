@@ -342,16 +342,17 @@ ApplicationWindow {
                                 width: rectScanArea.width * 0.93
                                 height: rectScanArea.height * 0.93
                                 // Define the center and radius of the circle
-                                property int centerX: width / 2
-                                property int centerY: height / 2
-                                property int radius: height * 0.4
+                                property int centerX: scanCanvas.width / 2
+                                property int centerY: scanCanvas.height / 2
+                                property int radius: scanCanvas.height * 1
                                 // Define the size and color for the points
                                 property int pointSize: 4
                                 property color pointColor: "green"
 
                                 onPaint: {
                                     var ctx = getContext("2d");
-                                    ctx.clearRect(0, 0, width, height); // Clear the canvas
+                                    ctx.clearRect(0, 0, scanCanvas.width, scanCanvas.height); // Clear the canvas
+                                    console.log("lidarScan2DData.numberOfPoints " + lidarScan2DData.numberOfPoints)
 
                                     // Calculate and draw points
                                     ////var numberOfPoints = 100;
@@ -360,8 +361,8 @@ ApplicationWindow {
                                         ////var angle = (i * 2 * Math.PI) / numberOfPoints;
 
                                         // Use polar coordinates formula to find the x, y position
-                                        var x = centerX + lidarScan2DData.ranges[i] * Math.cos(lidarScan2DData.angleInDegrees);
-                                        var y = centerY + lidarScan2DData.ranges[i]  * Math.sin(lidarScan2DData.angleInDegrees);
+                                        var x = centerX + (radius * (lidarScan2DData.ranges[i]/6) * Math.cos(lidarScan2DData.angleInRadians));
+                                        var y = centerY + (radius * (lidarScan2DData.ranges[i]/6) * Math.sin(lidarScan2DData.angleInRadians));
 
                                         // Draw a small filled circle (point) at the calculated coordinates
                                         ctx.beginPath();
