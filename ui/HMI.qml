@@ -11,10 +11,10 @@ import Example 1.0
 
 ApplicationWindow {
     id: applicationWindow
-    width: 1400
-    minimumWidth: 1400
-    height: 850
-    minimumHeight: 850
+    width: 1550
+    minimumWidth: 1550
+    height: 800
+    minimumHeight: 800
     color: "#E0DFDB"
     visible: true
     title: qsTr("Humber Polytechnic: Electromechanical Engineering Technology: Winter 2026 Capstone: Group 6: LIDAR Mapping HMI")
