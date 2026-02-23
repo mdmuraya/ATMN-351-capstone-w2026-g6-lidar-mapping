@@ -11,8 +11,8 @@ import Example 1.0
 
 ApplicationWindow {
     id: applicationWindow
-    width: 1600
-    minimumWidth: 1600
+    width: 1400
+    minimumWidth: 1400
     height: 850
     minimumHeight: 850
     color: "#E0DFDB"
