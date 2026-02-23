@@ -11,7 +11,7 @@ class PLCTag : public QObject
     Q_PROPERTY(QString plcAddress READ getPLCAddress)
     Q_PROPERTY(bool plcIsConnected READ getPLCIsConnected WRITE setPLCIsConnected NOTIFY plcIsConnectedChanged)
     Q_PROPERTY(bool runState READ getRunState WRITE setRunState NOTIFY runStateChanged)
-    Q_PROPERTY(bool runStateAUTO READ getRunStateAUTO WRITE setRunStateAUTO NOTIFY runStateAUTOChanged)
+    Q_PROPERTY(bool runStateSCAN READ getRunStateSCAN WRITE setRunStateSCAN NOTIFY runStateSCANChanged)
     Q_PROPERTY(bool redPilotLight READ getRedPilotLight WRITE setRedPilotLight NOTIFY redPilotLightChanged)
     Q_PROPERTY(bool amberPilotLight READ getAmberPilotLight WRITE setAmberPilotLight NOTIFY amberPilotLightChanged)
     Q_PROPERTY(bool greenPilotLight READ getGreenPilotLight WRITE setGreenPilotLight NOTIFY greenPilotLightChanged)
@@ -30,8 +30,8 @@ public:
     bool getRunState() const;
     void setRunState(bool newValue);
 
-    bool getRunStateAUTO() const;
-    void setRunStateAUTO(bool newValue);
+    bool getRunStateSCAN() const;
+    void setRunStateSCAN(bool newValue);
 
     bool getRedPilotLight() const;
     void setRedPilotLight(bool newValue);
@@ -52,7 +52,7 @@ public:
 signals:
     void plcIsConnectedChanged(bool newValue);
     void runStateChanged(bool newValue);
-    void runStateAUTOChanged(bool newValue);
+    void runStateSCANChanged(bool newValue);
     void redPilotLightChanged(bool newValue);
     void amberPilotLightChanged(bool newValue);
     void greenPilotLightChanged(bool newValue);
@@ -78,7 +78,7 @@ private:
     QHash<QString, int32_t> _PLCTags;
     bool _plcIsConnected = false;
     bool _runState = false;
-    bool _runStateAUTO = false;
+    bool _runStateSCAN = false;
     bool _redPilotLight = false;
     bool _amberPilotLight = false;
     bool _greenPilotLight = false;

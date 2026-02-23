@@ -3,6 +3,7 @@
 #include <QQmlContext>
 
 #include "include/HMIBackendHelper.hpp"
+#include "mycustompointcloud.h"
 
 int main(int argc, char *argv[])
 {
@@ -11,6 +12,8 @@ int main(int argc, char *argv[])
     qInfo() << "***************************************";
 
     QGuiApplication qGuiApplication(argc, argv);
+
+    qmlRegisterType<MyCustomPointCloud>("Example", 1, 0, "CustomGeometry");
 
     HMIBackendHelper hmiBackendHelper;
 

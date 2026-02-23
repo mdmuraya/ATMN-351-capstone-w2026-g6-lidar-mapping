@@ -179,8 +179,8 @@ void PLCTag::getPLCStatus()
         synchronizer.addFuture(future);
 
         future = QtConcurrent::run([this]() {
-            bool boolTagValue =getRunStateAUTO();
-            readPLCTag(_plcProgramName + "PHY_Selector_Run_AUTO", boolTagValue) ? setRunStateAUTO(boolTagValue) : (void)0; // do nothiing if false
+            bool boolTagValue =getRunStateSCAN();
+            readPLCTag(_plcProgramName + "PHY_Selector_Run_SCAN", boolTagValue) ? setRunStateSCAN(boolTagValue) : (void)0; // do nothiing if false
         });
         synchronizer.addFuture(future);
 
@@ -258,18 +258,18 @@ void PLCTag::setRunState(bool newValue)
     emit runStateChanged(_runState); // Emit signal to trigger QML updates
 }
 
-bool PLCTag::getRunStateAUTO() const
+bool PLCTag::getRunStateSCAN() const
 {
-    return _runStateAUTO;
+    return _runStateSCAN;
 }
 
-void PLCTag::setRunStateAUTO(bool newValue)
+void PLCTag::setRunStateSCAN(bool newValue)
 {
-    if (_runStateAUTO == newValue)
+    if (_runStateSCAN == newValue)
         return;
 
-    _runStateAUTO = newValue;
-    emit runStateAUTOChanged(_runStateAUTO); // Emit signal to trigger QML updates
+    _runStateSCAN = newValue;
+    emit runStateSCANChanged(_runStateSCAN); // Emit signal to trigger QML updates
 }
 
 void PLCTag::startButtonPressedChanged(bool pressed)

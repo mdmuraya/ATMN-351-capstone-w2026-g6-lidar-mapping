@@ -4,11 +4,14 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import QtQuick.Dialogs
 import QtQuick.Controls.Material
+import QtQuick3D.Helpers
+import Example 1.0
+
 //import LIDARMapping
 
 ApplicationWindow {
     id: applicationWindow
-    width: 1960
+    width: 1600
     minimumWidth: 1600
     height: 850
     minimumHeight: 850
@@ -38,31 +41,7 @@ ApplicationWindow {
             anchors.leftMargin: 10
 
             RowLayout {
-                /*
-                Frame {
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-                    Layout.horizontalStretchFactor: 1
-
-                    Rectangle {
-                        anchors.fill: parent
-                        Text {
-                            id: controlPanelTextId
-                            anchors.fill: parent
-                            rotation: 270
-                            text: qsTr("CONTROL PANEL")
-                            horizontalAlignment: Text.AlignHCenter
-                            verticalAlignment: Text.AlignVCenter
-                            font {
-                                bold: true
-                                pointSize: 12
-                            }
-                        }
-                    }
-                }
-                */
-
-                ColumnLayout {
+                 ColumnLayout {
                     id: columnLayoutControls
                     Layout.horizontalStretchFactor: 1
 
@@ -147,7 +126,7 @@ ApplicationWindow {
                             Rectangle {
                                 width: 150
                                 height: 50
-                                color: plcTag?.plcIsConnected ? (plcTag?.runStateAUTO ? "green" : "blue") : "transparent"
+                                color: plcTag?.plcIsConnected ? (plcTag?.runStateSCAN ? "green" : "blue") : "transparent"
                                 radius: 5 // Optional: adds rounded corners
                                 Layout.fillWidth: true
                                 border {
@@ -155,7 +134,7 @@ ApplicationWindow {
                                     color: "black"
                                 }
                                 Text {
-                                    text: plcTag?.plcIsConnected ? (plcTag?.runStateAUTO ? "AUTO" : "JOG") : "??"
+                                    text: plcTag?.plcIsConnected ? (plcTag?.runStateSCAN ? "SCAN" : "JOG") : "??"
                                     color: plcTag?.plcIsConnected ? "white" : "black"
                                     font.bold: true
                                     font.pointSize: 12
@@ -233,7 +212,7 @@ ApplicationWindow {
                             anchors.fill: parent
                             RoundButton {
                                 text: qsTr("\u2B9D") //move left
-                                enabled: ((plcTag?.runState ?? false) && (!(plcTag?.runStateAUTO ?? false)))
+                                enabled: ((plcTag?.runState ?? false) && (!(plcTag?.runStateSCAN ?? false)))
                                 Material.background: Material.Blue
                                 Layout.alignment: Qt.AlignHCenter
                                 onPressedChanged: {
@@ -246,7 +225,7 @@ ApplicationWindow {
                                 Item { Layout.fillWidth: true }
                                 RoundButton {
                                     text: qsTr("\u2B9C") //move back
-                                    enabled: ((plcTag?.runState ?? false) && (!(plcTag?.runStateAUTO ?? false)))
+                                    enabled: ((plcTag?.runState ?? false) && (!(plcTag?.runStateSCAN ?? false)))
                                     Material.background: Material.Blue
                                     onPressedChanged: {
                                         plcTag?.moveBackButtonPressedChanged(pressed);
@@ -255,7 +234,7 @@ ApplicationWindow {
 
                                 RoundButton {
                                     text: qsTr("HOME")
-                                    enabled: ((plcTag?.runState ?? false) && (!(plcTag?.runStateAUTO ?? false)))
+                                    enabled: ((plcTag?.runState ?? false) && (!(plcTag?.runStateSCAN ?? false)))
                                     Material.background: Material.Blue
                                     Material.foreground: "white"
                                     font {
@@ -269,7 +248,7 @@ ApplicationWindow {
 
                                 RoundButton {
                                     text: qsTr("\u2B9E") //move forward
-                                    enabled: ((plcTag?.runState ?? false) && (!(plcTag?.runStateAUTO ?? false)))
+                                    enabled: ((plcTag?.runState ?? false) && (!(plcTag?.runStateSCAN ?? false)))
                                     Material.background: Material.Blue
                                     onPressedChanged: {
                                         plcTag?.moveForwardButtonPressedChanged(pressed);
@@ -280,7 +259,7 @@ ApplicationWindow {
 
                             RoundButton {
                                 text: qsTr("\u2B9F") //move right
-                                enabled: ((plcTag?.runState ?? false) && (!(plcTag?.runStateAUTO ?? false)))
+                                enabled: ((plcTag?.runState ?? false) && (!(plcTag?.runStateSCAN ?? false)))
                                 Material.background: Material.Blue
                                 Layout.alignment: Qt.AlignHCenter
                                 onPressedChanged: {
@@ -307,91 +286,131 @@ ApplicationWindow {
                             Layout.fillHeight: true
                             color: "transparent"
 
-                            // View3D {
-                            //         anchors.fill: parent
 
-                            //         PerspectiveCamera {
-                            //             z: 200
-                            //         }
 
-                            //         DirectionalLight {
 
-                            //         }
 
-                            //         Model {
-                            //             source: "#Cube"
-                            //             materials: DefaultMaterial {}
-                            //             eulerRotation.y: 20
-                            //             Node {
-                            //                 // Empty spatial Node to give 2D item
-                            //                 // a position in 3D space
-                            //                 y: 100
-                            //                 Text {
-                            //                     // 2D content in 3D
-                            //                     anchors.centerIn: parent
-                            //                     text: "Cube Label"
-                            //                     color: "white"
-                            //                 }
-                            //             }
-                            //         }
-                            //     }
 
-                            Canvas {
-                                id: scanCanvas
+
+
+
+                            Rectangle {
                                 anchors.centerIn: parent
                                 width: rectScanArea.width * 0.93
                                 height: rectScanArea.height * 0.93
-                                // Define the center and radius of the circle
-                                property int centerX: scanCanvas.width / 2
-                                property int centerY: scanCanvas.height / 2
-                                property int radius: scanCanvas.height * 1
-                                // Define the size and color for the points
-                                property int pointSize: 4
-                                property color pointColor: "green"
+                                color: "#F7F7DA"
+                                border {
+                                    width: 1
+                                    color: "black"
+                                }
 
-                                onPaint: {
-                                    var ctx = getContext("2d");
-                                    ctx.clearRect(0, 0, scanCanvas.width, scanCanvas.height); // Clear the canvas
-                                    console.log("lidarScan2DData.numberOfPoints " + lidarScan2DData.numberOfPoints)
+                                // View3D {
+                                //     anchors.fill: parent
 
-                                    // Calculate and draw points
-                                    ////var numberOfPoints = 100;
-                                    for (var i = 0; i < lidarScan2DData.numberOfPoints; i++) {
-                                        // Calculate the angle in radians for each point
-                                        ////var angle = (i * 2 * Math.PI) / numberOfPoints;
+                                //     PerspectiveCamera {
+                                //         id: camera
+                                //         z: 200
+                                //     }
 
-                                        // Use polar coordinates formula to find the x, y position
-                                        var x = centerX + (radius * (lidarScan2DData.ranges[i]/6) * Math.cos(lidarScan2DData.angleInRadians));
-                                        var y = centerY + (radius * (lidarScan2DData.ranges[i]/6) * Math.sin(lidarScan2DData.angleInRadians));
+                                //     DirectionalLight {
 
-                                        // Draw a small filled circle (point) at the calculated coordinates
-                                        ctx.beginPath();
-                                        // The arc method is used to draw a full circle for each point
-                                        ctx.arc(x, y, pointSize / 2, 0, 2 * Math.PI, false);
-                                        ctx.fillStyle = pointColor;
-                                        ctx.fill();
+                                //     }
+
+                                //     Model {
+                                //         source: "#Cylinder"
+                                //         materials: DefaultMaterial {}
+                                //         eulerRotation.y: 20
+                                //         Node {
+                                //             // Empty spatial Node to give 2D item
+                                //             // a position in 3D space
+                                //             y: 75
+                                //             Text {
+                                //                 // 2D content in 3D
+                                //                 anchors.centerIn: parent
+                                //                 text: "THIS IS THE SCAN AREA"
+                                //                 color: "black"
+                                //             }
+                                //         }
+                                //     }
+                                // }
+                                // WasdController{
+                                //     controlledObject: camera
+                                // }
+
+
+
+                                View3D {
+                                    anchors.fill: parent
+                                    environment: SceneEnvironment {
+                                        lightProbe: Texture{
+                                            ///source: "imageTesto.hdr"
+                                        }
+                                        backgroundMode: SceneEnvironment.SkyBox
+                                    }
+
+                                    PerspectiveCamera {
+                                        id: camera
+                                        z: 300
+                                    }
+
+                                    DirectionalLight {
+                                        eulerRotation.x: -30
+                                    }
+
+                                    Model {
+                                        geometry: CustomGeometry{
+                                            //property string name: ""
+                                            //name: "mypointcloud"
+                                            count: 10000000
+                                        }
+                                        materials: PrincipledMaterial{
+                                        pointSize: 10
+                                        }
                                     }
                                 }
-                            }
 
-                            // Rectangle {
-                            //     anchors.centerIn: parent
-                            //     width: rectScanArea.width * 0.93
-                            //     height: rectScanArea.height * 0.93
-                            //     color: "#F7F7DA"
-                            //     border {
-                            //         width: 1
-                            //         color: "black"
-                            //     }
-                            //     Text {
-                            //         anchors.centerIn: parent
-                            //         text: qsTr("THIS IS THE SCAN AREA")
-                            //         font {
-                            //             bold: true
-                            //             pointSize: 20
-                            //         }
-                            //     }
-                            // }
+
+
+
+
+    //                             Canvas {
+    //                                 id: scanCanvas
+    //                                 anchors.centerIn: parent
+    //                                 width: rectScanArea.width * 0.93
+    //                                 height: rectScanArea.height * 0.93
+    //                                 // Define the center and radius of the circle
+    //                                 property int centerX: scanCanvas.width / 2
+    //                                 property int centerY: scanCanvas.height / 2
+    //                                 property int radius: scanCanvas.height * 1
+    //                                 // Define the size and color for the points
+    //                                 property int pointSize: 4
+    //                                 property color pointColor: "green"
+
+    //                                 onPaint: {
+    //                                     var ctx = getContext("2d");
+    //                                     ctx.clearRect(0, 0, scanCanvas.width, scanCanvas.height); // Clear the canvas
+    //                                     console.log("lidarScan2DData.numberOfPoints " + lidarScan2DData.numberOfPoints)
+
+    //                                     // Calculate and draw points
+    //                                     ////var numberOfPoints = 100;
+    //                                     for (var i = 0; i < lidarScan2DData.numberOfPoints; i++) {
+    //                                         // Calculate the angle in radians for each point
+    //                                         ////var angle = (i * 2 * Math.PI) / numberOfPoints;
+
+    //                                         // Use polar coordinates formula to find the x, y position
+    //                                         var x = centerX + (radius * (lidarScan2DData.ranges[i]/6) * Math.cos(lidarScan2DData.angleInRadians));
+    //                                         var y = centerY + (radius * lidarScan2DData.ranges[i] * Math.sin(lidarScan2DData.angleInRadians));
+
+    //                                         // Draw a small filled circle (point) at the calculated coordinates
+    //                                         ctx.beginPath();
+    //                                         // The arc method is used to draw a full circle for each point
+    //                                         ctx.arc(x, y, pointSize / 2, 0, 2 * Math.PI, false);
+    //                                         ctx.fillStyle = pointColor;
+    //                                         ctx.fill();
+    //                                     }
+    //                                 }
+    //                             }
+                            }
 
 
                             Text {
@@ -464,7 +483,7 @@ ApplicationWindow {
                             id: progressBar
                             from: 0.0      // Minimum value
                             to: 100.0     // Maximum value
-                            value: 50.36    // Current value
+                            //value: 50.36    // Current value
                             Layout.fillWidth: true
 
                             // Define the background (the progress bar track)
@@ -487,10 +506,24 @@ ApplicationWindow {
                                     width: progressBar.visualPosition * parent.width
                                     height: parent.height
                                     radius: 5
-                                    color: "#4CAF50" // Green fill color
+                                    color: "steelblue"//"#4CAF50" // Green fill color
 
                                 }
                             }
+
+                            NumberAnimation on value {
+                                from: progressBar.from
+                                to: progressBar.to
+                                duration:  5000
+                                running: ((plcTag?.runState ?? false) && (plcTag?.runStateSCAN ?? false))
+                            }
+
+                            onValueChanged: {
+                                    if (value === to && to > 0) {
+                                        plcTag?.stopButtonPressedChanged(true)
+                                        plcTag?.stopButtonPressedChanged(false)
+                                    }
+                                }
                         }
 
                         // Add a Text label to show the percentage value
