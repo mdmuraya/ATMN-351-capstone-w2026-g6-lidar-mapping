@@ -11,8 +11,8 @@ import Example 1.0
 
 ApplicationWindow {
     id: applicationWindow
-    width: 1700
-    minimumWidth: 1600
+    width: 1300
+    minimumWidth: 1300
     height: 800
     minimumHeight: 800
     color: "#E0DFDB"
@@ -692,23 +692,20 @@ ApplicationWindow {
         }
     }
 
-    // footer: Rectangle {
-    //     height: 30
-    //     color: "gray"
+
+    // footer: ToolBar {
+    //     contentHeight: 20
+    //     // Use a Label for text that follows the app's style and font inheritance
+    //     Label {
+    //         text: applicationName
+    //         font.bold: true
+    //         font.pointSize: 12
+    //         anchors.centerIn: parent
+    //         // Center the text horizontally and vertically within the Label's bounds
+    //         horizontalAlignment: Text.AlignHCenter
+    //         verticalAlignment: Text.AlignVCenter
+    //     }
     // }
-    footer: ToolBar {
-        contentHeight: 20
-        // Use a Label for text that follows the app's style and font inheritance
-        Label {
-            text: applicationName
-            font.bold: true
-            font.pointSize: 12
-            anchors.centerIn: parent
-            // Center the text horizontally and vertically within the Label's bounds
-            horizontalAlignment: Text.AlignHCenter
-            verticalAlignment: Text.AlignVCenter
-        }
-    }
 
 
     MessageDialog {
