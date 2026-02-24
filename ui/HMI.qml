@@ -11,24 +11,33 @@ import Example 1.0
 
 ApplicationWindow {
     id: applicationWindow
-    width: 1600
+    width: 1700
     minimumWidth: 1600
     height: 800
     minimumHeight: 800
     color: "#E0DFDB"
     visible: true
-    title: qsTr("Humber Polytechnic: Electromechanical Engineering Technology: Winter 2026 Capstone: Group 6: LIDAR Mapping HMI")
+    title: qsTr("Humber Polytechnic: Electromechanical Engineering Technology: Winter 2026 Capstone: Group 6")
     //flags: Qt.Window | Qt.FramelessWindowHint
 
     // A flag to indicate if the closing action is confirmned
     property bool quitConfirmed: false
+    property string applicationName: qsTr("LIDAR Mapping HMI")
 
-    /*
-    header: Rectangle {
-        height: 60
-        color: "gray"
+
+    header: ToolBar {
+        contentHeight: 20
+        // Use a Label for text that follows the app's style and font inheritance
+        Label {
+            text: applicationName
+            font.bold: true
+            font.pointSize: 12
+            anchors.centerIn: parent
+            // Center the text horizontally and vertically within the Label's bounds
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+        }
     }
-    */
 
 
     contentData: Rectangle {
@@ -98,16 +107,34 @@ ApplicationWindow {
                     }
 
                     GroupBox {
-                        title: "System State"
+                        title: "System Mode/ State"
                         enabled: plcTag?.plcIsConnected
                         Layout.fillWidth: true
-                        ColumnLayout {
+                        RowLayout {
                             anchors.fill: parent
 
-                            //Item { Layout.fillWidth: true }
-
+                            //Item { Layout.fillWidth: true }                            
                             Rectangle {
-                                width: 150
+                                //width: 150
+                                height: 35
+                                color: plcTag?.plcIsConnected ? (plcTag?.runStateSCAN ? "green" : "blue") : "transparent"
+                                radius: 5 // Optional: adds rounded corners
+                                Layout.fillWidth: true
+                                border {
+                                    width: 1
+                                    color: "black"
+                                }
+                                Text {
+                                    text: plcTag?.plcIsConnected ? (plcTag?.runStateSCAN ? "SCAN" : "JOG") : "??"
+                                    color: plcTag?.plcIsConnected ? "white" : "black"
+                                    font.bold: true
+                                    font.pointSize: 12
+                                    anchors.centerIn: parent // Centers the text within the rectangle
+                                }
+                            }
+                            Rectangle {
+                                //width: 150
+                                //Layout.fillWidth: true
                                 height: 35
                                 color: plcTag?.plcIsConnected ? (plcTag?.runState ? "green" : "transparent") : "transparent"
                                 radius: 5 // Optional: adds rounded corners
@@ -125,28 +152,12 @@ ApplicationWindow {
                                     anchors.centerIn: parent // Centers the text within the rectangle
                                 }
                             }
-                            Rectangle {
-                                width: 150
-                                height: 35
-                                color: plcTag?.plcIsConnected ? (plcTag?.runStateSCAN ? "green" : "blue") : "transparent"
-                                radius: 5 // Optional: adds rounded corners
-                                Layout.fillWidth: true
-                                border {
-                                    width: 1
-                                    color: "black"
-                                }
-                                Text {
-                                    text: plcTag?.plcIsConnected ? (plcTag?.runStateSCAN ? "SCAN" : "JOG") : "??"
-                                    color: plcTag?.plcIsConnected ? "white" : "black"
-                                    font.bold: true
-                                    font.pointSize: 12
-                                    anchors.centerIn: parent // Centers the text within the rectangle
-                                }
-                            }
                             //Item { Layout.fillWidth: true }
 
                         }
                     }
+
+                    Item { Layout.fillHeight: true }
 
                     GroupBox {
                         title: "Actions"
@@ -204,7 +215,7 @@ ApplicationWindow {
                         }
                     }
 
-                    Item { Layout.fillHeight: true }
+
 
                     GroupBox {
                         title: "Jog"
@@ -270,6 +281,24 @@ ApplicationWindow {
                             }
                         }
                     }
+                    GroupBox {
+                        Layout.fillWidth: true
+                        ColumnLayout {
+                            anchors.fill: parent
+                            Button {
+                                text: qsTr("Quit HMI Application")
+                                Material.background: "black"
+                                Material.foreground: "white"
+                                font {
+                                    bold: true
+                                    pointSize: 12
+                                }
+                                onClicked: {
+                                    confirmQuitDialog.open()
+                                }
+                            }
+                        }
+                    }
                 }
 
                 GroupBox {
@@ -287,14 +316,6 @@ ApplicationWindow {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
                             color: "transparent"
-
-
-
-
-
-
-
-
 
                             Rectangle {
                                 anchors.centerIn: parent
@@ -531,7 +552,8 @@ ApplicationWindow {
                         // Add a Text label to show the percentage value
                         Text {
                             text: progressBar.value.toFixed(0) + "% complete"
-                            font.pointSize: 12
+                            font.bold: true
+                            font.pointSize: 15
                             horizontalAlignment: Text.AlignHCenter
                             Layout.fillWidth: true
                         }
@@ -578,88 +600,116 @@ ApplicationWindow {
                         title: "Indicator Lights"
                         enabled: plcTag?.plcIsConnected
                         Layout.fillWidth: true
-                        Layout.fillHeight: true
+                        //Layout.fillHeight: true
                         ColumnLayout {
-                            anchors.fill: parent
                             PilotLight {
                                 id: redPilotLight
                                 Layout.alignment: Qt.AlignHCenter
-                                borderColor: "red"
+                                color: "red"
+                                text: "RED"
                                 isOn: plcTag?.redPilotLight ?? false
                             }
                             PilotLight {
                                 id: amberPilotLight
                                 Layout.alignment: Qt.AlignHCenter
-                                borderColor: "#FFBF00"
+                                color: "#FFBF00"
+                                text: "AMBER"
                                 isOn: plcTag?.amberPilotLight ?? false
                             }
                             PilotLight {
                                 id: greenPilotLight
                                 Layout.alignment: Qt.AlignHCenter
-                                borderColor: "green"
+                                color: "green"
+                                text: "GREEN"
                                 isOn: plcTag?.greenPilotLight ?? false
                             }
                             PilotLight {
                                 id: bluePilotLight
                                 Layout.alignment: Qt.AlignHCenter
-                                borderColor: "blue"
+                                color: "blue"
+                                text: "BLUE"
                                 isOn: plcTag?.bluePilotLight ?? false
                             }
                             PilotLight {
                                 id: whitePilotLight
                                 Layout.alignment: Qt.AlignHCenter
-                                borderColor: "white"
+                                color: "white"
+                                text: "WHITE"
                                 isOn: plcTag?.whitePilotLight ?? false
                             }
                         }
                     }
+                    GroupBox {
+                        title: ""
+                        enabled: plcTag?.plcIsConnected
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        ColumnLayout {
+                            anchors.fill: parent
+
+                        }
+
+                    }
 
                 }
             }
 
 
-            Item { Layout.fillHeight: true }
+            // Item { Layout.fillHeight: true }
 
-            RowLayout {
-                Item {
-                   Layout.fillWidth: true
+            // RowLayout {
+            //     Item {
+            //        Layout.fillWidth: true
 
-                   Rectangle {
-                        // Position the line
-                        // Set width and height to create a line
-                        width: parent.width // Stretches across the parent width
-                        height: 1            // Makes it a thin horizontal line
-                        color: "black"        // Set the line color
-                    }
-                }
-            }
+            //        Rectangle {
+            //             // Position the line
+            //             // Set width and height to create a line
+            //             width: parent.width // Stretches across the parent width
+            //             height: 1            // Makes it a thin horizontal line
+            //             color: "black"        // Set the line color
+            //         }
+            //     }
+            // }
 
-            RowLayout {
-                Item { Layout.fillWidth: true }
+            // RowLayout {
+            //     Item { Layout.fillWidth: true }
 
-                Button {
-                    text: qsTr("Quit HMI Application")
-                    Material.background: "black"
-                    Material.foreground: "white"
-                    font {
-                        bold: true
-                        pointSize: 12
-                    }
-                    onClicked: {
-                        confirmQuitDialog.open()
-                    }
-                }
+            //     Button {
+            //         text: qsTr("Quit HMI Application")
+            //         Material.background: "black"
+            //         Material.foreground: "white"
+            //         font {
+            //             bold: true
+            //             pointSize: 12
+            //         }
+            //         onClicked: {
+            //             confirmQuitDialog.open()
+            //         }
+            //     }
 
-            }
+            // }
 
         }
     }
-    /*
-    footer: Rectangle {
-        height: 40
-        color: "gray"
+
+    // footer: Rectangle {
+    //     height: 30
+    //     color: "gray"
+    // }
+    footer: ToolBar {
+        contentHeight: 20
+        // Use a Label for text that follows the app's style and font inheritance
+        Label {
+            text: applicationName
+            font.bold: true
+            font.pointSize: 12
+            anchors.centerIn: parent
+            // Center the text horizontally and vertically within the Label's bounds
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+        }
     }
-    */
+
 
     MessageDialog {
         id: confirmQuitDialog
