@@ -47,9 +47,9 @@ class HMIBackendHelper : public QObject
         //tf2_ros::TransformListener _TransformListener;
         std::unique_ptr<PLCTag> _PLCTag = nullptr;
         std::unique_ptr<LIDARScan2DData> _LIDARScan2DData = nullptr;
-        QString _plcAddress = "192.168.50.105";//"10.111.42.192";//
-        QString _plcType = "micro800";//controllogix //micro800
-        QString _plcProgramName = ""; //"Program:MainProgram.";
+        QString _plcAddress = "192.168.50.102";//"10.111.42.192";//
+        QString _plcType = "controllogix";//controllogix //micro800
+        QString _plcProgramName = "Program:MainProgram."; //"Program:MainProgram.";
 
         void initializeROS2();
         void setupConnections();
