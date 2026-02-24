@@ -16,6 +16,8 @@
 #include "sensor_msgs/msg/point_cloud2.hpp"
 #include "laser_geometry/laser_geometry.hpp"
 //#include "tf2_ros/tf2_ros/transform_listener.hpp"
+//sudo nmcli connection modify "Wired connection 1" ipv4.method manual ipv4.address 192.168.0.8/24
+
 
 #include "include/PLCTag.hpp"
 #include "include/LIDARScan2DData.hpp"
