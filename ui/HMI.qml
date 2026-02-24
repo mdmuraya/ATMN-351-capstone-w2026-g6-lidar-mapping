@@ -11,10 +11,10 @@ import Example 1.0
 
 ApplicationWindow {
     id: applicationWindow
-    width: 1300
-    minimumWidth: 1300
-    height: 800
-    minimumHeight: 800
+    width: 1800
+    minimumWidth: 1800
+    height: 960
+    minimumHeight: 960
     color: "#E0DFDB"
     visible: true
     title: qsTr("Humber Polytechnic: Electromechanical Engineering Technology: Winter 2026 Capstone: Group 6")
@@ -693,19 +693,19 @@ ApplicationWindow {
     }
 
 
-    // footer: ToolBar {
-    //     contentHeight: 20
-    //     // Use a Label for text that follows the app's style and font inheritance
-    //     Label {
-    //         text: applicationName
-    //         font.bold: true
-    //         font.pointSize: 12
-    //         anchors.centerIn: parent
-    //         // Center the text horizontally and vertically within the Label's bounds
-    //         horizontalAlignment: Text.AlignHCenter
-    //         verticalAlignment: Text.AlignVCenter
-    //     }
-    // }
+    footer: ToolBar {
+        contentHeight: 20
+        // Use a Label for text that follows the app's style and font inheritance
+        Label {
+            text: applicationName
+            font.bold: true
+            font.pointSize: 12
+            anchors.centerIn: parent
+            // Center the text horizontally and vertically within the Label's bounds
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+        }
+    }
 
 
     MessageDialog {
