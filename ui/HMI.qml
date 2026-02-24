@@ -13,8 +13,8 @@ ApplicationWindow {
     id: applicationWindow
     width: 1800
     minimumWidth: 1800
-    height: 960
-    minimumHeight: 960
+    height: 860
+    minimumHeight: 860
     color: "#E0DFDB"
     visible: true
     title: qsTr("Humber Polytechnic: Electromechanical Engineering Technology: Winter 2026 Capstone: Group 6")
