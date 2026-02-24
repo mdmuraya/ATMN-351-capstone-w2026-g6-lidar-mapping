@@ -79,6 +79,7 @@ if(USE_QT)
        URI ${PROJECT_NAME}
        QML_FILES ui/HMI.qml
        QML_FILES ui/PilotLight.qml
+       QML_FILES ui/SafetyIndicator.qml
        QML_FILES ui/DirectionButton.qml
        SOURCES include/HMIBackendHelper.hpp src/HMIBackendHelper.cpp
     )

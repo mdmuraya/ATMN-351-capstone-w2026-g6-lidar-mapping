@@ -2,15 +2,24 @@ import QtQuick
 import QtQuick.Layouts
 
 Item {
-    id: pilotLightId
-    width: containerRectangleId.width
-    height: containerRectangleId.height
-    property alias color: containerRectangleId.color
-    property alias radius:  containerRectangleId.radius
-    property alias borderColor: containerRectangleId.border.color
+    id: pilotLight
+    width: containerRectangle.width
+    height: containerRectangle.height
+    property alias color: containerRectangle.color
+    property alias radius:  containerRectangle.radius
+    property alias borderColor: containerRectangle.border.color
+    property bool isOn: false
+
+    states: [
+        State {
+            name: "onState"
+            when: pilotLight.isOn
+            PropertyChanges { target: containerRectangle; color: borderColor }
+        }
+    ]
 
     Rectangle {
-        id: containerRectangleId
+        id: containerRectangle
         width: (radius * 2)
         height: width
         radius: 25

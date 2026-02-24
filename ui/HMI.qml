@@ -11,10 +11,10 @@ import Example 1.0
 
 ApplicationWindow {
     id: applicationWindow
-    width: 1500
-    minimumWidth: 1500
-    height: 750
-    minimumHeight: 750
+    width: 1600
+    minimumWidth: 1600
+    height: 800
+    minimumHeight: 800
     color: "#E0DFDB"
     visible: true
     title: qsTr("Humber Polytechnic: Electromechanical Engineering Technology: Winter 2026 Capstone: Group 6: LIDAR Mapping HMI")
@@ -29,6 +29,8 @@ ApplicationWindow {
         color: "gray"
     }
     */
+
+
     contentData: Rectangle {
         id: contentDataContainer
         anchors.fill: parent
@@ -65,7 +67,7 @@ ApplicationWindow {
                                     color: "black"
                                 }
                                 Text {
-                                    text: "Address: " + plcTag?.plcAddress
+                                    text:  qsTr("Address: %1").arg(plcTag?.plcAddress)//"Address: " + plcTag?.plcAddress
                                     color: "white"
                                     font.bold: true
                                     font.pointSize: 12
@@ -549,61 +551,23 @@ ApplicationWindow {
                         ColumnLayout {
                             anchors.fill: parent
 
-                            //Item { Layout.fillWidth: true }
-
-                            Rectangle {
-                                width: 150
-                                height: 50
-                                color: plcTag?.plcIsConnected ? (plcTag?.runState ? "red" : "transparent") : "transparent"
-                                radius: 5 // Optional: adds rounded corners
-                                Layout.fillWidth: true
-                                border {
-                                    width: 1
-                                    color: "red"
-                                }
-                                Text {
-                                    text: plcTag?.plcIsConnected ? "E-STOP" : "?? E-STOP"
-                                    color: plcTag?.plcIsConnected ? (plcTag?.runState ? "white" : "black") : "black"
-                                    font.bold: true
-                                    font.pointSize: 12
-                                    anchors.centerIn: parent // Centers the text within the rectangle
-                                }
+                            SafetyIndicator {
+                                id: eStopSafetyIndicator
+                                Layout.alignment: Qt.AlignHCenter
+                                displayText: plcTag?.plcIsConnected ? "E-STOP" : "?? E-STOP"
+                                isActivated: plcTag?.plcIsConnected && plcTag?.runState
                             }
-                            Rectangle {
-                                width: 150
-                                height: 50
-                                color: plcTag?.plcIsConnected ? (plcTag?.runState ? "red" : "transparent") : "transparent"
-                                radius: 5 // Optional: adds rounded corners
-                                Layout.fillWidth: true
-                                border {
-                                    width: 1
-                                    color: "red"
-                                }
-                                Text {
-                                    text: plcTag?.plcIsConnected ? "LIGHT CURTAIN" : "?? LIGHT CURTAIN"
-                                    color: plcTag?.plcIsConnected ? (plcTag?.runState ? "white" : "black") : "black"
-                                    font.bold: true
-                                    font.pointSize: 12
-                                    anchors.centerIn: parent // Centers the text within the rectangle
-                                }
+                            SafetyIndicator {
+                                id: lightCurtainSafetyIndicator
+                                Layout.alignment: Qt.AlignHCenter
+                                displayText: plcTag?.plcIsConnected ? "LIGHT CURTAIN" : "?? LIGHT CURTAIN"
+                                isActivated: plcTag?.plcIsConnected && plcTag?.runState
                             }
-                            Rectangle {
-                                width: 150
-                                height: 50
-                                color: plcTag?.plcIsConnected ? (plcTag?.runState ? "red" : "transparent") : "transparent"
-                                radius: 5 // Optional: adds rounded corners
-                                Layout.fillWidth: true
-                                border {
-                                    width: 1
-                                    color: "red"
-                                }
-                                Text {
-                                    text: plcTag?.plcIsConnected ? "AREA SCANNER" : "?? AREA SCANNER"
-                                    color: plcTag?.plcIsConnected ? (plcTag?.runState ? "white" : "black") : "black"
-                                    font.bold: true
-                                    font.pointSize: 12
-                                    anchors.centerIn: parent // Centers the text within the rectangle
-                                }
+                            SafetyIndicator {
+                                id: areaScannerSafetyIndicator
+                                Layout.alignment: Qt.AlignHCenter
+                                displayText: plcTag?.plcIsConnected ? "AREA SCANNER" : "?? AREA SCANNER"
+                                isActivated: plcTag?.plcIsConnected && plcTag?.runState
                             }
                             //Item { Layout.fillWidth: true }
 
@@ -621,46 +585,31 @@ ApplicationWindow {
                                 id: redPilotLight
                                 Layout.alignment: Qt.AlignHCenter
                                 borderColor: "red"
-                                Binding on color {
-                                    value: redPilotLight.borderColor
-                                    when: plcTag?.redPilotLight ?? false
-                                }
+                                isOn: plcTag?.redPilotLight ?? false
                             }
                             PilotLight {
                                 id: amberPilotLight
                                 Layout.alignment: Qt.AlignHCenter
                                 borderColor: "#FFBF00"
-                                Binding on color {
-                                    value: amberPilotLight.borderColor
-                                    when: plcTag?.amberPilotLight ?? false
-                                }
+                                isOn: plcTag?.amberPilotLight ?? false
                             }
                             PilotLight {
                                 id: greenPilotLight
                                 Layout.alignment: Qt.AlignHCenter
                                 borderColor: "green"
-                                Binding on color {
-                                    value: greenPilotLight.borderColor
-                                    when: plcTag?.greenPilotLight ?? false
-                                }
+                                isOn: plcTag?.greenPilotLight ?? false
                             }
                             PilotLight {
                                 id: bluePilotLight
                                 Layout.alignment: Qt.AlignHCenter
                                 borderColor: "blue"
-                                Binding on color {
-                                    value: bluePilotLight.borderColor
-                                    when: plcTag?.bluePilotLight ?? false
-                                }
+                                isOn: plcTag?.bluePilotLight ?? false
                             }
                             PilotLight {
                                 id: whitePilotLight
                                 Layout.alignment: Qt.AlignHCenter
                                 borderColor: "white"
-                                Binding on color {
-                                    value: greenPilotLight.borderColor
-                                    when: plcTag?.whitePilotLight ?? false
-                                }
+                                isOn: plcTag?.whitePilotLight ?? false
                             }
                         }
                     }

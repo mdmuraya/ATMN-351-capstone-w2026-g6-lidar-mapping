@@ -8,7 +8,7 @@
 class PLCTag : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QString plcAddress READ getPLCAddress)
+    Q_PROPERTY(QString plcAddress READ getPLCAddress NOTIFY plcAddressChanged)
     Q_PROPERTY(bool plcIsConnected READ getPLCIsConnected WRITE setPLCIsConnected NOTIFY plcIsConnectedChanged)
     Q_PROPERTY(bool runState READ getRunState WRITE setRunState NOTIFY runStateChanged)
     Q_PROPERTY(bool runStateSCAN READ getRunStateSCAN WRITE setRunStateSCAN NOTIFY runStateSCANChanged)
@@ -50,6 +50,7 @@ public:
 
 
 signals:
+    void plcAddressChanged(bool newValue);
     void plcIsConnectedChanged(bool newValue);
     void runStateChanged(bool newValue);
     void runStateSCANChanged(bool newValue);
