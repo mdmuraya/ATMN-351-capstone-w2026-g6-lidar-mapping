@@ -58,7 +58,7 @@ ApplicationWindow {
 
                             Rectangle {
                                 width: 150
-                                height: 50
+                                height: 35
                                 color: "black"
                                 radius: 5 // Optional: adds rounded corners
                                 Layout.fillWidth: true
@@ -76,7 +76,7 @@ ApplicationWindow {
                             }
                             Rectangle {
                                 width: 150
-                                height: 50
+                                height: 35
                                 color: plcTag?.plcIsConnected ? "green" : "transparent"
                                 radius: 5 // Optional: adds rounded corners
                                 Layout.fillWidth: true
@@ -108,7 +108,7 @@ ApplicationWindow {
 
                             Rectangle {
                                 width: 150
-                                height: 50
+                                height: 35
                                 color: plcTag?.plcIsConnected ? (plcTag?.runState ? "green" : "transparent") : "transparent"
                                 radius: 5 // Optional: adds rounded corners
                                 Layout.fillWidth: true
@@ -127,7 +127,7 @@ ApplicationWindow {
                             }
                             Rectangle {
                                 width: 150
-                                height: 50
+                                height: 35
                                 color: plcTag?.plcIsConnected ? (plcTag?.runStateSCAN ? "green" : "blue") : "transparent"
                                 radius: 5 // Optional: adds rounded corners
                                 Layout.fillWidth: true
