@@ -11,12 +11,13 @@ import Example 1.0
 
 ApplicationWindow {
     id: applicationWindow
-    width: 1800
+    //width: 800//1800
     minimumWidth: 1800
-    height: 860
+    //height: 600//860
     minimumHeight: 860
     color: "#E0DFDB"
     visible: true
+    visibility: Window.Maximized
     title: qsTr("Humber Polytechnic: Electromechanical Engineering Technology: Winter 2026 Capstone: Group 6")
     //flags: Qt.Window | Qt.FramelessWindowHint
 
@@ -59,7 +60,7 @@ ApplicationWindow {
                     GroupBox {
                         title: "PLC Connection"
                         enabled: plcTag?.plcIsConnected
-                        Layout.fillWidth: true                        
+                        Layout.fillWidth: true
                         ColumnLayout {
                             anchors.fill: parent
 
@@ -113,7 +114,7 @@ ApplicationWindow {
                         RowLayout {
                             anchors.fill: parent
 
-                            //Item { Layout.fillWidth: true }                            
+                            //Item { Layout.fillWidth: true }
                             Rectangle {
                                 //width: 150
                                 height: 35
