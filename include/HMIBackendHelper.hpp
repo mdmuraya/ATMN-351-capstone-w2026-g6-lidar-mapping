@@ -26,15 +26,29 @@ class HMIBackendHelper : public QObject
 {
     Q_OBJECT
     //QML_ELEMENT
-    //QML_SINGLETON    
+    //QML_SINGLETON
+    Q_PROPERTY(QString plcAddress READ getPLCAddress WRITE setPLCAddress NOTIFY plcAddressChanged)
+    Q_PROPERTY(QString plcFamilyId READ getPLCFamilyId WRITE setPLCFamilyId NOTIFY plcFamilyIdChanged)
+    Q_PROPERTY(QVariantList listOfPLCFamily READ getListOfPLCFamily NOTIFY listOfPLCFamilyChanged)
     public:
         explicit HMIBackendHelper(QObject *parent = nullptr);
         ~HMIBackendHelper();
         bool initialize(QGuiApplication *qGuiApplication);
+        QVariantList  getListOfPLCFamily() const;
+        QString getPLCAddress() const;
+        QString getPLCFamilyId() const;
+        void setPLCAddress(QString newValue);
+        void setPLCFamilyId(QString newValue);
+
     signals:
         void timeToPublish();
+        void listOfPLCFamilyChanged();
+        void plcAddressChanged(QString newValue);
+        void plcFamilyIdChanged(QString newValue);
+
     public slots:
-        void onConnectToPLC();
+        void connectToPLC();
+        void disconnectFromPLC();
 
     private:
         QQmlApplicationEngine _QQmlApplicationEngine;
@@ -47,8 +61,9 @@ class HMIBackendHelper : public QObject
         //tf2_ros::TransformListener _TransformListener;
         std::unique_ptr<PLCTag> _PLCTag = nullptr;
         std::unique_ptr<LIDARScan2DData> _LIDARScan2DData = nullptr;
-        QString _plcAddress = "192.168.50.102";//"10.111.42.192";//
-        QString _plcType = "controllogix";//controllogix //micro800
+        QVariantList _listOfPLCFamily = {};
+        QString _plcAddress = "";//"192.168.50.102";//"10.111.42.192";//
+        QString _plcFamilyId = "";//"controllogix";//controllogix //micro800
         QString _plcProgramName = "Program:MainProgram."; //"Program:MainProgram.";
 
         void initializeROS2();

@@ -62,13 +62,24 @@ bool HMIBackendHelper::initialize(QGuiApplication *qGuiApplication)
         []() { QCoreApplication::exit(-1); },
         Qt::QueuedConnection);
 
-    _PLCTag = std::make_unique<PLCTag>(this, _plcAddress, _plcType, _plcProgramName);
+    QMap<QString, QString> plcFamily;
+    plcFamily.insert("controllogix", "Control Logix / Compact Logix" );
+    plcFamily.insert("micro800", "Micro 800" );
+
+    for (auto it = plcFamily.constBegin(); it != plcFamily.constEnd(); ++it) {
+        QVariantMap itemMap;
+        itemMap["plcFamilyId"] = it.key();
+        itemMap["plcFamilyDescription"] = it.value();
+        _listOfPLCFamily.append(itemMap);
+    }
+
+    _PLCTag = std::make_unique<PLCTag>(this);
     _LIDARScan2DData = std::make_unique<LIDARScan2DData>(this);
     _ros2PublishTimer = std::make_shared<QTimer>();
 
     _QQmlApplicationEngine.rootContext()->setContextProperty("plcTag", _PLCTag.get());
     _QQmlApplicationEngine.rootContext()->setContextProperty("lidarScan2DData", _LIDARScan2DData.get());
-    _QQmlApplicationEngine.rootContext()->setContextProperty("HMIBackendHelper", this);
+    _QQmlApplicationEngine.rootContext()->setContextProperty("hmiBackendHelper", this);
 
     _QQmlApplicationEngine.loadFromModule("LIDAR_Mapping", "HMI");
 
@@ -84,10 +95,72 @@ bool HMIBackendHelper::initialize(QGuiApplication *qGuiApplication)
     return true;
 }
 
-void HMIBackendHelper::onConnectToPLC()
+QVariantList HMIBackendHelper::getListOfPLCFamily() const
 {
-
+    return _listOfPLCFamily;
 }
+
+QString HMIBackendHelper::getPLCAddress() const
+{
+    return _plcAddress;
+}
+
+QString HMIBackendHelper::getPLCFamilyId() const
+{
+    return _plcFamilyId;
+}
+
+void HMIBackendHelper::setPLCAddress(QString newValue)
+{
+    if (_plcAddress == newValue)
+        return;
+
+    _plcAddress = newValue;
+    emit plcAddressChanged(_plcAddress); // Emit signal to trigger QML updates
+}
+
+void HMIBackendHelper::setPLCFamilyId(QString newValue)
+{
+    if (_plcFamilyId == newValue)
+        return;
+
+    _plcFamilyId = newValue;
+    emit plcFamilyIdChanged(_plcFamilyId); // Emit signal to trigger QML updates
+}
+
+void HMIBackendHelper::connectToPLC()
+{
+    qDebug() << "HMIBackendHelper::onConnectToPLC()" << QDateTime::currentDateTime();
+
+    qDebug() << "HMIBackendHelper::onConnectToPLC()" << _plcFamilyId  << _plcAddress;
+
+    if(_plcFamilyId == "controllogix")
+    {
+        _plcProgramName = "Program:MainProgram.";
+    }
+    else if(_plcFamilyId == "micro800")
+    {
+        _plcProgramName = "";
+    }
+    else
+    {
+        _plcProgramName = "";
+    }
+    _PLCTag->connectToPLC(_plcAddress, _plcFamilyId, _plcProgramName);
+}
+
+
+void HMIBackendHelper::disconnectFromPLC()
+{
+    qDebug() << "HMIBackendHelper::disconnectFromPLC()" << QDateTime::currentDateTime();
+
+    qDebug() << "HMIBackendHelper::disconnectFromPLC()" << _plcFamilyId  << _plcAddress;
+
+
+    _PLCTag->disconnectFromPLC();
+}
+
+
 
 void HMIBackendHelper::initializeROS2()
 {

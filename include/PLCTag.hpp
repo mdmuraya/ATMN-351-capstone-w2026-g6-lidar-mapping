@@ -4,11 +4,17 @@
 #include <QObject>
 #include <QHash>
 
+#include "PLCFamily.hpp"
+
+
 
 class PLCTag : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QString plcAddress READ getPLCAddress NOTIFY plcAddressChanged)
+    //Q_PROPERTY(QList<PLCFamily> listOfPLCFamily READ getListOfPLCFamily)
+
+
+    //Q_PROPERTY(QString plcAddress READ getPLCAddress NOTIFY plcAddressChanged)
     Q_PROPERTY(bool plcIsConnected READ getPLCIsConnected WRITE setPLCIsConnected NOTIFY plcIsConnectedChanged)
     Q_PROPERTY(bool runState READ getRunState WRITE setRunState NOTIFY runStateChanged)
     Q_PROPERTY(bool runStateSCAN READ getRunStateSCAN WRITE setRunStateSCAN NOTIFY runStateSCANChanged)
@@ -19,10 +25,11 @@ class PLCTag : public QObject
     Q_PROPERTY(bool whitePilotLight READ getWhitePilotLight WRITE setWhitePilotLight NOTIFY whitePilotLightChanged)
 
 public:
-    explicit PLCTag(QObject *parent = nullptr, QString plcAddress = "", QString plcType = "", QString plcProgramName = "");
+    explicit PLCTag(QObject *paren);
     ~PLCTag();
 
-    QString getPLCAddress() const;
+    void connectToPLC(QString plcAddress, QString plcFamilyId, QString plcProgramName);
+    void disconnectFromPLC();
 
     bool getPLCIsConnected() const;
     void setPLCIsConnected(bool newValue);
@@ -50,7 +57,7 @@ public:
 
 
 signals:
-    void plcAddressChanged(bool newValue);
+    //void plcAddressChanged(bool newValue);
     void plcIsConnectedChanged(bool newValue);
     void runStateChanged(bool newValue);
     void runStateSCANChanged(bool newValue);
@@ -61,7 +68,6 @@ signals:
     void whitePilotLightChanged(bool newValue);
 
 public slots:
-    void onConnectToPLC();
     void startButtonPressedChanged(bool pressed);
     void stopButtonPressedChanged(bool pressed);
     void resetButtonPressedChanged(bool pressed);
@@ -73,8 +79,9 @@ public slots:
 
 private:
     std::unique_ptr<QTimer> _getPLCStatusTimer = nullptr;
+
     QString _plcAddress = "";
-    QString _plcType = "";
+    QString _plcFamilyId = "";
     QString _plcProgramName = "";    
     QHash<QString, int32_t> _PLCTags;
     bool _plcIsConnected = false;

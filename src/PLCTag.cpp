@@ -7,14 +7,9 @@
 #include "include/PLCTag.hpp"
 #include "lib/libplctag/include/libplctag.h"
 
-PLCTag::PLCTag(QObject *parent, QString plcAddress, QString plcType, QString plcProgramName) :
-    QObject (parent),
-    _plcAddress(plcAddress),
-    _plcType(plcType),
-    _plcProgramName(plcProgramName)
+PLCTag::PLCTag(QObject *parent) : QObject (parent)
 {
-    qDebug() << QString("PLCTag::PLCTag()") << _plcAddress << _plcType << _plcProgramName;
-
+    qDebug() << "PLCTag::PLCTag()";
 
     _getPLCStatusTimer = std::make_unique<QTimer>();
 
@@ -22,8 +17,6 @@ PLCTag::PLCTag(QObject *parent, QString plcAddress, QString plcType, QString plc
         getPLCStatus();
     });
 
-    int frequency = 5; //number of times per second
-    _getPLCStatusTimer->start((1000/frequency));
 }
 
 PLCTag::~PLCTag()
@@ -38,6 +31,22 @@ PLCTag::~PLCTag()
     _PLCTags.clear();
 }
 
+void PLCTag::connectToPLC(QString plcAddress, QString plcFamilyId, QString plcProgramName)
+{
+    _plcAddress = plcAddress;
+    _plcFamilyId = plcFamilyId;
+    _plcProgramName =plcProgramName;
+
+    int frequency = 5; //number of times per second
+    _getPLCStatusTimer->start((1000/frequency));
+}
+
+void PLCTag::disconnectFromPLC()
+{
+    setPLCIsConnected(false);
+    _getPLCStatusTimer->stop();
+}
+
 int32_t PLCTag::getPLCTag(QString tagName)
 {
     qDebug() << "PLCTag::getPLCTag()" << QDateTime::currentDateTime();
@@ -50,8 +59,8 @@ int32_t PLCTag::getPLCTag(QString tagName)
     qDebug() << "Key " << tagName << " NOT FOUND. Creating...";
 
 
-    QString plcPath = (QString::compare(_plcType, "controllogix", Qt::CaseInsensitive) == 0 ) ? QString("&path=1,0") : "";
-    QString plcTagPath = QString("protocol=ab-eip&gateway=") + _plcAddress + plcPath + QString("&plc=") + _plcType + QString("&elem_size=1&elem_count=1&name=") + tagName;
+    QString plcPath = (QString::compare(_plcFamilyId, "controllogix", Qt::CaseInsensitive) == 0 ) ? QString("&path=1,0") : "";
+    QString plcTagPath = QString("protocol=ab-eip&gateway=") + _plcAddress + plcPath + QString("&plc=") + _plcFamilyId + QString("&elem_size=1&elem_count=1&name=") + tagName;
 
     int32_t tag = plc_tag_create(plcTagPath.toUtf8().constData(), 5000 /*wait for a maximumm of 5 seconds*/);
 
@@ -225,10 +234,10 @@ void PLCTag::getPLCStatus()
 }
 
 
-QString PLCTag::getPLCAddress() const
-{
-    return _plcAddress;
-}
+// QString PLCTag::getPLCAddress() const
+// {
+//     return _plcAddress;
+// }
 
 bool PLCTag::getPLCIsConnected() const
 {
@@ -241,7 +250,7 @@ void PLCTag::setPLCIsConnected(bool newValue)
         return;
 
     _plcIsConnected = newValue;
-    emit plcIsConnectedChanged(_runState); // Emit signal to trigger QML updates
+    emit plcIsConnectedChanged(_plcIsConnected); // Emit signal to trigger QML updates
 }
 
 bool PLCTag::getRunState() const
@@ -397,11 +406,6 @@ void PLCTag::setWhitePilotLight(bool newValue)
 
     _whitePilotLight = newValue;
     emit whitePilotLightChanged(_whitePilotLight);
-}
-
-void PLCTag::onConnectToPLC()
-{
-
 }
 
 /*
