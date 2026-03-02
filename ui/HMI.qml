@@ -19,6 +19,8 @@ ApplicationWindow {
     visible: true
     visibility: Window.Maximized
     title: qsTr("Humber Polytechnic: Electromechanical Engineering Technology: Winter 2026 Capstone: Group 6")
+    flags: Qt.Window | Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowCloseButtonHint
+
     //flags: Qt.Window | Qt.FramelessWindowHint
 
     // A flag to indicate if the closing action is confirmned
