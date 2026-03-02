@@ -11,7 +11,7 @@ import Example 1.0
 
 ApplicationWindow {
     id: applicationWindow
-    //width: 800//1800
+    //width: 1800
     minimumWidth: 1800
     //height: 600//860
     minimumHeight: 860
