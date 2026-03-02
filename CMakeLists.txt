@@ -1,3 +1,9 @@
+# /home/atmn-351/Command to run the LIDAR_Mapping_HMI_App.txt
+# /home/atmn-351/ROS2_Workspaces/LIDAR_Mapping_Workspace/src/LIDAR_Mapping/build/Desktop_Qt_6_10_2-Debug/LIDAR_Mapping_HMI&
+
+# ros2 launch sick_scan_xd sick_multiscan.launch.py hostname:=192.168.50.101 udp_receiver_ip:=192.168.50.103
+# pointcloud2 topic = /cloud_unstructured_fullframe
+
 cmake_minimum_required(VERSION 4.2)
 
 project(LIDAR_Mapping VERSION 0.1 LANGUAGES CXX)
