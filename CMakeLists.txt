@@ -1,7 +1,7 @@
 # /home/atmn-351/Command to run the LIDAR_Mapping_HMI_App.txt
 # /home/atmn-351/ROS2_Workspaces/LIDAR_Mapping_Workspace/src/LIDAR_Mapping/build/Desktop_Qt_6_10_2-Debug/LIDAR_Mapping_HMI&
 
-# ros2 launch sick_scan_xd sick_multiscan.launch.py hostname:=192.168.50.101 udp_receiver_ip:=192.168.50.103
+# ros2 launch sick_scan_xd sick_multiscan.launch.py hostname:=192.168.50.101 udp_receiver_ip:=192.168.50.105
 # pointcloud2 topic = /cloud_unstructured_fullframe
 
 cmake_minimum_required(VERSION 4.2)
@@ -44,6 +44,13 @@ endif()
 
 find_package(Qt6 6.8 REQUIRED COMPONENTS Quick QuickControls2 Quick3D Concurrent)
 
+# If you are using PCL directly in C++, you may also need: find_package(MPI REQUIRED)
+#find_package(VTK REQUIRED)
+#find_package(PCL REQUIRED)
+include_directories(${PCL_INCLUDE_DIRS})
+link_directories(${PCL_LIBRARY_DIRS})
+add_definitions(${PCL_DEFINITIONS})
+
 if(Qt6_FOUND)
     message(STATUS "Qt6 found. Building with Qt support.")
     set(USE_QT ON)
@@ -59,6 +66,9 @@ if(USE_ROS)
     find_package(laser_geometry REQUIRED)
     find_package(sensor_msgs REQUIRED)
     find_package(tf2_ros REQUIRED)
+    #find_package(pcl_conversions REQUIRED)
+    #find_package(pcl_ros REQUIRED)
+
 endif()
 
 if(USE_QT)
@@ -108,11 +118,13 @@ if(USE_QT)
                 ${laser_geometry_TARGETS}
                 ${sensor_msgs_TARGETS}
                 ${tf2_ros_TARGETS}
+                ${pcl_conversions_TARGETS}
+                ${pcl_ros_TARGETS}
         )        
     endif()
 
     target_link_libraries(${PROJECT_NAME}_HMI
-        PRIVATE Qt6::Quick Qt6::Quick3D Qt6::Concurrent libplctag
+        PRIVATE Qt6::Quick Qt6::Quick3D Qt6::Concurrent  libplctag #MPI::MPI_C ${PCL_LIBRARIES}
     )
 
     if(WIN32)

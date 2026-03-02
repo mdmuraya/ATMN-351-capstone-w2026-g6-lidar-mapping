@@ -3,6 +3,10 @@
 #include <QDebug>
 #include <QVariantList>
 
+//#include "<pcl_conversions/pcl_conversions.h"
+//#include "pcl/point_cloud.h"
+//#include "pcl/point_types.h"
+
 #include "lib/libplctag/include/libplctag.h"
 #include "include/HMIBackendHelper.hpp"
 
@@ -172,6 +176,12 @@ void HMIBackendHelper::initializeROS2()
         "scan",
         rclcpp::SensorDataQoS(),
         std::bind(&HMIBackendHelper::scanCallBack, this, std::placeholders::_1));
+
+    _ros2SICKMultiscan100LIDARScannerSubscription = _ros2Node->create_subscription<sensor_msgs::msg::PointCloud2>(
+        "/cloud_unstructured_fullframe",
+        10,
+        std::bind(&HMIBackendHelper::scanSICKMultiscan100CallBack, this, std::placeholders::_1));
+
 }
 
 void HMIBackendHelper::setupConnections()
@@ -211,6 +221,14 @@ void HMIBackendHelper::scanCallBack(sensor_msgs::msg::LaserScan::SharedPtr scan)
     //     printf("[SLLIDAR INFO]: angle-distance : [%f, %f]\n", degree, scan->ranges[i]);
     // }
 
+}
+
+void HMIBackendHelper::scanSICKMultiscan100CallBack(const std::shared_ptr<sensor_msgs::msg::PointCloud2> msg)
+{
+    qDebug() << "HMIBackendHelper::scanSICKMultiscan100CallBack()";
+
+
+    qDebug() << "sick_scan_ros2_example: pointcloud message received, size " << msg-> width << " x " << msg->height;
 }
 
 void HMIBackendHelper::startTimers()

@@ -4,10 +4,6 @@
 #include <QObject>
 #include <QHash>
 
-#include "PLCFamily.hpp"
-
-
-
 class PLCTag : public QObject
 {
     Q_OBJECT

@@ -674,7 +674,14 @@ ApplicationWindow {
                             Layout.fillWidth: true
                             //Layout.fillHeight: true
                             ColumnLayout {
+
                                 PilotLight {
+                                    id: greenPilotLight
+                                    Layout.alignment: Qt.AlignHCenter
+                                    color: "green"
+                                    text: "GREEN"
+                                    isOn: plcTag?.greenPilotLight ?? false
+                                }PilotLight {
                                     id: redPilotLight
                                     Layout.alignment: Qt.AlignHCenter
                                     color: "red"
@@ -688,13 +695,7 @@ ApplicationWindow {
                                     text: "AMBER"
                                     isOn: plcTag?.amberPilotLight ?? false
                                 }
-                                PilotLight {
-                                    id: greenPilotLight
-                                    Layout.alignment: Qt.AlignHCenter
-                                    color: "green"
-                                    text: "GREEN"
-                                    isOn: plcTag?.greenPilotLight ?? false
-                                }
+
                                 PilotLight {
                                     id: bluePilotLight
                                     Layout.alignment: Qt.AlignHCenter

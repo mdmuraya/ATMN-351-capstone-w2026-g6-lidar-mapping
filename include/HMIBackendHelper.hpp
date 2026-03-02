@@ -10,6 +10,7 @@
 #include <QHash>
 #include <math.h>
 
+
 #include "rclcpp/rclcpp.hpp"
 #include "example_interfaces/msg/string.hpp"
 #include "sensor_msgs/msg/laser_scan.hpp"
@@ -57,6 +58,7 @@ class HMIBackendHelper : public QObject
         rclcpp::Node::SharedPtr _ros2Node = nullptr;
         rclcpp::Publisher<example_interfaces::msg::String>::SharedPtr _ros2Publisher = nullptr;
         rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr _ros2LIDARScannerSubscription = nullptr;
+        rclcpp::Subscription<sensor_msgs::msg::PointCloud2>::SharedPtr _ros2SICKMultiscan100LIDARScannerSubscription = nullptr;
         laser_geometry::LaserProjection _LaserProjection;
         //tf2_ros::TransformListener _TransformListener;
         std::unique_ptr<PLCTag> _PLCTag = nullptr;
@@ -71,6 +73,7 @@ class HMIBackendHelper : public QObject
         void startTimers();
         void publishToROS2();
         void scanCallBack(sensor_msgs::msg::LaserScan::SharedPtr scan);
+        void scanSICKMultiscan100CallBack(const std::shared_ptr<sensor_msgs::msg::PointCloud2> msg);
 };
 
 #endif // HMIBACKENDHELPER_H
