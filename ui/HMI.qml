@@ -12,7 +12,7 @@ import Example 1.0
 ApplicationWindow {
     id: applicationWindow
     //width: 800//1800
-    minimumWidth: 1000
+    minimumWidth: 1800
     //height: 600//860
     minimumHeight: 860
     color: "#E0DFDB"
@@ -288,7 +288,7 @@ ApplicationWindow {
                             ColumnLayout {
                                 anchors.fill: parent
                                 Button {
-                                    text: qsTr("Quit HMI Application")
+                                    text: qsTr("Quit HMI App")
                                     Material.background: "black"
                                     Material.foreground: "white"
                                     font {
