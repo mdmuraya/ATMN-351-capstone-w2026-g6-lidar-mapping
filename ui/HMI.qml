@@ -288,7 +288,7 @@ ApplicationWindow {
                             ColumnLayout {
                                 anchors.fill: parent
                                 Button {
-                                    text: qsTr("Quit HMI App")
+                                    text: qsTr("Quit HMI Application")
                                     Material.background: "black"
                                     Material.foreground: "white"
                                     font {
