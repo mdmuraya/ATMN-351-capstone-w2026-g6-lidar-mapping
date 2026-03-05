@@ -11,6 +11,8 @@
 //#include "pcl/point_types.h"
 
 #include "lib/libplctag/include/libplctag.h"
+#include "include/LIDARScanPointCloud2Geometry.hpp"
+#include "mycustompointcloud.h"
 #include "include/HMIBackendHelper.hpp"
 
 
@@ -66,7 +68,11 @@ bool HMIBackendHelper::initialize(QGuiApplication *qGuiApplication)
         &_QQmlApplicationEngine,
         &QQmlApplicationEngine::objectCreationFailed,
         qGuiApplication,
-        []() { QCoreApplication::exit(-1); },
+        []()
+        {
+            qDebug() << "HERE QQmlApplicationEngine::objectCreationFailed";
+            QCoreApplication::exit(-1);
+        },
         Qt::QueuedConnection);
 
     QMap<QString, QString> plcFamily;
@@ -82,7 +88,10 @@ bool HMIBackendHelper::initialize(QGuiApplication *qGuiApplication)
 
     _PLCTag = std::make_unique<PLCTag>(this);
     _LIDARScan2DData = std::make_unique<LIDARScan2DData>(this);
+    _LIDARScanPointCloud2Geometry = std::make_unique<LIDARScanPointCloud2Geometry>(qGuiApplication);
     _ros2PublishTimer = std::make_shared<QTimer>();
+
+    qmlRegisterSingletonInstance<LIDARScanPointCloud2Geometry>("LIDARScanPointCloud2", 1, 0, "LIDARScanPointCloud2Geometry",_LIDARScanPointCloud2Geometry.get());
 
     _QQmlApplicationEngine.rootContext()->setContextProperty("plcTag", _PLCTag.get());
     _QQmlApplicationEngine.rootContext()->setContextProperty("lidarScan2DData", _LIDARScan2DData.get());
@@ -226,6 +235,32 @@ void HMIBackendHelper::scanCallBack(sensor_msgs::msg::LaserScan::SharedPtr scan)
         // Do something with x, y, z
         qDebug() << "SLLIDAR: PointCloud2 message XYZ: x=" << x << ", y=" << y << ", z=" << z;
     }
+
+     QByteArray vertexData = QByteArray(reinterpret_cast<const char*>(pointCloud2.data.data()),
+               static_cast<int>(pointCloud2.data.size()));
+
+    _LIDARScanPointCloud2Geometry->updateData(vertexData);
+
+    // _LIDARScanPointCloud2.clear();
+
+    // // QByteArray vertexData;
+    // // vertexData.resize(sizeof(float) * 3 * m_count);
+    // // float *p = reinterpret_cast<float *>(vertexData.data());
+
+    // // for (int var = 0; var < m_count; ++var)
+    // // {
+    // //     const QVector3D vertex = generateRandomVertex(-300.0f, 300.0f);
+    // //     *p++ = vertex.x();
+    // //     *p++ = vertex.y();
+    // //     *p++ = vertex.z();
+    // // }
+
+    // _LIDARScanPointCloud2.setVertexData(vertexData);
+    // _LIDARScanPointCloud2.setPrimitiveType(QQuick3DGeometry::PrimitiveType::Points);
+    // _LIDARScanPointCloud2.setStride(3 * sizeof(float));
+    // _LIDARScanPointCloud2.addAttribute(QQuick3DGeometry::Attribute::PositionSemantic,
+    //              0,
+    //              QQuick3DGeometry::Attribute::F32Type);
 
     //_LIDARScan2DData->setScanData(scan);
 

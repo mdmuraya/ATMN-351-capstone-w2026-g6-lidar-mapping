@@ -4,6 +4,9 @@
 # ros2 launch sick_scan_xd sick_multiscan.launch.py hostname:=192.168.50.101 udp_receiver_ip:=192.168.50.105
 # pointcloud2 topic = /cloud_unstructured_fullframe
 
+# sudo chmod 777 /dev/ttyUSB0
+# ros2 launch rplidar_ros view_rplidar_c1_launch.py
+
 cmake_minimum_required(VERSION 4.2)
 
 project(LIDAR_Mapping VERSION 0.1 LANGUAGES CXX)

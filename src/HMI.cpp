@@ -4,6 +4,7 @@
 
 #include "include/HMIBackendHelper.hpp"
 #include "mycustompointcloud.h"
+#include "include/LIDARScanPointCloud2Geometry.hpp"
 
 int main(int argc, char *argv[])
 {
@@ -13,7 +14,7 @@ int main(int argc, char *argv[])
 
     QGuiApplication qGuiApplication(argc, argv);
 
-    qmlRegisterType<MyCustomPointCloud>("Example", 1, 0, "CustomGeometry");
+    //qmlRegisterType<MyCustomPointCloud>("Example", 1, 0, "CustomGeometry");
 
     HMIBackendHelper hmiBackendHelper;
 

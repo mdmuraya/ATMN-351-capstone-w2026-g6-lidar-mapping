@@ -23,6 +23,7 @@
 
 #include "include/PLCTag.hpp"
 #include "include/LIDARScan2DData.hpp"
+#include "include/LIDARScanPointCloud2Geometry.hpp"
 
 class HMIBackendHelper : public QObject
 {
@@ -64,6 +65,8 @@ class HMIBackendHelper : public QObject
         //tf2_ros::TransformListener _TransformListener;
         std::unique_ptr<PLCTag> _PLCTag = nullptr;
         std::unique_ptr<LIDARScan2DData> _LIDARScan2DData = nullptr;
+        std::unique_ptr<LIDARScanPointCloud2Geometry> _LIDARScanPointCloud2Geometry = nullptr;
+
         QVariantList _listOfPLCFamily = {};
         QString _plcAddress = "";//"192.168.50.102";//"10.111.42.192";//
         QString _plcFamilyId = "";//"controllogix";//controllogix //micro800

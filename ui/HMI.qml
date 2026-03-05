@@ -5,7 +5,7 @@ import QtQuick.Layouts
 import QtQuick.Dialogs
 import QtQuick.Controls.Material
 import QtQuick3D.Helpers
-import Example 1.0
+import LIDARScanPointCloud2 1.0
 
 //import LIDARMapping
 
@@ -384,12 +384,8 @@ ApplicationWindow {
                                             eulerRotation.x: -30
                                         }
 
-                                        Model {
-                                            geometry: CustomGeometry{
-                                                //property string name: ""
-                                                //name: "mypointcloud"
-                                                count: 10000000
-                                            }
+                                        Model { //LIDARScanPointCloud2Geometry //hmiBackendHelper.lidarScanPointCloud2
+                                            geometry: LIDARScanPointCloud2Geometry
                                             materials: PrincipledMaterial{
                                             pointSize: 10
                                             }
