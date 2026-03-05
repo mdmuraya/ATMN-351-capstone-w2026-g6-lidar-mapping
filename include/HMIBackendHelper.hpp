@@ -15,6 +15,7 @@
 #include "example_interfaces/msg/string.hpp"
 #include "sensor_msgs/msg/laser_scan.hpp"
 #include "sensor_msgs/msg/point_cloud2.hpp"
+#include "sensor_msgs/point_cloud2_iterator.hpp"
 #include "laser_geometry/laser_geometry.hpp"
 //#include "tf2_ros/tf2_ros/transform_listener.hpp"
 //sudo nmcli connection modify "Wired connection 1" ipv4.method manual ipv4.address 192.168.0.8/24

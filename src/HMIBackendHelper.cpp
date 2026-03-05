@@ -3,6 +3,9 @@
 #include <QDebug>
 #include <QVariantList>
 
+
+
+
 //#include "<pcl_conversions/pcl_conversions.h"
 //#include "pcl/point_cloud.h"
 //#include "pcl/point_types.h"
@@ -201,15 +204,30 @@ void HMIBackendHelper::scanCallBack(sensor_msgs::msg::LaserScan::SharedPtr scan)
 
     qDebug() << "HMIBackendHelper::scanCallBack()";
 
-    sensor_msgs::msg::PointCloud2 pointCloud;
+    sensor_msgs::msg::PointCloud2 pointCloud2;
 
     qInfo() << "START: LaserScan to  PointCloud2";
 
-    _LaserProjection.projectLaser(*scan, pointCloud);
+    _LaserProjection.projectLaser(*scan, pointCloud2);
 
     qInfo() << "DONE: LaserScan to  PointCloud2";
 
-    _LIDARScan2DData->setScanData(scan);
+    qDebug() << "SLLIDAR: PointCloud2 message received, size " << pointCloud2.width << " x " << pointCloud2.height;
+
+    // Create iterators for x, y, and z fields
+    sensor_msgs::PointCloud2ConstIterator<float> iterX(pointCloud2, "x");
+    sensor_msgs::PointCloud2ConstIterator<float> iterY(pointCloud2, "y");
+    sensor_msgs::PointCloud2ConstIterator<float> iterZ(pointCloud2, "z");
+
+    for (; iterX != iterX.end(); ++iterX, ++iterY, ++iterZ) {
+        float x = *iterX;
+        float y = *iterY;
+        float z = *iterZ;
+        // Do something with x, y, z
+        qDebug() << "SLLIDAR: PointCloud2 message XYZ: x=" << x << ", y=" << y << ", z=" << z;
+    }
+
+    //_LIDARScan2DData->setScanData(scan);
 
     // int count = scan->scan_time / scan->time_increment;
     // printf("[SLLIDAR INFO]: I heard a laser scan %s[%d]:\n", scan->header.frame_id.c_str(), count);
@@ -228,7 +246,7 @@ void HMIBackendHelper::scanSICKMultiscan100CallBack(const std::shared_ptr<sensor
     qDebug() << "HMIBackendHelper::scanSICKMultiscan100CallBack()";
 
 
-    qDebug() << "sick_scan_ros2_example: pointcloud message received, size " << msg-> width << " x " << msg->height;
+    qDebug() << "sick_scan_ros2_example: pointcloud message received, size " << msg->width << " x " << msg->height;
 }
 
 void HMIBackendHelper::startTimers()

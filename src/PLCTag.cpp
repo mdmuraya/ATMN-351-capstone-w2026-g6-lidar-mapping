@@ -49,14 +49,14 @@ void PLCTag::disconnectFromPLC()
 
 int32_t PLCTag::getPLCTag(QString tagName)
 {
-    qDebug() << "PLCTag::getPLCTag()" << QDateTime::currentDateTime();
+    //qDebug() << "PLCTag::getPLCTag()" << QDateTime::currentDateTime();
 
     if (_PLCTags.contains(tagName)) {
-        qDebug() << "Key" << tagName << " found.";
+        //qDebug() << "Key" << tagName << " found.";
         return _PLCTags.value(tagName);
     }
 
-    qDebug() << "Key " << tagName << " NOT FOUND. Creating...";
+    //qDebug() << "Key " << tagName << " NOT FOUND. Creating...";
 
 
     QString plcPath = (QString::compare(_plcFamilyId, "controllogix", Qt::CaseInsensitive) == 0 ) ? QString("&path=1,0") : "";
@@ -88,7 +88,7 @@ int32_t PLCTag::getPLCTag(QString tagName)
 
 bool PLCTag::readPLCTag(QString tagName, bool &tagValue)
 {
-    qDebug() << "PLCTag::readPLCTag()" << QDateTime::currentDateTime();
+    //qDebug() << "PLCTag::readPLCTag()" << QDateTime::currentDateTime();
 
     int32_t tag = getPLCTag(tagName);
 
@@ -103,7 +103,7 @@ bool PLCTag::readPLCTag(QString tagName, bool &tagValue)
             plc_tag_destroy(tag);
             return false;
         }
-        qDebug() << QString::number(tag);
+        //qDebug() << QString::number(tag);
         tagValue = static_cast<bool>(plc_tag_get_bit(tag, 0));
 
         return true;
@@ -114,7 +114,7 @@ bool PLCTag::readPLCTag(QString tagName, bool &tagValue)
 
 uint64_t PLCTag::readPLCTag(QString tagName, uint64_t &tagValue)
 {
-    qDebug() << "PLCTag::readPLCTag()" << QDateTime::currentDateTime();
+    //qDebug() << "PLCTag::readPLCTag()" << QDateTime::currentDateTime();
 
     int32_t tag = getPLCTag(tagName);
 
@@ -130,7 +130,7 @@ uint64_t PLCTag::readPLCTag(QString tagName, uint64_t &tagValue)
             plc_tag_destroy(tag);
             return false;
         }
-        qDebug() << QString::number(tag);
+        //qDebug() << QString::number(tag);
         tagValue = (plc_tag_get_uint64(tag, 0));
 
         return true;
@@ -166,7 +166,7 @@ bool PLCTag::writePLCTag(QString tagName, bool tagValue)
 
 void PLCTag::getPLCStatus()
 {
-    qDebug() << "PLCTag::getPLCStatus()" << QDateTime::currentDateTime();
+    //qDebug() << "PLCTag::getPLCStatus()" << QDateTime::currentDateTime();
     //here we will get all the PLC tags, in threads (concurrently)
     _getPLCStatusTimer->stop();
 
