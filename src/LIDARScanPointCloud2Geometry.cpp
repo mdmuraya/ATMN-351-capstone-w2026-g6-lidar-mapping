@@ -9,21 +9,7 @@ LIDARScanPointCloud2Geometry::LIDARScanPointCloud2Geometry(QObject *parent)
 {
     qDebug() << "LIDARScanPointCloud2Geometry::LIDARScanPointCloud2Geometry()";
 
-    QByteArray vertexData;
-    vertexData.resize(sizeof(float) * 3 * 100);
-    float *p = reinterpret_cast<float *>(vertexData.data());
 
-    for (int var = 0; var < 100; ++var)
-    {
-        const QVector3D vertex = generateRandomVertex(-300.0f, 300.0f);
-        *p++ = vertex.x();
-        *p++ = vertex.y();
-        *p++ = vertex.z();
-    }
-
-
-
-    updateData(vertexData);
 }
 
 QVector3D LIDARScanPointCloud2Geometry::generateRandomVertex(float min, float max) const
@@ -43,18 +29,6 @@ LIDARScanPointCloud2Geometry::~LIDARScanPointCloud2Geometry()
 void LIDARScanPointCloud2Geometry::updateData(QByteArray &vertexData)
 {
     clear();
-
-    // QByteArray vertexData;
-    // vertexData.resize(sizeof(float) * 3 * m_count);
-    // float *p = reinterpret_cast<float *>(vertexData.data());
-
-    // for (int var = 0; var < m_count; ++var)
-    // {
-    //     const QVector3D vertex = generateRandomVertex(-300.0f, 300.0f);
-    //     *p++ = vertex.x();
-    //     *p++ = vertex.y();
-    //     *p++ = vertex.z();
-    // }
 
     setVertexData(vertexData);
     setPrimitiveType(QQuick3DGeometry::PrimitiveType::Points);

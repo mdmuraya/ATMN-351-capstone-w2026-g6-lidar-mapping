@@ -345,6 +345,7 @@ ApplicationWindow {
 
                                     //     Model {
                                     //         source: "#Cylinder"
+                                    //         //geometry: LIDARScanPointCloud2Geometry
                                     //         materials: DefaultMaterial {}
                                     //         eulerRotation.y: 20
                                     //         Node {
@@ -360,9 +361,10 @@ ApplicationWindow {
                                     //         }
                                     //     }
                                     // }
-                                    // WasdController{
-                                    //     controlledObject: camera
-                                    // }
+
+                                    WasdController{
+                                        controlledObject: camera
+                                    }
 
 
 
@@ -372,7 +374,7 @@ ApplicationWindow {
                                             lightProbe: Texture{
                                                 ///source: "imageTesto.hdr"
                                             }
-                                            backgroundMode: SceneEnvironment.SkyBox
+                                            //backgroundMode: SceneEnvironment.SkyBox
                                         }
 
                                         PerspectiveCamera {
@@ -384,10 +386,10 @@ ApplicationWindow {
                                             eulerRotation.x: -30
                                         }
 
-                                        Model { //LIDARScanPointCloud2Geometry //hmiBackendHelper.lidarScanPointCloud2
+                                        Model {
                                             geometry: LIDARScanPointCloud2Geometry
                                             materials: PrincipledMaterial{
-                                            pointSize: 10
+                                                pointSize: 5
                                             }
                                         }
                                     }

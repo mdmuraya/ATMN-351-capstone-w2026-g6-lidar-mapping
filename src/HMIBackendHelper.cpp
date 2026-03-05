@@ -241,47 +241,20 @@ void HMIBackendHelper::scanCallBack(sensor_msgs::msg::LaserScan::SharedPtr scan)
 
     _LIDARScanPointCloud2Geometry->updateData(vertexData);
 
-    // _LIDARScanPointCloud2.clear();
-
-    // // QByteArray vertexData;
-    // // vertexData.resize(sizeof(float) * 3 * m_count);
-    // // float *p = reinterpret_cast<float *>(vertexData.data());
-
-    // // for (int var = 0; var < m_count; ++var)
-    // // {
-    // //     const QVector3D vertex = generateRandomVertex(-300.0f, 300.0f);
-    // //     *p++ = vertex.x();
-    // //     *p++ = vertex.y();
-    // //     *p++ = vertex.z();
-    // // }
-
-    // _LIDARScanPointCloud2.setVertexData(vertexData);
-    // _LIDARScanPointCloud2.setPrimitiveType(QQuick3DGeometry::PrimitiveType::Points);
-    // _LIDARScanPointCloud2.setStride(3 * sizeof(float));
-    // _LIDARScanPointCloud2.addAttribute(QQuick3DGeometry::Attribute::PositionSemantic,
-    //              0,
-    //              QQuick3DGeometry::Attribute::F32Type);
-
-    //_LIDARScan2DData->setScanData(scan);
-
-    // int count = scan->scan_time / scan->time_increment;
-    // printf("[SLLIDAR INFO]: I heard a laser scan %s[%d]:\n", scan->header.frame_id.c_str(), count);
-    // printf("[SLLIDAR INFO]: angle_range : [%f, %f]\n", RAD2DEG(scan->angle_min),
-    //        RAD2DEG(scan->angle_max));
-
-    // for (int i = 0; i < count; i++) {
-    //     float degree = RAD2DEG(scan->angle_min + scan->angle_increment * i);
-    //     printf("[SLLIDAR INFO]: angle-distance : [%f, %f]\n", degree, scan->ranges[i]);
-    // }
-
 }
 
-void HMIBackendHelper::scanSICKMultiscan100CallBack(const std::shared_ptr<sensor_msgs::msg::PointCloud2> msg)
+void HMIBackendHelper::scanSICKMultiscan100CallBack(const std::shared_ptr<sensor_msgs::msg::PointCloud2> pointCloud2)
 {
     qDebug() << "HMIBackendHelper::scanSICKMultiscan100CallBack()";
 
 
-    qDebug() << "sick_scan_ros2_example: pointcloud message received, size " << msg->width << " x " << msg->height;
+    qDebug() << "sick_scan_ros2_example: pointcloud message received, size " << pointCloud2->width << " x " << pointCloud2->height;
+
+    QByteArray vertexData = QByteArray(reinterpret_cast<const char*>(pointCloud2->data.data()),
+                                       static_cast<int>(pointCloud2->data.size()));
+
+    _LIDARScanPointCloud2Geometry->updateData(vertexData);
+
 }
 
 void HMIBackendHelper::startTimers()
