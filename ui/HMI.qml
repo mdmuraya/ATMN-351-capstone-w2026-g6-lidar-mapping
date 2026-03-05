@@ -647,7 +647,7 @@ ApplicationWindow {
                                     id: eStopSafetyIndicator
                                     Layout.alignment: Qt.AlignHCenter
                                     displayText: plcTag?.plcIsConnected ? "E-STOP" : "?? E-STOP"
-                                    isActivated: plcTag?.plcIsConnected && plcTag?.runState
+                                    isActivated: plcTag?.plcIsConnected && plcTag?.eStopActivated
                                 }
                                 SafetyIndicator {
                                     id: lightCurtainSafetyIndicator
