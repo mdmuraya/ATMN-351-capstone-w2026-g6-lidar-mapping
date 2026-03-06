@@ -164,7 +164,7 @@ ApplicationWindow {
 
                         GroupBox {
                             title: "Actions"
-                            enabled: plcTag?.plcIsConnected
+                            enabled: plcTag?.plcIsConnected ?? false
                             Layout.fillWidth: true
                             ColumnLayout {
                                 anchors.fill: parent
@@ -222,7 +222,7 @@ ApplicationWindow {
 
                         GroupBox {
                             title: "Jog"
-                            enabled: plcTag?.plcIsConnected
+                            enabled: plcTag?.plcIsConnected ?? false
                             Layout.fillWidth: true
                             ColumnLayout {
                                 anchors.fill: parent
@@ -307,7 +307,7 @@ ApplicationWindow {
 
                     GroupBox {
                         title: "Scan Area"
-                        enabled: plcTag?.plcIsConnected
+                        enabled: plcTag?.plcIsConnected ?? false
                         Layout.fillWidth: true
                         Layout.fillHeight: true
                         Layout.horizontalStretchFactor: 98
@@ -568,7 +568,7 @@ ApplicationWindow {
 
                         GroupBox {
                             title: "System Mode/ State"
-                            enabled: plcTag?.plcIsConnected
+                            enabled: plcTag?.plcIsConnected ?? false
                             Layout.fillWidth: true
                             ColumnLayout {
                                 anchors.fill: parent
@@ -638,7 +638,7 @@ ApplicationWindow {
 
                         GroupBox {
                             title: "Alarms"
-                            enabled: plcTag?.plcIsConnected
+                            enabled: plcTag?.plcIsConnected ?? false
                             Layout.fillWidth: true
                             ColumnLayout {
                                 anchors.fill: parent
@@ -647,19 +647,19 @@ ApplicationWindow {
                                     id: eStopSafetyIndicator
                                     Layout.alignment: Qt.AlignHCenter
                                     displayText: plcTag?.plcIsConnected ? "E-STOP" : "?? E-STOP"
-                                    isActivated: plcTag?.plcIsConnected && plcTag?.runState
+                                    isActivated: (plcTag?.plcIsConnected && plcTag?.runState) ?? false
                                 }
                                 SafetyIndicator {
                                     id: lightCurtainSafetyIndicator
                                     Layout.alignment: Qt.AlignHCenter
                                     displayText: plcTag?.plcIsConnected ? "LIGHT CURTAIN" : "?? LIGHT CURTAIN"
-                                    isActivated: plcTag?.plcIsConnected && plcTag?.runState
+                                    isActivated: (plcTag?.plcIsConnected && plcTag?.runState) ?? false
                                 }
                                 SafetyIndicator {
                                     id: areaScannerSafetyIndicator
                                     Layout.alignment: Qt.AlignHCenter
                                     displayText: plcTag?.plcIsConnected ? "AREA SCANNER" : "?? AREA SCANNER"
-                                    isActivated: plcTag?.plcIsConnected && plcTag?.runState
+                                    isActivated: (plcTag?.plcIsConnected && plcTag?.runState) ?? false
                                 }
                                 //Item { Layout.fillWidth: true }
 
@@ -668,7 +668,7 @@ ApplicationWindow {
 
                         GroupBox {
                             title: "Indicator Lights"
-                            enabled: plcTag?.plcIsConnected
+                            enabled: plcTag?.plcIsConnected ?? false
                             Layout.fillWidth: true
                             //Layout.fillHeight: true
                             ColumnLayout {
@@ -712,7 +712,7 @@ ApplicationWindow {
                         }
                         GroupBox {
                             title: ""
-                            enabled: plcTag?.plcIsConnected
+                            enabled: plcTag?.plcIsConnected ?? false
                             Layout.fillWidth: true
                             Layout.fillHeight: true
                             ColumnLayout {
