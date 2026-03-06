@@ -653,13 +653,13 @@ ApplicationWindow {
                                     id: lightCurtainSafetyIndicator
                                     Layout.alignment: Qt.AlignHCenter
                                     displayText: plcTag?.plcIsConnected ? "LIGHT CURTAIN" : "?? LIGHT CURTAIN"
-                                    isActivated: plcTag?.plcIsConnected && plcTag?.runState
+                                    isActivated: false//plcTag?.plcIsConnected && plcTag?.runState
                                 }
                                 SafetyIndicator {
                                     id: areaScannerSafetyIndicator
                                     Layout.alignment: Qt.AlignHCenter
                                     displayText: plcTag?.plcIsConnected ? "AREA SCANNER" : "?? AREA SCANNER"
-                                    isActivated: plcTag?.plcIsConnected && plcTag?.runState
+                                    isActivated: false//plcTag?.plcIsConnected && plcTag?.runState
                                 }
                                 //Item { Layout.fillWidth: true }
 

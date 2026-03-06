@@ -269,7 +269,7 @@ bool PLCTag::getEStopActivated() const
 
 void PLCTag::setEStopActivated(bool newValue)
 {
-    if (_runState == newValue)
+    if (_eStopActivated == newValue)
         return;
 
     _eStopActivated = newValue;

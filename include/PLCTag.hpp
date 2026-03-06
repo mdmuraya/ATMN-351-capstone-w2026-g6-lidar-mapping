@@ -62,7 +62,7 @@ signals:
     void eStopActivatedChanged(bool newValue);
     void runStateChanged(bool newValue);
     void runStateSCANChanged(bool newValue);
-    void redPilotLightChanged(bool newValue);_runState
+    void redPilotLightChanged(bool newValue);
     void amberPilotLightChanged(bool newValue);
     void greenPilotLightChanged(bool newValue);
     void bluePilotLightChanged(bool newValue);
@@ -74,7 +74,7 @@ public slots:
     void resetButtonPressedChanged(bool pressed);
     void moveToHomeButtonPressedChanged(bool pressed);
     void moveLeftButtonPressedChanged(bool pressed);
-    void moveBackButtonPressedChanged(bool pressed);_runState
+    void moveBackButtonPressedChanged(bool pressed);
     void moveForwardButtonPressedChanged(bool pressed);
     void moveRightButtonPressedChanged(bool pressed);
 
