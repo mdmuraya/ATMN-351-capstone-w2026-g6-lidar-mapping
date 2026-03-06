@@ -293,6 +293,8 @@ ApplicationWindow {
                                     text: qsTr("Quit HMI Application")
                                     Material.background: "black"
                                     Material.foreground: "white"
+                                    //palette.button: "black"
+                                    //palette.buttonText: "white"
                                     font {
                                         bold: true
                                         pointSize: 12
@@ -647,19 +649,19 @@ ApplicationWindow {
                                     id: eStopSafetyIndicator
                                     Layout.alignment: Qt.AlignHCenter
                                     displayText: plcTag?.plcIsConnected ? "E-STOP" : "?? E-STOP"
-                                    isActivated: (plcTag?.plcIsConnected && plcTag?.runState) ?? false
+                                    isActivated: (plcTag?.plcIsConnected && plcTag?.eStopActivated) ?? false
                                 }
                                 SafetyIndicator {
                                     id: lightCurtainSafetyIndicator
                                     Layout.alignment: Qt.AlignHCenter
                                     displayText: plcTag?.plcIsConnected ? "LIGHT CURTAIN" : "?? LIGHT CURTAIN"
-                                    isActivated: (plcTag?.plcIsConnected && plcTag?.runState) ?? false
+                                    isActivated: false //(plcTag?.plcIsConnected && plcTag?.runState) ?? false
                                 }
                                 SafetyIndicator {
                                     id: areaScannerSafetyIndicator
                                     Layout.alignment: Qt.AlignHCenter
                                     displayText: plcTag?.plcIsConnected ? "AREA SCANNER" : "?? AREA SCANNER"
-                                    isActivated: (plcTag?.plcIsConnected && plcTag?.runState) ?? false
+                                    isActivated: false //(plcTag?.plcIsConnected && plcTag?.runState) ?? false
                                 }
                                 //Item { Layout.fillWidth: true }
 
@@ -809,10 +811,7 @@ ApplicationWindow {
 
     Connections {
         target: lidarScan2DData // The context property name
-        // Signal handler format: on<SignalName>
-        onScanDataChanged: {
-            //console.log("QML received signal:", message, value)
-            //statusText.text = "Received: " + message + " with value " + value
+        function onScanDataChanged  () {
             scanCanvas.requestPaint();
         }
     }

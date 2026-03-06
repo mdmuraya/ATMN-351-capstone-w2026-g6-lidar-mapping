@@ -31,11 +31,12 @@ PLCTag::~PLCTag()
     _PLCTags.clear();
 }
 
-void PLCTag::connectToPLC(QString plcAddress, QString plcFamilyId, QString plcProgramName)
+void PLCTag::connectToPLC(QString plcAddress, QString plcFamilyId, QString plcMainProgramName, QString plcSafetyProgramName)
 {
     _plcAddress = plcAddress;
     _plcFamilyId = plcFamilyId;
-    _plcProgramName =plcProgramName;
+    _plcMainProgramName = plcMainProgramName;
+    _plcSafetyProgramName = plcSafetyProgramName;
 
     int frequency = 5; //number of times per second
     _getPLCStatusTimer->start((1000/frequency));
@@ -168,12 +169,13 @@ void PLCTag::getPLCStatus()
 {
     //qDebug() << "PLCTag::getPLCStatus()" << QDateTime::currentDateTime();
     //here we will get all the PLC tags, in threads (concurrently)
+    //Program:SafetyProgram.PHY_ESTOP_ACTIVATED
     _getPLCStatusTimer->stop();
 
     //bool boolTagValue = false;
     uint64_t uint64TagValue = 0;
 
-    if(readPLCTag(_plcProgramName + "PLC_Heart_Beat", uint64TagValue))
+    if(readPLCTag(_plcMainProgramName + "PLC_Heart_Beat", uint64TagValue))
     {
         setPLCIsConnected(true);
         qDebug() << "PLC_Heart_Beat" << uint64TagValue;
@@ -182,44 +184,50 @@ void PLCTag::getPLCStatus()
         QFuture<void> future;
 
         future = QtConcurrent::run([this]() {
+            bool boolTagValue = getEStopActivated();
+            readPLCTag(_plcSafetyProgramName + "PHY_ESTOP_ACTIVATED", boolTagValue) ? setEStopActivated(boolTagValue) : (void)0; // do nothiing if false
+        });
+        synchronizer.addFuture(future);
+
+        future = QtConcurrent::run([this]() {
             bool boolTagValue = getRunState();
-            readPLCTag(_plcProgramName + "System_Running", boolTagValue) ? setRunState(boolTagValue) : (void)0; // do nothiing if false
+            readPLCTag(_plcMainProgramName + "System_Running", boolTagValue) ? setRunState(boolTagValue) : (void)0; // do nothiing if false
         });
         synchronizer.addFuture(future);
 
         future = QtConcurrent::run([this]() {
             bool boolTagValue =getRunStateSCAN();
-            readPLCTag(_plcProgramName + "PHY_Selector_Run_SCAN", boolTagValue) ? setRunStateSCAN(boolTagValue) : (void)0; // do nothiing if false
+            readPLCTag(_plcMainProgramName + "PHY_Selector_Run_SCAN", boolTagValue) ? setRunStateSCAN(boolTagValue) : (void)0; // do nothiing if false
         });
         synchronizer.addFuture(future);
 
         future = QtConcurrent::run([this]() {
             bool boolTagValue =getRedPilotLight();
-            readPLCTag(_plcProgramName + "Red_Pilot_Light", boolTagValue) ? setRedPilotLight(boolTagValue) : (void)0; // do nothiing if false
+            readPLCTag(_plcMainProgramName + "Red_Pilot_Light", boolTagValue) ? setRedPilotLight(boolTagValue) : (void)0; // do nothiing if false
         });
         synchronizer.addFuture(future);
 
         future = QtConcurrent::run([this]() {
             bool boolTagValue = getAmberPilotLight();
-            readPLCTag(_plcProgramName + "Amber_Pilot_Light", boolTagValue) ? setAmberPilotLight(boolTagValue) : (void)0; // do nothiing if false
+            readPLCTag(_plcMainProgramName + "Amber_Pilot_Light", boolTagValue) ? setAmberPilotLight(boolTagValue) : (void)0; // do nothiing if false
         });
         synchronizer.addFuture(future);
 
         future = QtConcurrent::run([this]() {
             bool boolTagValue = getGreenPilotLight();
-            readPLCTag(_plcProgramName + "Green_Pilot_Light", boolTagValue) ? setGreenPilotLight(boolTagValue) : (void)0; // do nothiing if false
+            readPLCTag(_plcMainProgramName + "Green_Pilot_Light", boolTagValue) ? setGreenPilotLight(boolTagValue) : (void)0; // do nothiing if false
         });
         synchronizer.addFuture(future);
 
         future = QtConcurrent::run([this]() {
             bool boolTagValue = getBluePilotLight();
-            readPLCTag(_plcProgramName + "Blue_Pilot_Light", boolTagValue) ? setBluePilotLight(boolTagValue) :  (void)0; // do nothiing if false
+            readPLCTag(_plcMainProgramName + "Blue_Pilot_Light", boolTagValue) ? setBluePilotLight(boolTagValue) :  (void)0; // do nothiing if false
         });
         synchronizer.addFuture(future);
 
         future = QtConcurrent::run([this]() {
             bool boolTagValue = getWhitePilotLight();
-            readPLCTag(_plcProgramName + "White_Pilot_Light", boolTagValue) ? setWhitePilotLight(boolTagValue) : (void)0; // do nothiing if false
+            readPLCTag(_plcMainProgramName + "White_Pilot_Light", boolTagValue) ? setWhitePilotLight(boolTagValue) : (void)0; // do nothiing if false
         });
         synchronizer.addFuture(future);
 
@@ -251,6 +259,21 @@ void PLCTag::setPLCIsConnected(bool newValue)
 
     _plcIsConnected = newValue;
     emit plcIsConnectedChanged(_plcIsConnected); // Emit signal to trigger QML updates
+}
+
+
+bool PLCTag::getEStopActivated() const
+{
+    return _eStopActivated;
+}
+
+void PLCTag::setEStopActivated(bool newValue)
+{
+    if (_eStopActivated == newValue)
+        return;
+
+    _eStopActivated = newValue;
+    emit eStopActivatedChanged(_eStopActivated); // Emit signal to trigger QML updates
 }
 
 bool PLCTag::getRunState() const
@@ -285,56 +308,56 @@ void PLCTag::startButtonPressedChanged(bool pressed)
 {
     qDebug() << "PLCTag::startButtonPressedChanged()";
 
-    writePLCTag(_plcProgramName + "HMI_Start_PB",pressed);
+    writePLCTag(_plcMainProgramName + "HMI_Start_PB",pressed);
 }
 
 void PLCTag::stopButtonPressedChanged(bool pressed)
 {
     qDebug() << "PLCTag::stopButtonPressedChanged()";
 
-    writePLCTag(_plcProgramName + "HMI_Stop_PB",pressed);
+    writePLCTag(_plcMainProgramName + "HMI_Stop_PB",pressed);
 }
 
 void PLCTag::resetButtonPressedChanged(bool pressed)
 {
     qDebug() << "PLCTag::resetButtonPressedChanged()";
 
-    writePLCTag(_plcProgramName + "HMI_Reset_PB",pressed);
+    writePLCTag(_plcMainProgramName + "HMI_Reset_PB",pressed);
 }
 
 void PLCTag::moveToHomeButtonPressedChanged(bool pressed)
 {
     qDebug() << "PLCTag::moveToHomeButtonPressedChanged()";
 
-    writePLCTag(_plcProgramName + "HMI_Home_PB",pressed);
+    writePLCTag(_plcMainProgramName + "HMI_Home_PB",pressed);
 }
 
 void PLCTag::moveLeftButtonPressedChanged(bool pressed)
 {
     qDebug() << "PLCTag::moveLeftButtonPressedChanged()";
 
-    writePLCTag(_plcProgramName + "HMI_MoveLeft_PB",pressed);
+    writePLCTag(_plcMainProgramName + "HMI_MoveLeft_PB",pressed);
 }
 
 void PLCTag::moveBackButtonPressedChanged(bool pressed)
 {
     qDebug() << "PLCTag::moveBackButtonPressedChanged()";
 
-    writePLCTag(_plcProgramName + "HMI_MoveBack_PB",pressed);
+    writePLCTag(_plcMainProgramName + "HMI_MoveBack_PB",pressed);
 }
 
 void PLCTag::moveForwardButtonPressedChanged(bool pressed)
 {
     qDebug() << "PLCTag::moveForwardButtonPressedChanged()";
 
-    writePLCTag(_plcProgramName + "HMI_MoveForward_PB",pressed);
+    writePLCTag(_plcMainProgramName + "HMI_MoveForward_PB",pressed);
 }
 
 void PLCTag::moveRightButtonPressedChanged(bool pressed)
 {
     qDebug() << "PLCTag::moveRightButtonPressedChanged()";
 
-    writePLCTag(_plcProgramName + "HMI_MoveRight_PB",pressed);
+    writePLCTag(_plcMainProgramName + "HMI_MoveRight_PB",pressed);
 }
 
 

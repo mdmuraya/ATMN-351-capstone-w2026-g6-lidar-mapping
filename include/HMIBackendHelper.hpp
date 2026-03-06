@@ -70,7 +70,8 @@ class HMIBackendHelper : public QObject
         QVariantList _listOfPLCFamily = {};
         QString _plcAddress = "";//"192.168.50.102";//"10.111.42.192";//
         QString _plcFamilyId = "";//"controllogix";//controllogix //micro800
-        QString _plcProgramName = "Program:MainProgram."; //"Program:MainProgram.";
+        QString _plcMainProgramName = "Program:MainProgram."; //"Program:MainProgram.";
+        QString _plcSafetyProgramName = "Program:MainProgram."; //"Program:MainProgram.";
 
         void initializeROS2();
         void setupConnections();

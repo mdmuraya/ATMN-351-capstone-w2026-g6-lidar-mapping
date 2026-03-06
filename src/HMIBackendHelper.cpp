@@ -152,17 +152,20 @@ void HMIBackendHelper::connectToPLC()
 
     if(_plcFamilyId == "controllogix")
     {
-        _plcProgramName = "Program:MainProgram.";
+        _plcMainProgramName = "Program:MainProgram.";
+        _plcSafetyProgramName = "Program:SafetyProgram.";
     }
     else if(_plcFamilyId == "micro800")
     {
-        _plcProgramName = "";
+        _plcMainProgramName = "";
+        _plcSafetyProgramName = "";
     }
     else
     {
-        _plcProgramName = "";
+        _plcMainProgramName = "";
+        _plcSafetyProgramName = "";
     }
-    _PLCTag->connectToPLC(_plcAddress, _plcFamilyId, _plcProgramName);
+    _PLCTag->connectToPLC(_plcAddress, _plcFamilyId, _plcMainProgramName, _plcSafetyProgramName);
 }
 
 
