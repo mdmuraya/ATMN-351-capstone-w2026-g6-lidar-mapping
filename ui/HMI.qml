@@ -293,8 +293,6 @@ ApplicationWindow {
                                     text: qsTr("Quit HMI Application")
                                     Material.background: "black"
                                     Material.foreground: "white"
-                                    //palette.button: "black"
-                                    //palette.buttonText: "white"
                                     font {
                                         bold: true
                                         pointSize: 12
@@ -649,7 +647,7 @@ ApplicationWindow {
                                     id: eStopSafetyIndicator
                                     Layout.alignment: Qt.AlignHCenter
                                     displayText: plcTag?.plcIsConnected ? "E-STOP" : "?? E-STOP"
-                                    isActivated: (plcTag?.plcIsConnected && plcTag?.eStopActivated) ?? false
+                                    isActivated: (plcTag?.plcIsConnected && plcTag?.eStop1Activated) ?? false
                                 }
                                 SafetyIndicator {
                                     id: lightCurtainSafetyIndicator

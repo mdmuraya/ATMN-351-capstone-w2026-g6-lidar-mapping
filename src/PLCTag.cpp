@@ -184,8 +184,8 @@ void PLCTag::getPLCStatus()
         QFuture<void> future;
 
         future = QtConcurrent::run([this]() {
-            bool boolTagValue = getEStopActivated();
-            readPLCTag(_plcSafetyProgramName + "PHY_ESTOP_ACTIVATED", boolTagValue) ? setEStopActivated(boolTagValue) : (void)0; // do nothiing if false
+            bool boolTagValue = getEStop1Activated();
+            readPLCTag(_plcSafetyProgramName + "PHY_ESTOP_1_ACTIVATED", boolTagValue) ? setEStop1Activated(boolTagValue) : (void)0; // do nothiing if false
         });
         synchronizer.addFuture(future);
 
@@ -262,18 +262,18 @@ void PLCTag::setPLCIsConnected(bool newValue)
 }
 
 
-bool PLCTag::getEStopActivated() const
+bool PLCTag::getEStop1Activated() const
 {
-    return _eStopActivated;
+    return _eStop1Activated;
 }
 
-void PLCTag::setEStopActivated(bool newValue)
+void PLCTag::setEStop1Activated(bool newValue)
 {
-    if (_eStopActivated == newValue)
+    if (_eStop1Activated == newValue)
         return;
 
-    _eStopActivated = newValue;
-    emit eStopActivatedChanged(_eStopActivated); // Emit signal to trigger QML updates
+    _eStop1Activated = newValue;
+    emit eStop1ActivatedChanged(_eStop1Activated); // Emit signal to trigger QML updates
 }
 
 bool PLCTag::getRunState() const
@@ -322,7 +322,7 @@ void PLCTag::resetButtonPressedChanged(bool pressed)
 {
     qDebug() << "PLCTag::resetButtonPressedChanged()";
 
-    writePLCTag(_plcMainProgramName + "HMI_Reset_PB",pressed);
+    writePLCTag(_plcSafetyProgramName + "HMI_Reset_PB",pressed);
 }
 
 void PLCTag::moveToHomeButtonPressedChanged(bool pressed)
