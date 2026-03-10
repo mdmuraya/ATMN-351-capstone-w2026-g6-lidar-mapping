@@ -15,7 +15,7 @@ class LIDARScanPointCloud2Geometry : public QQuick3DGeometry
     signals:
 
     public slots:
-        void updateData(const QVector<QVector3D> &points);
+        void updatePoints(const QVector<QVector3D> &points);
 
     private:
         QVector3D generateRandomVertex(float min, float max) const;

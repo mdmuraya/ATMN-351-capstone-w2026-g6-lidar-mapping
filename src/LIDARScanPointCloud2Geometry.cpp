@@ -32,7 +32,7 @@ LIDARScanPointCloud2Geometry::~LIDARScanPointCloud2Geometry()
     qDebug() << "LIDARScanPointCloud2Geometry::~LIDARScanPointCloud2Geometry()";
 }
 
-void LIDARScanPointCloud2Geometry::updateData(const QVector<QVector3D> &points)
+void LIDARScanPointCloud2Geometry::updatePoints(const QVector<QVector3D> &points)
 {
     // clear();
 

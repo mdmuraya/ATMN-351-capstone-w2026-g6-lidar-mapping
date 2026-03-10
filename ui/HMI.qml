@@ -381,17 +381,17 @@ ApplicationWindow {
                                            eulerRotation.x: -30
                                        }
 
-                                       // Terrain DEM
-                                       Model {
-                                           geometry: HeightFieldGeometry {
-                                               source: DEMSurface.heightMap
-                                               extents: Qt.vector3d(100, 20, 100) // x,y,z size in world units
-                                               smoothShading: true
-                                           }
-                                           materials: DefaultMaterial {
-                                               diffuseColor: "#8c7a5b"
-                                           }
-                                       }
+                                       // // Terrain DEM
+                                       // Model {
+                                       //     geometry: HeightFieldGeometry {
+                                       //         source: DEMSurface.heightMap
+                                       //         extents: Qt.vector3d(100, 20, 100) // x,y,z size in world units
+                                       //         smoothShading: true
+                                       //     }
+                                       //     materials: DefaultMaterial {
+                                       //         diffuseColor: "#8c7a5b"
+                                       //     }
+                                       // }
 
                                        // Raw point cloud overlay
 

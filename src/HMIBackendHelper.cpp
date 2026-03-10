@@ -238,9 +238,9 @@ void HMIBackendHelper::scanCallBack(sensor_msgs::msg::LaserScan::SharedPtr scan)
 
     for (; iterX != iterX.end(); ++iterX, ++iterY, ++iterZ)
     {
-        float x = (*iterX) * 50;
-        float y = (*iterY) * 50;
-        float z = (*iterZ) * 50;
+        float x = (*iterX) * 20;
+        float y = (*iterY) * 20;
+        float z = (*iterZ) * 20;
         // Do something with x, y, z
         qDebug() << "SLLIDAR: PointCloud2 message XYZ: x=" << x << ", y=" << y << ", z=" << z;
 
@@ -248,7 +248,8 @@ void HMIBackendHelper::scanCallBack(sensor_msgs::msg::LaserScan::SharedPtr scan)
     }
 
     emit pointCloudReady(points);
-    _LIDARScanPointCloud2Geometry->updateData(points);
+    _DEMSurface->updatePoints(points);
+    _LIDARScanPointCloud2Geometry->updatePoints(points);
 
 }
 
@@ -279,7 +280,8 @@ void HMIBackendHelper::scanSICKMultiscan100CallBack(const std::shared_ptr<sensor
     }
 
     emit pointCloudReady(points);
-    _LIDARScanPointCloud2Geometry->updateData(points);
+    _DEMSurface->updatePoints(points);
+    _LIDARScanPointCloud2Geometry->updatePoints(points);
 
 }
 
