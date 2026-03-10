@@ -105,7 +105,7 @@ ApplicationWindow {
                                 font.bold: true // Sets the font for the entire TextField to bold
                                 font.pointSize: 14 // Optional: Adjust the font size
                                 implicitWidth: 200
-                                text: "192.168.50.102"
+                                text: "127.0.0.1"
                                 // Restrict input to digits and dots
                                 //inputMask: "000.000.000.000;_"
                                 validator: RegularExpressionValidator {
