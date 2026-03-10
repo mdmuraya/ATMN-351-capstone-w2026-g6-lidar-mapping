@@ -196,6 +196,18 @@ void PLCTag::getPLCStatus()
         synchronizer.addFuture(future);
 
         future = QtConcurrent::run([this]() {
+            bool boolTagValue = getLightCurtain1Activated();
+            readPLCTag(_plcSafetyProgramName + "PHY_LIGHTCURTAIN_1_ACTIVATED", boolTagValue) ? setLightCurtain1Activated(boolTagValue) : (void)0; // do nothiing if false
+        });
+        synchronizer.addFuture(future);
+
+        future = QtConcurrent::run([this]() {
+            bool boolTagValue = getLightCurtain1Faulted();
+            readPLCTag(_plcSafetyProgramName + "PHY_LIGHTCURTAIN_1_FAULTED", boolTagValue) ? setLightCurtain1Faulted(boolTagValue) : (void)0; // do nothiing if false
+        });
+        synchronizer.addFuture(future);
+
+        future = QtConcurrent::run([this]() {
             bool boolTagValue = getRunState();
             readPLCTag(_plcMainProgramName + "System_Running", boolTagValue) ? setRunState(boolTagValue) : (void)0; // do nothiing if false
         });
@@ -266,6 +278,7 @@ void PLCTag::setPLCIsConnected(bool newValue)
     _plcIsConnected = newValue;
     emit plcIsConnectedChanged(_plcIsConnected); // Emit signal to trigger QML updates
 }
+
 bool PLCTag::getEStop1Faulted() const
 {
     return _eStop1Faulted;
@@ -292,6 +305,35 @@ void PLCTag::setEStop1Activated(bool newValue)
 
     _eStop1Activated = newValue;
     emit eStop1ActivatedChanged(_eStop1Activated); // Emit signal to trigger QML updates
+}
+
+
+bool PLCTag::getLightCurtain1Faulted() const
+{
+    return _lightCurtain1Faulted;
+}
+
+void PLCTag::setLightCurtain1Faulted(bool newValue)
+{
+    if (_lightCurtain1Faulted == newValue)
+        return;
+
+    _lightCurtain1Faulted = newValue;
+    emit lightCurtain1FaultedChanged(_lightCurtain1Faulted); // Emit signal to trigger QML updates
+}
+
+bool PLCTag::getLightCurtain1Activated() const
+{
+    return _lightCurtain1Activated;
+}
+
+void PLCTag::setLightCurtain1Activated(bool newValue)
+{
+    if (_lightCurtain1Activated == newValue)
+        return;
+
+    _lightCurtain1Activated = newValue;
+    emit lightCurtain1ActivatedChanged(_lightCurtain1Activated); // Emit signal to trigger QML updates
 }
 
 bool PLCTag::getRunState() const

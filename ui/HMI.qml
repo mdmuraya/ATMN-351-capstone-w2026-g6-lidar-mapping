@@ -105,7 +105,7 @@ ApplicationWindow {
                                 font.bold: true // Sets the font for the entire TextField to bold
                                 font.pointSize: 14 // Optional: Adjust the font size
                                 implicitWidth: 200
-                                text: "127.0.0.1"
+                                text: "192.168.50.102"
                                 // Restrict input to digits and dots
                                 //inputMask: "000.000.000.000;_"
                                 validator: RegularExpressionValidator {
@@ -331,43 +331,6 @@ ApplicationWindow {
                                         color: "black"
                                     }
 
-                                    // View3D {
-                                    //     anchors.fill: parent
-
-                                    //     PerspectiveCamera {
-                                    //         id: camera
-                                    //         z: 200
-                                    //     }
-
-                                    //     DirectionalLight {
-
-                                    //     }
-
-                                    //     Model {
-                                    //         source: "#Cylinder"
-                                    //         //geometry: LIDARScanPointCloud2Geometry
-                                    //         materials: DefaultMaterial {}
-                                    //         eulerRotation.y: 20
-                                    //         Node {
-                                    //             // Empty spatial Node to give 2D item
-                                    //             // a position in 3D space
-                                    //             y: 75
-                                    //             Text {
-                                    //                 // 2D content in 3D
-                                    //                 anchors.centerIn: parent
-                                    //                 text: "THIS IS THE SCAN AREA"
-                                    //                 color: "black"
-                                    //             }
-                                    //         }
-                                    //     }
-                                    // }
-
-                                    // WasdController{
-                                    //     controlledObject: camera
-                                    // }
-
-
-
                                     View3D {
                                         anchors.fill: parent
                                         id: view3DNode
@@ -406,48 +369,6 @@ ApplicationWindow {
                                             controlledObject: camera
                                         }
                                     }
-
-
-
-
-
-        //                             Canvas {
-        //                                 id: scanCanvas
-        //                                 anchors.centerIn: parent
-        //                                 width: rectScanArea.width * 0.93
-        //                                 height: rectScanArea.height * 0.93
-        //                                 // Define the center and radius of the circle
-        //                                 property int centerX: scanCanvas.width / 2
-        //                                 property int centerY: scanCanvas.height / 2
-        //                                 property int radius: scanCanvas.height * 1
-        //                                 // Define the size and color for the points
-        //                                 property int pointSize: 4
-        //                                 property color pointColor: "green"
-
-        //                                 onPaint: {
-        //                                     var ctx = getContext("2d");
-        //                                     ctx.clearRect(0, 0, scanCanvas.width, scanCanvas.height); // Clear the canvas
-        //                                     console.log("lidarScan2DData.numberOfPoints " + lidarScan2DData.numberOfPoints)
-
-        //                                     // Calculate and draw points
-        //                                     ////var numberOfPoints = 100;
-        //                                     for (var i = 0; i < lidarScan2DData.numberOfPoints; i++) {
-        //                                         // Calculate the angle in radians for each point
-        //                                         ////var angle = (i * 2 * Math.PI) / numberOfPoints;
-
-        //                                         // Use polar coordinates formula to find the x, y position
-        //                                         var x = centerX + (radius * (lidarScan2DData.ranges[i]/6) * Math.cos(lidarScan2DData.angleInRadians));
-        //                                         var y = centerY + (radius * lidarScan2DData.ranges[i] * Math.sin(lidarScan2DData.angleInRadians));
-
-        //                                         // Draw a small filled circle (point) at the calculated coordinates
-        //                                         ctx.beginPath();
-        //                                         // The arc method is used to draw a full circle for each point
-        //                                         ctx.arc(x, y, pointSize / 2, 0, 2 * Math.PI, false);
-        //                                         ctx.fillStyle = pointColor;
-        //                                         ctx.fill();
-        //                                     }
-        //                                 }
-        //                             }
                                 }
 
 
@@ -665,8 +586,8 @@ ApplicationWindow {
                                 SafetyIndicator {
                                     id: lightCurtainSafetyIndicator
                                     Layout.alignment: Qt.AlignHCenter
-                                    displayText: plcTag?.plcIsConnected ? "LIGHT CURTAIN" : "?? LIGHT CURTAIN"
-                                    isActivated: false //(plcTag?.plcIsConnected && plcTag?.runState) ?? false
+                                    displayText: plcTag?.plcIsConnected ? plcTag?.lightCurtain1Faulted ? "LIGHT CURTAIN (FAULTED)"  : "LIGHT CURTAIN" : "?? LIGHT CURTAIN"
+                                    isActivated: (plcTag?.plcIsConnected && plcTag?.lightCurtain1Activated) ?? false
                                 }
                                 SafetyIndicator {
                                     id: areaScannerSafetyIndicator
