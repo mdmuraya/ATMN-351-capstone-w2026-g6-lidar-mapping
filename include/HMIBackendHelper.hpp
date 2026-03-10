@@ -19,6 +19,7 @@
 #include "sensor_msgs/msg/point_cloud2.hpp"
 #include "sensor_msgs/point_cloud2_iterator.hpp"
 #include "laser_geometry/laser_geometry.hpp"
+#include "lib/libplctag/include/libplctag.h"
 //#include "tf2_ros/tf2_ros/transform_listener.hpp"
 //sudo nmcli connection modify "Wired connection 1" ipv4.method manual ipv4.address 192.168.0.8/24
 
@@ -26,7 +27,7 @@
 #include "include/PLCTag.hpp"
 #include "include/LIDARScan2DData.hpp"
 #include "include/LIDARScanPointCloud2Geometry.hpp"
-
+#include "include/DEMSurface.hpp"
 
 class HMIBackendHelper : public QObject
 {
@@ -71,6 +72,7 @@ class HMIBackendHelper : public QObject
         std::unique_ptr<PLCTag> _PLCTag = nullptr;
         std::unique_ptr<LIDARScan2DData> _LIDARScan2DData = nullptr;
         std::unique_ptr<LIDARScanPointCloud2Geometry> _LIDARScanPointCloud2Geometry = nullptr;
+        std::unique_ptr<DEMSurface> _DEMSurface = nullptr;
 
         QVariantList _listOfPLCFamily = {};
         QString _plcAddress = "";//"192.168.50.102";//"10.111.42.192";//

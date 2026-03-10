@@ -370,31 +370,40 @@ ApplicationWindow {
 
                                     View3D {
                                         anchors.fill: parent
+                                        id: view3DNode
 
                                         PerspectiveCamera {
-                                            id: camera
-                                            position: Qt.vector3d(0, 50, 150)
-                                            eulerRotation.x: -30
-                                        }
+                                           id: camera
+                                           z: 300
+                                       }
 
-                                        DirectionalLight {
-                                            eulerRotation: Qt.vector3d(-45, 45, 0)
-                                            brightness: 1.5
-                                        }
+                                       DirectionalLight {
+                                           eulerRotation.x: -30
+                                       }
 
-                                        Model {
-                                            geometry: LIDARScanPointCloud2Geometry
-                                            // materials: PrincipledMaterial{
-                                            //     pointSize: 5
-                                            // }
-                                            materials: DefaultMaterial {
-                                                diffuseColor: "cyan"
-                                                pointSize: 2.0
-                                            }
-                                        }
+                                       // Terrain DEM
+                                       Model {
+                                           geometry: HeightFieldGeometry {
+                                               source: DEMSurface.heightMap
+                                               extents: Qt.vector3d(100, 20, 100) // x,y,z size in world units
+                                               smoothShading: true
+                                           }
+                                           materials: DefaultMaterial {
+                                               diffuseColor: "#8c7a5b"
+                                           }
+                                       }
 
-                                        OrbitCameraController {
-                                            camera: camera
+                                       // Raw point cloud overlay
+
+                                       Model {
+                                           geometry: LIDARScanPointCloud2Geometry
+                                           materials: PrincipledMaterial{
+                                               pointSize: 3
+                                           }
+                                       }
+
+                                        WasdController {
+                                            controlledObject: camera
                                         }
                                     }
 

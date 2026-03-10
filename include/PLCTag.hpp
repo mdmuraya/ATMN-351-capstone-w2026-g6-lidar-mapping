@@ -22,91 +22,91 @@ class PLCTag : public QObject
     Q_PROPERTY(bool bluePilotLight READ getBluePilotLight WRITE setBluePilotLight NOTIFY bluePilotLightChanged)
     Q_PROPERTY(bool whitePilotLight READ getWhitePilotLight WRITE setWhitePilotLight NOTIFY whitePilotLightChanged)
 
-public:
-    explicit PLCTag(QObject *paren);
-    ~PLCTag();
+    public:
+        explicit PLCTag(QObject *paren);
+        ~PLCTag();
 
-    void connectToPLC(QString plcAddress, QString plcFamilyId, QString plcMainProgramName, QString plcSafetyProgramName);
-    void disconnectFromPLC();
+        void connectToPLC(QString plcAddress, QString plcFamilyId, QString plcMainProgramName, QString plcSafetyProgramName);
+        void disconnectFromPLC();
 
-    bool getPLCIsConnected() const;
-    void setPLCIsConnected(bool newValue);
+        bool getPLCIsConnected() const;
+        void setPLCIsConnected(bool newValue);
 
-    bool getEStop1Activated() const;
-    void setEStop1Activated(bool newValue);
+        bool getEStop1Activated() const;
+        void setEStop1Activated(bool newValue);
 
-    bool getEStop1Faulted() const;
-    void setEStop1Faulted(bool newValue);
+        bool getEStop1Faulted() const;
+        void setEStop1Faulted(bool newValue);
 
-    bool getRunState() const;
-    void setRunState(bool newValue);
+        bool getRunState() const;
+        void setRunState(bool newValue);
 
-    bool getRunStateSCAN() const;
-    void setRunStateSCAN(bool newValue);
+        bool getRunStateSCAN() const;
+        void setRunStateSCAN(bool newValue);
 
-    bool getRedPilotLight() const;
-    void setRedPilotLight(bool newValue);
+        bool getRedPilotLight() const;
+        void setRedPilotLight(bool newValue);
 
-    bool getAmberPilotLight() const;
-    void setAmberPilotLight(bool newValue);
+        bool getAmberPilotLight() const;
+        void setAmberPilotLight(bool newValue);
 
-    bool getGreenPilotLight() const;
-    void setGreenPilotLight(bool newValue);
+        bool getGreenPilotLight() const;
+        void setGreenPilotLight(bool newValue);
 
-    bool getBluePilotLight() const;
-    void setBluePilotLight(bool newValue);
+        bool getBluePilotLight() const;
+        void setBluePilotLight(bool newValue);
 
-    bool getWhitePilotLight() const;
-    void setWhitePilotLight(bool newValue);
+        bool getWhitePilotLight() const;
+        void setWhitePilotLight(bool newValue);
 
 
-signals:
-    //void plcAddressChanged(bool newValue);
-    void plcIsConnectedChanged(bool newValue);
-    void eStop1ActivatedChanged(bool newValue);
-    void eStop1FaultedChanged(bool newValue);
-    void runStateChanged(bool newValue);
-    void runStateSCANChanged(bool newValue);
-    void redPilotLightChanged(bool newValue);
-    void amberPilotLightChanged(bool newValue);
-    void greenPilotLightChanged(bool newValue);
-    void bluePilotLightChanged(bool newValue);
-    void whitePilotLightChanged(bool newValue);
+    signals:
+        //void plcAddressChanged(bool newValue);
+        void plcIsConnectedChanged(bool newValue);
+        void eStop1ActivatedChanged(bool newValue);
+        void eStop1FaultedChanged(bool newValue);
+        void runStateChanged(bool newValue);
+        void runStateSCANChanged(bool newValue);
+        void redPilotLightChanged(bool newValue);
+        void amberPilotLightChanged(bool newValue);
+        void greenPilotLightChanged(bool newValue);
+        void bluePilotLightChanged(bool newValue);
+        void whitePilotLightChanged(bool newValue);
 
-public slots:
-    void startButtonPressedChanged(bool pressed);
-    void stopButtonPressedChanged(bool pressed);
-    void resetButtonPressedChanged(bool pressed);
-    void moveToHomeButtonPressedChanged(bool pressed);
-    void moveLeftButtonPressedChanged(bool pressed);
-    void moveBackButtonPressedChanged(bool pressed);
-    void moveForwardButtonPressedChanged(bool pressed);
-    void moveRightButtonPressedChanged(bool pressed);
+    public slots:
+        void startButtonPressedChanged(bool pressed);
+        void stopButtonPressedChanged(bool pressed);
+        void resetButtonPressedChanged(bool pressed);
+        void moveToHomeButtonPressedChanged(bool pressed);
+        void moveLeftButtonPressedChanged(bool pressed);
+        void moveBackButtonPressedChanged(bool pressed);
+        void moveForwardButtonPressedChanged(bool pressed);
+        void moveRightButtonPressedChanged(bool pressed);
 
-private:
-    std::unique_ptr<QTimer> _getPLCStatusTimer = nullptr;
+    private:
+        std::unique_ptr<QTimer> _getPLCStatusTimer = nullptr;
 
-    QString _plcAddress = "";
-    QString _plcFamilyId = "";
-    QString _plcMainProgramName = "";
-    QString _plcSafetyProgramName = "";
-    QHash<QString, int32_t> _PLCTags;
-    bool _plcIsConnected = false;
-    bool _runState = false;
-    bool _eStop1Activated = false;
-    bool _eStop1Faulted = false;
-    bool _runStateSCAN = false;
-    bool _redPilotLight = false;
-    bool _amberPilotLight = false;
-    bool _greenPilotLight = false;
-    bool _bluePilotLight = false;
-    bool _whitePilotLight = false;
+        QString _plcAddress = "";
+        QString _plcFamilyId = "";
+        QString _plcMainProgramName = "";
+        QString _plcSafetyProgramName = "";
+        QHash<QString, int32_t> _PLCTags;
+        bool _plcIsConnected = false;
+        bool _runState = false;
+        bool _eStop1Activated = false;
+        bool _eStop1Faulted = false;
+        bool _runStateSCAN = false;
+        bool _redPilotLight = false;
+        bool _amberPilotLight = false;
+        bool _greenPilotLight = false;
+        bool _bluePilotLight = false;
+        bool _whitePilotLight = false;
 
-    void getPLCStatus();
-    int32_t getPLCTag(QString tagName);
-    bool readPLCTag(QString tagName, bool &tagValue);
-    uint64_t readPLCTag(QString tagName, uint64_t &tagValue);
-    bool writePLCTag(QString tagName, bool tagValue);
+        void getPLCStatus();
+        int32_t getPLCTag(QString tagName);
+        bool readPLCTag(QString tagName, bool &tagValue);
+        uint64_t readPLCTag(QString tagName, uint64_t &tagValue);
+        bool writePLCTag(QString tagName, bool tagValue);
 
 };
 

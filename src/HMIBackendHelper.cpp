@@ -3,16 +3,6 @@
 #include <QDebug>
 #include <QVariantList>
 
-
-
-
-//#include "<pcl_conversions/pcl_conversions.h"
-//#include "pcl/point_cloud.h"
-//#include "pcl/point_types.h"
-
-#include "lib/libplctag/include/libplctag.h"
-#include "include/LIDARScanPointCloud2Geometry.hpp"
-#include "mycustompointcloud.h"
 #include "include/HMIBackendHelper.hpp"
 
 
@@ -95,9 +85,11 @@ bool HMIBackendHelper::initialize(QGuiApplication *qGuiApplication)
     _PLCTag = std::make_unique<PLCTag>(this);
     _LIDARScan2DData = std::make_unique<LIDARScan2DData>(this);
     _LIDARScanPointCloud2Geometry = std::make_unique<LIDARScanPointCloud2Geometry>();
+    _DEMSurface = std::make_unique<DEMSurface>();
     _ros2PublishTimer = std::make_shared<QTimer>();
 
     qmlRegisterSingletonInstance<LIDARScanPointCloud2Geometry>("LIDARScanPointCloud2", 1, 0, "LIDARScanPointCloud2Geometry",_LIDARScanPointCloud2Geometry.get());
+    qmlRegisterSingletonInstance<DEMSurface>("LIDARScanPointCloud2", 1, 0, "DEMSurface",_DEMSurface.get());
 
     _QQmlApplicationEngine.rootContext()->setContextProperty("plcTag", _PLCTag.get());
     _QQmlApplicationEngine.rootContext()->setContextProperty("lidarScan2DData", _LIDARScan2DData.get());
@@ -194,7 +186,7 @@ void HMIBackendHelper::initializeROS2()
     _ros2Publisher = _ros2Node->create_publisher<example_interfaces::msg::String>("LIDAR_Mapping_HMI_topic", 10);
 
     _ros2LIDARScannerSubscription = _ros2Node->create_subscription<sensor_msgs::msg::LaserScan>(
-        "/scan",
+        "scan",
         rclcpp::SensorDataQoS(),
         std::bind(&HMIBackendHelper::scanCallBack, this, std::placeholders::_1));
 
@@ -246,9 +238,9 @@ void HMIBackendHelper::scanCallBack(sensor_msgs::msg::LaserScan::SharedPtr scan)
 
     for (; iterX != iterX.end(); ++iterX, ++iterY, ++iterZ)
     {
-        float x = (*iterX) * 20;
-        float y = (*iterY) * 20;
-        float z = (*iterZ) * 20;
+        float x = (*iterX) * 50;
+        float y = (*iterY) * 50;
+        float z = (*iterZ) * 50;
         // Do something with x, y, z
         qDebug() << "SLLIDAR: PointCloud2 message XYZ: x=" << x << ", y=" << y << ", z=" << z;
 
