@@ -270,13 +270,13 @@ void HMIBackendHelper::scanSICKMultiscan100CallBack(const std::shared_ptr<sensor
 
     for (; iterX != iterX.end(); ++iterX, ++iterY, ++iterZ)
     {
-        float x = (*iterX) * 50;
-        float y = (*iterY) * 50;
-        float z = (*iterZ) * 50;
+        float x = (*iterX) * 20;
+        float y = (*iterY) * 20;
+        float z = (*iterZ) * 20;
         // Do something with x, y, z
 
-        if(((x) > 20) || ((y) > 20) || ((z) > 20))
-            continue;
+        // if(((x) > 20) || ((y) > 20) || ((z) > 20))
+        //     continue;
 
         qDebug() << "sick_scan_ros2_example: PointCloud2 message XYZ: x=" << x << ", y=" << y << ", z=" << z;
 
