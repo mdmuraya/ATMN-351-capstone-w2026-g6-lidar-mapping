@@ -50,14 +50,14 @@ void PLCTag::disconnectFromPLC()
 
 int32_t PLCTag::getPLCTag(QString tagName)
 {
-    //qDebug() << "PLCTag::getPLCTag()" << QDateTime::currentDateTime();
+    qDebug() << "PLCTag::getPLCTag()" << QDateTime::currentDateTime();
 
     if (_PLCTags.contains(tagName)) {
-        //qDebug() << "Key" << tagName << " found.";
+        qDebug() << "Key" << tagName << " found.";
         return _PLCTags.value(tagName);
     }
 
-    //qDebug() << "Key " << tagName << " NOT FOUND. Creating...";
+    qDebug() << "Key " << tagName << " NOT FOUND. Creating...";
 
 
     QString plcPath = (QString::compare(_plcFamilyId, "controllogix", Qt::CaseInsensitive) == 0 ) ? QString("&path=1,0") : "";
@@ -152,7 +152,7 @@ bool PLCTag::writePLCTag(QString tagName, bool tagValue)
 
         if(plc_tag_write(tag, 3000 /*wait for a maximumm of 3 seconds*/) != PLCTAG_STATUS_OK) {
             //plc_tag_destroy(tag);
-            qDebug() << "PLCTag::writePLCTag() FAIL";
+            qDebug() << "PLCTag::writePLCTag() - plc_tag_write  - FAIL";
             return false;
         }
         //plc_tag_destroy(tag);
@@ -186,6 +186,12 @@ void PLCTag::getPLCStatus()
         future = QtConcurrent::run([this]() {
             bool boolTagValue = getEStop1Activated();
             readPLCTag(_plcSafetyProgramName + "PHY_ESTOP_1_ACTIVATED", boolTagValue) ? setEStop1Activated(boolTagValue) : (void)0; // do nothiing if false
+        });
+        synchronizer.addFuture(future);
+
+        future = QtConcurrent::run([this]() {
+            bool boolTagValue = getEStop1Faulted();
+            readPLCTag(_plcSafetyProgramName + "PHY_ESTOP_1_FAULTED", boolTagValue) ? setEStop1Faulted(boolTagValue) : (void)0; // do nothiing if false
         });
         synchronizer.addFuture(future);
 
@@ -260,7 +266,19 @@ void PLCTag::setPLCIsConnected(bool newValue)
     _plcIsConnected = newValue;
     emit plcIsConnectedChanged(_plcIsConnected); // Emit signal to trigger QML updates
 }
+bool PLCTag::getEStop1Faulted() const
+{
+    return _eStop1Faulted;
+}
 
+void PLCTag::setEStop1Faulted(bool newValue)
+{
+    if (_eStop1Faulted == newValue)
+        return;
+
+    _eStop1Faulted = newValue;
+    emit eStop1FaultedChanged(_eStop1Faulted); // Emit signal to trigger QML updates
+}
 
 bool PLCTag::getEStop1Activated() const
 {

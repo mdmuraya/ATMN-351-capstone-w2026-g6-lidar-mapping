@@ -38,8 +38,14 @@ HMIBackendHelper::~HMIBackendHelper()
 {
     qDebug() << "HMIBackendHelper::~HMIBackendHelper()";
 
+
     if (rclcpp::ok()) {
         rclcpp::shutdown();
+
+        if (_ros2WorkerThread.joinable())
+        {
+            _ros2WorkerThread.join();
+        }
     }
 }
 
@@ -57,7 +63,7 @@ void HMIBackendHelper::publishToROS2()
     _ros2Publisher->publish(message);
 
     qDebug() << "Published:" <<  message.data;
-    rclcpp::spin_some(_ros2Node);
+    //rclcpp::spin_some(_ros2Node);
 }
 
 bool HMIBackendHelper::initialize(QGuiApplication *qGuiApplication)
@@ -88,7 +94,7 @@ bool HMIBackendHelper::initialize(QGuiApplication *qGuiApplication)
 
     _PLCTag = std::make_unique<PLCTag>(this);
     _LIDARScan2DData = std::make_unique<LIDARScan2DData>(this);
-    _LIDARScanPointCloud2Geometry = std::make_unique<LIDARScanPointCloud2Geometry>(qGuiApplication);
+    _LIDARScanPointCloud2Geometry = std::make_unique<LIDARScanPointCloud2Geometry>();
     _ros2PublishTimer = std::make_shared<QTimer>();
 
     qmlRegisterSingletonInstance<LIDARScanPointCloud2Geometry>("LIDARScanPointCloud2", 1, 0, "LIDARScanPointCloud2Geometry",_LIDARScanPointCloud2Geometry.get());
@@ -188,7 +194,7 @@ void HMIBackendHelper::initializeROS2()
     _ros2Publisher = _ros2Node->create_publisher<example_interfaces::msg::String>("LIDAR_Mapping_HMI_topic", 10);
 
     _ros2LIDARScannerSubscription = _ros2Node->create_subscription<sensor_msgs::msg::LaserScan>(
-        "scan",
+        "/scan",
         rclcpp::SensorDataQoS(),
         std::bind(&HMIBackendHelper::scanCallBack, this, std::placeholders::_1));
 
@@ -196,6 +202,10 @@ void HMIBackendHelper::initializeROS2()
         "/cloud_unstructured_fullframe",
         10,
         std::bind(&HMIBackendHelper::scanSICKMultiscan100CallBack, this, std::placeholders::_1));
+
+    _ros2WorkerThread = std::thread([this]() {
+        rclcpp::spin(_ros2Node);
+    });
 
 }
 
@@ -226,23 +236,27 @@ void HMIBackendHelper::scanCallBack(sensor_msgs::msg::LaserScan::SharedPtr scan)
 
     qDebug() << "SLLIDAR: PointCloud2 message received, size " << pointCloud2.width << " x " << pointCloud2.height;
 
+    QVector<QVector3D> points;
+    points.reserve(pointCloud2.width * pointCloud2.height);
+
     // Create iterators for x, y, and z fields
     sensor_msgs::PointCloud2ConstIterator<float> iterX(pointCloud2, "x");
     sensor_msgs::PointCloud2ConstIterator<float> iterY(pointCloud2, "y");
     sensor_msgs::PointCloud2ConstIterator<float> iterZ(pointCloud2, "z");
 
-    for (; iterX != iterX.end(); ++iterX, ++iterY, ++iterZ) {
-        float x = *iterX;
-        float y = *iterY;
-        float z = *iterZ;
+    for (; iterX != iterX.end(); ++iterX, ++iterY, ++iterZ)
+    {
+        float x = (*iterX) * 20;
+        float y = (*iterY) * 20;
+        float z = (*iterZ) * 20;
         // Do something with x, y, z
         qDebug() << "SLLIDAR: PointCloud2 message XYZ: x=" << x << ", y=" << y << ", z=" << z;
+
+        points.append(QVector3D(x, y, z));
     }
 
-     QByteArray vertexData = QByteArray(reinterpret_cast<const char*>(pointCloud2.data.data()),
-               static_cast<int>(pointCloud2.data.size()));
-
-    _LIDARScanPointCloud2Geometry->updateData(vertexData);
+    emit pointCloudReady(points);
+    _LIDARScanPointCloud2Geometry->updateData(points);
 
 }
 
@@ -253,10 +267,27 @@ void HMIBackendHelper::scanSICKMultiscan100CallBack(const std::shared_ptr<sensor
 
     qDebug() << "sick_scan_ros2_example: pointcloud message received, size " << pointCloud2->width << " x " << pointCloud2->height;
 
-    QByteArray vertexData = QByteArray(reinterpret_cast<const char*>(pointCloud2->data.data()),
-                                       static_cast<int>(pointCloud2->data.size()));
+    QVector<QVector3D> points;
+    points.reserve(pointCloud2->width * pointCloud2->height);
 
-    _LIDARScanPointCloud2Geometry->updateData(vertexData);
+    // Create iterators for x, y, and z fields
+    sensor_msgs::PointCloud2ConstIterator<float> iterX(*pointCloud2, "x");
+    sensor_msgs::PointCloud2ConstIterator<float> iterY(*pointCloud2, "y");
+    sensor_msgs::PointCloud2ConstIterator<float> iterZ(*pointCloud2, "z");
+
+    for (; iterX != iterX.end(); ++iterX, ++iterY, ++iterZ)
+    {
+        float x = (*iterX) * 20;
+        float y = (*iterY) * 20;
+        float z = (*iterZ) * 20;
+        // Do something with x, y, z
+        qDebug() << "sick_scan_ros2_example: PointCloud2 message XYZ: x=" << x << ", y=" << y << ", z=" << z;
+
+        points.append(QVector3D(x, y, z));
+    }
+
+    emit pointCloudReady(points);
+    _LIDARScanPointCloud2Geometry->updateData(points);
 
 }
 

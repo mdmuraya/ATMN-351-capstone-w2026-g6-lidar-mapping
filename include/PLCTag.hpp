@@ -13,6 +13,7 @@ class PLCTag : public QObject
     //Q_PROPERTY(QString plcAddress READ getPLCAddress NOTIFY plcAddressChanged)
     Q_PROPERTY(bool plcIsConnected READ getPLCIsConnected WRITE setPLCIsConnected NOTIFY plcIsConnectedChanged)
     Q_PROPERTY(bool eStop1Activated READ getEStop1Activated WRITE setEStop1Activated NOTIFY eStop1ActivatedChanged)
+    Q_PROPERTY(bool eStop1Faulted READ getEStop1Faulted WRITE setEStop1Faulted NOTIFY eStop1FaultedChanged)
     Q_PROPERTY(bool runState READ getRunState WRITE setRunState NOTIFY runStateChanged)
     Q_PROPERTY(bool runStateSCAN READ getRunStateSCAN WRITE setRunStateSCAN NOTIFY runStateSCANChanged)
     Q_PROPERTY(bool redPilotLight READ getRedPilotLight WRITE setRedPilotLight NOTIFY redPilotLightChanged)
@@ -33,6 +34,9 @@ public:
 
     bool getEStop1Activated() const;
     void setEStop1Activated(bool newValue);
+
+    bool getEStop1Faulted() const;
+    void setEStop1Faulted(bool newValue);
 
     bool getRunState() const;
     void setRunState(bool newValue);
@@ -60,6 +64,7 @@ signals:
     //void plcAddressChanged(bool newValue);
     void plcIsConnectedChanged(bool newValue);
     void eStop1ActivatedChanged(bool newValue);
+    void eStop1FaultedChanged(bool newValue);
     void runStateChanged(bool newValue);
     void runStateSCANChanged(bool newValue);
     void redPilotLightChanged(bool newValue);
@@ -89,6 +94,7 @@ private:
     bool _plcIsConnected = false;
     bool _runState = false;
     bool _eStop1Activated = false;
+    bool _eStop1Faulted = false;
     bool _runStateSCAN = false;
     bool _redPilotLight = false;
     bool _amberPilotLight = false;

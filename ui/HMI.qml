@@ -362,35 +362,39 @@ ApplicationWindow {
                                     //     }
                                     // }
 
-                                    WasdController{
-                                        controlledObject: camera
-                                    }
+                                    // WasdController{
+                                    //     controlledObject: camera
+                                    // }
 
 
 
                                     View3D {
                                         anchors.fill: parent
-                                        environment: SceneEnvironment {
-                                            lightProbe: Texture{
-                                                ///source: "imageTesto.hdr"
-                                            }
-                                            //backgroundMode: SceneEnvironment.SkyBox
-                                        }
 
                                         PerspectiveCamera {
                                             id: camera
-                                            z: 300
+                                            position: Qt.vector3d(0, 50, 150)
+                                            eulerRotation.x: -30
                                         }
 
                                         DirectionalLight {
-                                            eulerRotation.x: -30
+                                            eulerRotation: Qt.vector3d(-45, 45, 0)
+                                            brightness: 1.5
                                         }
 
                                         Model {
                                             geometry: LIDARScanPointCloud2Geometry
-                                            materials: PrincipledMaterial{
-                                                pointSize: 5
+                                            // materials: PrincipledMaterial{
+                                            //     pointSize: 5
+                                            // }
+                                            materials: DefaultMaterial {
+                                                diffuseColor: "cyan"
+                                                pointSize: 2.0
                                             }
+                                        }
+
+                                        OrbitCameraController {
+                                            camera: camera
                                         }
                                     }
 
@@ -646,7 +650,7 @@ ApplicationWindow {
                                 SafetyIndicator {
                                     id: eStopSafetyIndicator
                                     Layout.alignment: Qt.AlignHCenter
-                                    displayText: plcTag?.plcIsConnected ? "E-STOP" : "?? E-STOP"
+                                    displayText: plcTag?.plcIsConnected ? plcTag?.eStop1Faulted ? "E-STOP (FAULTED)"  : "E-STOP" : "?? E-STOP"
                                     isActivated: (plcTag?.plcIsConnected && plcTag?.eStop1Activated) ?? false
                                 }
                                 SafetyIndicator {

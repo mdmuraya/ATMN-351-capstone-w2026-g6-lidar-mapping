@@ -3,18 +3,19 @@
 
 #include <QObject>
 #include <QQuick3DGeometry>
+#include <QVector3D>
 
 class LIDARScanPointCloud2Geometry : public QQuick3DGeometry
 {
     Q_OBJECT    
     public:
-        explicit LIDARScanPointCloud2Geometry(QObject *parent = nullptr);
+        explicit LIDARScanPointCloud2Geometry(QQuick3DObject *parent = nullptr);
         ~LIDARScanPointCloud2Geometry();
 
     signals:
 
     public slots:
-        void updateData(QByteArray &vertexData);
+        void updateData(const QVector<QVector3D> &points);
 
     private:
         QVector3D generateRandomVertex(float min, float max) const;

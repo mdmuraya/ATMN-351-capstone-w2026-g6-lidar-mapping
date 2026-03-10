@@ -9,6 +9,8 @@
 #include <QQmlEngine>
 #include <QHash>
 #include <math.h>
+#include <thread>
+#include <QVector3D>
 
 
 #include "rclcpp/rclcpp.hpp"
@@ -24,6 +26,7 @@
 #include "include/PLCTag.hpp"
 #include "include/LIDARScan2DData.hpp"
 #include "include/LIDARScanPointCloud2Geometry.hpp"
+
 
 class HMIBackendHelper : public QObject
 {
@@ -48,6 +51,7 @@ class HMIBackendHelper : public QObject
         void listOfPLCFamilyChanged();
         void plcAddressChanged(QString newValue);
         void plcFamilyIdChanged(QString newValue);
+        void pointCloudReady(const QVector<QVector3D> &points);
 
     public slots:
         void connectToPLC();
@@ -56,6 +60,7 @@ class HMIBackendHelper : public QObject
     private:
         QQmlApplicationEngine _QQmlApplicationEngine;
         QDateTime _dateTimeOnApplicationStart = QDateTime::currentDateTime();
+        std::thread _ros2WorkerThread;
         std::shared_ptr<QTimer> _ros2PublishTimer = nullptr;
         rclcpp::Node::SharedPtr _ros2Node = nullptr;
         rclcpp::Publisher<example_interfaces::msg::String>::SharedPtr _ros2Publisher = nullptr;
@@ -72,6 +77,7 @@ class HMIBackendHelper : public QObject
         QString _plcFamilyId = "";//"controllogix";//controllogix //micro800
         QString _plcMainProgramName = "Program:MainProgram."; //"Program:MainProgram.";
         QString _plcSafetyProgramName = "Program:MainProgram."; //"Program:MainProgram.";
+
 
         void initializeROS2();
         void setupConnections();
