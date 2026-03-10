@@ -2,9 +2,9 @@
 #include <QQmlContext>
 #include <QDebug>
 #include <QVariantList>
+#include <QtNumeric>
 
 #include "include/HMIBackendHelper.hpp"
-
 
 #define REQUIRED_VERSION 2, 4, 0
 #define RAD2DEG(x) ((x)*180./M_PI)
@@ -270,10 +270,14 @@ void HMIBackendHelper::scanSICKMultiscan100CallBack(const std::shared_ptr<sensor
 
     for (; iterX != iterX.end(); ++iterX, ++iterY, ++iterZ)
     {
-        float x = (*iterX) * 20;
-        float y = (*iterY) * 20;
-        float z = (*iterZ) * 20;
+        float x = (*iterX) * 50;
+        float y = (*iterY) * 50;
+        float z = (*iterZ) * 50;
         // Do something with x, y, z
+
+        if(((x) > 20) || ((y) > 20) || ((z) > 20))
+            continue;
+
         qDebug() << "sick_scan_ros2_example: PointCloud2 message XYZ: x=" << x << ", y=" << y << ", z=" << z;
 
         points.append(QVector3D(x, y, z));
