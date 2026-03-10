@@ -580,13 +580,13 @@ ApplicationWindow {
                                 SafetyIndicator {
                                     id: eStopSafetyIndicator
                                     Layout.alignment: Qt.AlignHCenter
-                                    displayText: plcTag?.plcIsConnected ? plcTag?.eStop1Faulted ? "E-STOP (FAULTED)"  : "E-STOP" : "?? E-STOP"
+                                    displayText: plcTag?.plcIsConnected ? plcTag?.eStop1Faulted ? "E-STOP (FLT)"  : "E-STOP" : "?? E-STOP"
                                     isActivated: (plcTag?.plcIsConnected && plcTag?.eStop1Activated) ?? false
                                 }
                                 SafetyIndicator {
                                     id: lightCurtainSafetyIndicator
                                     Layout.alignment: Qt.AlignHCenter
-                                    displayText: plcTag?.plcIsConnected ? plcTag?.lightCurtain1Faulted ? "LIGHT CURTAIN (FAULTED)"  : "LIGHT CURTAIN" : "?? LIGHT CURTAIN"
+                                    displayText: plcTag?.plcIsConnected ? plcTag?.lightCurtain1Faulted ? "LIGHT CURTAIN (FLT)"  : "LIGHT CURTAIN" : "?? LIGHT CURTAIN"
                                     isActivated: (plcTag?.plcIsConnected && plcTag?.lightCurtain1Activated) ?? false
                                 }
                                 SafetyIndicator {
