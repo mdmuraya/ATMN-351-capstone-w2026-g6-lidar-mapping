@@ -184,6 +184,12 @@ void PLCTag::getPLCStatus()
         QFuture<void> future;
 
         future = QtConcurrent::run([this]() {
+            bool boolTagValue = getAllSafetyInputsOK();
+            readPLCTag(QString("") + "ALL_Safety_Inputs_OK", boolTagValue) ? setAllSafetyInputsOK(boolTagValue) : (void)0; // do nothiing if false
+        });
+        synchronizer.addFuture(future);
+
+        future = QtConcurrent::run([this]() {
             bool boolTagValue = getEStop1Activated();
             readPLCTag(_plcSafetyProgramName + "PHY_ESTOP_1_ACTIVATED", boolTagValue) ? setEStop1Activated(boolTagValue) : (void)0; // do nothiing if false
         });
@@ -205,7 +211,7 @@ void PLCTag::getPLCStatus()
             bool boolTagValue = getLightCurtain1Faulted();
             readPLCTag(_plcSafetyProgramName + "PHY_LIGHTCURTAIN_1_FAULTED", boolTagValue) ? setLightCurtain1Faulted(boolTagValue) : (void)0; // do nothiing if false
         });
-        synchronizer.addFuture(future);
+        synchronizer.addFuture(future);        
 
         future = QtConcurrent::run([this]() {
             bool boolTagValue = getRunState();
@@ -277,6 +283,20 @@ void PLCTag::setPLCIsConnected(bool newValue)
 
     _plcIsConnected = newValue;
     emit plcIsConnectedChanged(_plcIsConnected); // Emit signal to trigger QML updates
+}
+
+bool PLCTag::getAllSafetyInputsOK() const
+{
+    return _allSafetyInputsOK;
+}
+
+void PLCTag::setAllSafetyInputsOK(bool newValue)
+{
+    if (_allSafetyInputsOK == newValue)
+        return;
+
+    _allSafetyInputsOK = newValue;
+    emit allSafetyInputsOKChanged(_allSafetyInputsOK); // Emit signal to trigger QML updates
 }
 
 bool PLCTag::getEStop1Faulted() const

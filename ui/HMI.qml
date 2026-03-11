@@ -16,10 +16,23 @@ ApplicationWindow {
     //height: 600//860
     minimumHeight: 860
     color: "#E0DFDB"
+    //color: "#F6BFC2"
     visible: true
     visibility: Window.Maximized
     title: qsTr("Humber Polytechnic: Electromechanical Engineering Technology: Winter 2026 Capstone: Group 6")
     flags: Qt.Window | Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowCloseButtonHint
+
+    Item {
+        states: [
+            State {
+                name: "safetyViolationState"
+                when: (plcTag?.plcIsConnected && (! plcTag?.allSafetyInputsOK))
+                PropertyChanges { target: applicationWindow; color: "#F6BFC2" }
+            }
+        ]
+    }
+
+
 
     //flags: Qt.Window | Qt.FramelessWindowHint
 
@@ -325,7 +338,8 @@ ApplicationWindow {
                                     anchors.centerIn: parent
                                     width: rectScanArea.width * 0.93
                                     height: rectScanArea.height * 0.93
-                                    color: "#F7F7DA"
+                                    //color: "#F7F7DA"
+                                    color: applicationWindow.color
                                     border {
                                         width: 1
                                         color: "black"
@@ -449,7 +463,7 @@ ApplicationWindow {
                                 background: Rectangle {
                                     Layout.fillWidth: true
                                     implicitHeight: 20
-                                    color: "#e6e6e6" // Light gray track color
+                                    color: applicationWindow.color//"#e6e6e6" // Light gray track color
                                     radius: 5
                                     border.color: "#cccccc"
                                     border.width: 1

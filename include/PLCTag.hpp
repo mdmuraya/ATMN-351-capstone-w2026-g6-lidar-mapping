@@ -12,6 +12,7 @@ class PLCTag : public QObject
 
     //Q_PROPERTY(QString plcAddress READ getPLCAddress NOTIFY plcAddressChanged)
     Q_PROPERTY(bool plcIsConnected READ getPLCIsConnected WRITE setPLCIsConnected NOTIFY plcIsConnectedChanged)
+    Q_PROPERTY(bool allSafetyInputsOK READ getAllSafetyInputsOK WRITE setAllSafetyInputsOK NOTIFY allSafetyInputsOKChanged)
     Q_PROPERTY(bool eStop1Activated READ getEStop1Activated WRITE setEStop1Activated NOTIFY eStop1ActivatedChanged)
     Q_PROPERTY(bool eStop1Faulted READ getEStop1Faulted WRITE setEStop1Faulted NOTIFY eStop1FaultedChanged)
     Q_PROPERTY(bool lightCurtain1Activated READ getLightCurtain1Activated WRITE setLightCurtain1Activated NOTIFY lightCurtain1ActivatedChanged)
@@ -33,6 +34,9 @@ class PLCTag : public QObject
 
         bool getPLCIsConnected() const;
         void setPLCIsConnected(bool newValue);
+
+        bool getAllSafetyInputsOK() const;
+        void setAllSafetyInputsOK(bool newValue);
 
         bool getEStop1Activated() const;
         void setEStop1Activated(bool newValue);
@@ -71,6 +75,7 @@ class PLCTag : public QObject
     signals:
         //void plcAddressChanged(bool newValue);
         void plcIsConnectedChanged(bool newValue);
+        void allSafetyInputsOKChanged(bool newValue);
         void eStop1ActivatedChanged(bool newValue);
         void eStop1FaultedChanged(bool newValue);//
         void lightCurtain1ActivatedChanged(bool newValue);
@@ -103,6 +108,7 @@ class PLCTag : public QObject
         QHash<QString, int32_t> _PLCTags;
         bool _plcIsConnected = false;
         bool _runState = false;
+        bool _allSafetyInputsOK = false;
         bool _eStop1Activated = false;
         bool _eStop1Faulted = false;
         bool _lightCurtain1Activated = false;
