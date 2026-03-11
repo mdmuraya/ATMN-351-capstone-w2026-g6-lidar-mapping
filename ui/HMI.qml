@@ -376,6 +376,7 @@ ApplicationWindow {
                                            geometry: LIDARScanPointCloud2Geometry
                                            materials: PrincipledMaterial{
                                                pointSize: 3
+                                               baseColor: "red"
                                            }
                                        }
 

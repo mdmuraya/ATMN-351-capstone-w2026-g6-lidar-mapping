@@ -34,14 +34,6 @@ LIDARScanPointCloud2Geometry::~LIDARScanPointCloud2Geometry()
 
 void LIDARScanPointCloud2Geometry::updatePoints(const QVector<QVector3D> &points)
 {
-    // clear();
-
-    // setVertexData(vertexData);
-    // setPrimitiveType(QQuick3DGeometry::PrimitiveType::Points);
-    // setStride(3 * sizeof(float));
-    // addAttribute(QQuick3DGeometry::Attribute::PositionSemantic,
-    //              0,
-    //              QQuick3DGeometry::Attribute::F32Type);
 
     if (points.isEmpty())
         return;
