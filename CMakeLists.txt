@@ -46,6 +46,7 @@ else()
 endif()
 
 find_package(Qt6 6.8 REQUIRED COMPONENTS Quick QuickControls2 Quick3D Concurrent)
+find_package(PCL REQUIRED COMPONENTS common io kdtree features surface)
 
 # If you are using PCL directly in C++, you may also need: find_package(MPI REQUIRED)
 #find_package(VTK REQUIRED)

@@ -181,6 +181,7 @@ ApplicationWindow {
                             Layout.fillWidth: true
                             ColumnLayout {
                                 anchors.fill: parent
+
                                 Button {
                                     id: startButton
                                     text: qsTr("START")
