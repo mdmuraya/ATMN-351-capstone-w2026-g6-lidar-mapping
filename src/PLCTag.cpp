@@ -211,7 +211,19 @@ void PLCTag::getPLCStatus()
             bool boolTagValue = getLightCurtain1Faulted();
             readPLCTag(_plcSafetyProgramName + "PHY_LIGHTCURTAIN_1_FAULTED", boolTagValue) ? setLightCurtain1Faulted(boolTagValue) : (void)0; // do nothiing if false
         });
-        synchronizer.addFuture(future);        
+        synchronizer.addFuture(future);
+
+        future = QtConcurrent::run([this]() {
+            bool boolTagValue = getAreaScanner1Activated();
+            readPLCTag(_plcSafetyProgramName + "PHY_AREASCANNER_1_ACTIVATED", boolTagValue) ? setAreaScanner1Activated(boolTagValue) : (void)0; // do nothiing if false
+        });
+        synchronizer.addFuture(future);
+
+        future = QtConcurrent::run([this]() {
+            bool boolTagValue = getAreaScanner1Faulted();
+            readPLCTag(_plcSafetyProgramName + "PHY_AREASCANNER_1_FAULTED", boolTagValue) ? setAreaScanner1Faulted(boolTagValue) : (void)0; // do nothiing if false
+        });
+        synchronizer.addFuture(future);
 
         future = QtConcurrent::run([this]() {
             bool boolTagValue = getRunState();
