@@ -608,8 +608,8 @@ ApplicationWindow {
                                 SafetyIndicator {
                                     id: areaScannerSafetyIndicator
                                     Layout.alignment: Qt.AlignHCenter
-                                    displayText: plcTag?.plcIsConnected ? "AREA SCANNER" : "?? AREA SCANNER"
-                                    isActivated: false //(plcTag?.plcIsConnected && plcTag?.runState) ?? false
+                                    displayText: plcTag?.plcIsConnected ? plcTag?.areaScanner1Faulted ? "AREA SCANNER (FLT)"  : "AREA SCANNER" : "?? AREA SCANNER"
+                                    isActivated: (plcTag?.plcIsConnected && plcTag?.areaScanner1Activated) ?? false
                                 }
                                 //Item { Layout.fillWidth: true }
 

@@ -356,6 +356,35 @@ void PLCTag::setLightCurtain1Activated(bool newValue)
     emit lightCurtain1ActivatedChanged(_lightCurtain1Activated); // Emit signal to trigger QML updates
 }
 
+
+bool PLCTag::getAreaScanner1Faulted() const
+{
+    return _areaScanner1Faulted;
+}
+
+void PLCTag::setAreaScanner1Faulted(bool newValue)
+{
+    if (_areaScanner1Faulted == newValue)
+        return;
+
+    _areaScanner1Faulted = newValue;
+    emit areaScanner1FaultedChanged(_areaScanner1Faulted); // Emit signal to trigger QML updates
+}
+
+bool PLCTag::getAreaScanner1Activated() const
+{
+    return _areaScanner1Activated;
+}
+
+void PLCTag::setAreaScanner1Activated(bool newValue)
+{
+    if (_areaScanner1Activated == newValue)
+        return;
+
+    _areaScanner1Activated = newValue;
+    emit areaScanner1ActivatedChanged(_areaScanner1Activated); // Emit signal to trigger QML updates
+}
+
 bool PLCTag::getRunState() const
 {
     return _runState;

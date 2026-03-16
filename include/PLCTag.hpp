@@ -17,6 +17,8 @@ class PLCTag : public QObject
     Q_PROPERTY(bool eStop1Faulted READ getEStop1Faulted WRITE setEStop1Faulted NOTIFY eStop1FaultedChanged)
     Q_PROPERTY(bool lightCurtain1Activated READ getLightCurtain1Activated WRITE setLightCurtain1Activated NOTIFY lightCurtain1ActivatedChanged)
     Q_PROPERTY(bool lightCurtain1Faulted READ getLightCurtain1Faulted WRITE setLightCurtain1Faulted NOTIFY lightCurtain1FaultedChanged)
+    Q_PROPERTY(bool areaScanner1Activated READ getAreaScanner1Activated WRITE setAreaScanner1Activated NOTIFY areaScanner1ActivatedChanged)
+    Q_PROPERTY(bool areaScanner1Faulted READ getAreaScanner1Faulted WRITE setAreaScanner1Faulted NOTIFY areaScanner1FaultedChanged)
     Q_PROPERTY(bool runState READ getRunState WRITE setRunState NOTIFY runStateChanged)
     Q_PROPERTY(bool runStateSCAN READ getRunStateSCAN WRITE setRunStateSCAN NOTIFY runStateSCANChanged)
     Q_PROPERTY(bool redPilotLight READ getRedPilotLight WRITE setRedPilotLight NOTIFY redPilotLightChanged)
@@ -50,6 +52,12 @@ class PLCTag : public QObject
         bool getLightCurtain1Faulted() const;
         void setLightCurtain1Faulted(bool newValue);
 
+        bool getAreaScanner1Activated() const;
+        void setAreaScanner1Activated(bool newValue);
+
+        bool getAreaScanner1Faulted() const;
+        void setAreaScanner1Faulted(bool newValue);
+
         bool getRunState() const;
         void setRunState(bool newValue);
 
@@ -80,6 +88,8 @@ class PLCTag : public QObject
         void eStop1FaultedChanged(bool newValue);//
         void lightCurtain1ActivatedChanged(bool newValue);
         void lightCurtain1FaultedChanged(bool newValue);
+        void areaScanner1ActivatedChanged(bool newValue);
+        void areaScanner1FaultedChanged(bool newValue);
         void runStateChanged(bool newValue);
         void runStateSCANChanged(bool newValue);
         void redPilotLightChanged(bool newValue);
@@ -113,6 +123,8 @@ class PLCTag : public QObject
         bool _eStop1Faulted = false;
         bool _lightCurtain1Activated = false;
         bool _lightCurtain1Faulted = false;
+        bool _areaScanner1Activated = false;
+        bool _areaScanner1Faulted = false;
         bool _runStateSCAN = false;
         bool _redPilotLight = false;
         bool _amberPilotLight = false;
