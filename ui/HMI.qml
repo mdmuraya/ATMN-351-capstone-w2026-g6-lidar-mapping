@@ -352,7 +352,7 @@ ApplicationWindow {
 
                                         PerspectiveCamera {
                                            id: camera
-                                           z: 300
+                                           z: 500
                                        }
 
                                        DirectionalLight {
@@ -376,7 +376,7 @@ ApplicationWindow {
                                        Model {
                                            geometry: LIDARScanPointCloud2Geometry
                                            materials: PrincipledMaterial{
-                                               pointSize: 3
+                                               pointSize: 1
                                                baseColor: "red"
                                            }
                                        }
