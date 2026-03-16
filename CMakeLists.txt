@@ -1,7 +1,7 @@
 # /home/atmn-351/Command to run the LIDAR_Mapping_HMI_App.txt
 # /home/atmn-351/ROS2_Workspaces/LIDAR_Mapping_Workspace/src/LIDAR_Mapping/build/Desktop_Qt_6_10_2-Debug/LIDAR_Mapping_HMI&
 
-# ros2 launch sick_scan_xd sick_multiscan.launch.py hostname:=192.168.50.101 udp_receiver_ip:=192.168.50.105
+# ros2 launch sick_scan_xd sick_multiscan.launch.py hostname:=192.168.1.101 udp_receiver_ip:=192.168.1.103
 # pointcloud2 topic = /cloud_unstructured_fullframe
 
 # sudo chmod 777 /dev/ttyUSB0
@@ -45,12 +45,16 @@ else()
     set(USE_ROS OFF)
 endif()
 
-find_package(Qt6 6.8 REQUIRED COMPONENTS Quick QuickControls2 Quick3D Concurrent)
-find_package(PCL REQUIRED COMPONENTS common io kdtree features surface)
 
-# If you are using PCL directly in C++, you may also need: find_package(MPI REQUIRED)
-#find_package(VTK REQUIRED)
-#find_package(PCL REQUIRED)
+find_package(Qt6 6.8 REQUIRED COMPONENTS Quick QuickControls2 Quick3D Concurrent)
+
+# --- FIX FOR UBUNTU 24.04 + PCL + VTK + MPI ---
+#set(PCL_FIND_VTK OFF)
+#set(PCL_ENABLE_VTK OFF)
+#set(PCL_DISABLE_VTK ON)
+# ----------------------------------------------
+#set(PCL_DIR "/pcl-no-vtk/pcl/build")
+find_package(PCL REQUIRED COMPONENTS common io kdtree features surface)
 include_directories(${PCL_INCLUDE_DIRS})
 link_directories(${PCL_LIBRARY_DIRS})
 add_definitions(${PCL_DEFINITIONS})
