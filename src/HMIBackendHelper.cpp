@@ -295,7 +295,7 @@ void HMIBackendHelper::startTimers()
 
     int frequency = 1; //number of times per second
 
-    _ros2PublishTimer->start((1000/frequency));
+    //_ros2PublishTimer->start((1000/frequency));
 }
 
 

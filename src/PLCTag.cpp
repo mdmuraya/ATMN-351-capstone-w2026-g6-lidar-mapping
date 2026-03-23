@@ -27,6 +27,7 @@ PLCTag::~PLCTag()
     {
         qDebug() << "DESTRYOING Tag: Name:" << tagName << "Value:" << tag;
         plc_tag_destroy(tag);
+        plc_tag_unregister_callback(tag);
     }
     _PLCTags.clear();
 }
@@ -40,7 +41,44 @@ void PLCTag::connectToPLC(QString plcAddress, QString plcFamilyId, QString plcMa
 
     int frequency = 5; //number of times per second
     _getPLCStatusTimer->start((1000/frequency));
+    //getPLCTag(_plcMainProgramName + "PLC_Heart_Beat");
 }
+
+// void PLCTag::eventCallback(int32_t tagId, int eventId, int status, void *userdata)
+// {
+//     qDebug() << "PLCTag::eventCallback()" << QDateTime::currentDateTime();
+//     QString plcTtag = *((QString*)userdata);
+//     qDebug() << "PLCTag::eventCallback()" << tagId << eventId << status  << plcTtag;
+
+//     switch (eventId)
+//     {
+//         case PLCTAG_EVENT_READ_STARTED:
+//             qDebug() << "PLCTag::eventCallback()" << "PLCTAG_EVENT_READ_STARTED";
+//             break;
+//         case PLCTAG_EVENT_READ_COMPLETED:
+//             qDebug() << "PLCTag::eventCallback()" << "PLCTAG_EVENT_READ_COMPLETED" << plcTtag;
+//             updateHMIFromPLCTag(plcTtag);
+//             break;
+//         case PLCTAG_EVENT_WRITE_STARTED:
+//             qDebug() << "PLCTag::eventCallback()" << "PLCTAG_EVENT_WRITE_STARTED";
+//             break;
+//         case PLCTAG_EVENT_WRITE_COMPLETED:
+//             qDebug() << "PLCTag::eventCallback()" << "PLCTAG_EVENT_WRITE_COMPLETED";
+//             break;
+//         case PLCTAG_EVENT_ABORTED:
+//             qDebug() << "PLCTag::eventCallback()" << "PLCTAG_EVENT_ABORTED";
+//             break;
+//         case PLCTAG_EVENT_DESTROYED:
+//             qDebug() << "PLCTag::eventCallback()" << "PLCTAG_EVENT_DESTROYED";
+//             break;
+//         case PLCTAG_EVENT_CREATED:
+//             qDebug() << "PLCTag::eventCallback()" << "PLCTAG_EVENT_CREATED";
+//             break;
+//         default:
+//             qDebug() << "PLCTag::eventCallback()" << "DEFAULT";
+//             break;
+//     }
+// }
 
 void PLCTag::disconnectFromPLC()
 {
@@ -73,6 +111,7 @@ int32_t PLCTag::getPLCTag(QString tagName)
         qDebug() << "ERROR" << QString::fromUtf8(plc_tag_decode_error(tag)) << ": Could not create tag!";
         return 0;
     }
+    qDebug() << "SUCCESS" << QString::fromUtf8(plc_tag_decode_error(tag)) << ": Tag created";
 
     int rc = 0;
     if((rc = plc_tag_status(tag)) != PLCTAG_STATUS_OK)
@@ -81,15 +120,37 @@ int32_t PLCTag::getPLCTag(QString tagName)
         plc_tag_destroy(tag);
         return 0;
     }
+    qDebug() << "SUCCESS" << QString::fromUtf8(plc_tag_decode_error(tag)) << ": Tag status OK";
 
     _PLCTags.insert(tagName, tag);
     return _PLCTags.value(tagName);
+
+    // QHash<QString, int>::iterator it = _PLCTags.find(tagName);
+    // // Check if the key was found
+    // if (it != _PLCTags.end()) {
+    //     // Get a const reference to the key, then take its address (pointer)
+    //     const QString* keyPointer = &(it.key());
+    //     qDebug() << "TUNA-GET" << (*keyPointer);
+
+    //     if((rc = plc_tag_register_callback_ex(tag, &PLCTag::eventCallback, (void*)keyPointer)) != PLCTAG_STATUS_OK)
+    //     {
+    //         qDebug() << "Error setting up callback. Error" << QString::fromUtf8(plc_tag_decode_error(rc));
+    //         _PLCTags.remove(tagName);
+    //         plc_tag_destroy(tag);
+    //         return 0;
+    //     }
+
+    //     return _PLCTags.value(tagName);
+    // }
+
+    // plc_tag_destroy(tag);
+    // return 0;
 
 }
 
 bool PLCTag::readPLCTag(QString tagName, bool &tagValue)
 {
-    //qDebug() << "PLCTag::readPLCTag()" << QDateTime::currentDateTime();
+    qDebug() << "PLCTag::readPLCTag()" << QDateTime::currentDateTime();
 
     int32_t tag = getPLCTag(tagName);
 
@@ -165,9 +226,75 @@ bool PLCTag::writePLCTag(QString tagName, bool tagValue)
     return false;
 }
 
+// bool PLCTag::updateHMIFromPLCTag(QString tagName)
+// {
+//     uint32_t tagId =_PLCTags[tagName];
+//     int status = 0;
+
+//     switch (tagName)
+//     {
+//         case "PLC_Heart_Beat":
+//             uint64_t value = plc_tag_get_uint64(tagId, 0);
+//             status = plc_tag_status(tagId);
+
+//             if(status == PLCTAG_STATUS_OK)
+//                 setPLCIsConnected(true);
+//             else
+//             {
+//                 qDebug() << "Read error:" << plc_tag_decode_error(status);
+//                 setPLCIsConnected(falsee);
+//             }
+//             break;
+//         case "PLC_Heart_Beat1":
+//             uint64_t value = plc_tag_get_uint64(tagId, 0);
+//             status = plc_tag_status(tagId);
+
+//             if(status == PLCTAG_STATUS_OK)
+//                 setPLCIsConnected(true);
+//             else
+//             {
+//                 qDebug() << "Read error:" << plc_tag_decode_error(status);
+//                 setPLCIsConnected(falsee);
+//             }
+//             break;
+//         default:
+//             break;
+//     }
+
+
+
+
+
+//     if (tagName == "PLC_Heart_Beat")
+//     {
+//         uint64_t value = plc_tag_get_uint64(tagId, 0);
+//         status = plc_tag_status(tagId);
+
+//         if(status == PLCTAG_STATUS_OK)
+//             setPLCIsConnected(true);
+//         else
+//         {
+//             qDebug() << "Read error:" << plc_tag_decode_error(status);
+//             setPLCIsConnected(falsee);
+//         }
+//     }
+//     else if (tagName == "PLC_Heart_Beat1")
+//     {
+//         // Code block 2: executed if condition1 was false and condition2 is true
+//     }
+//     else if (tagName == "PLC_Heart_Beat2")
+//     {
+//         // Code block 3: executed if condition1 and condition2 were false and condition3 is true
+//     }
+//     else if (tagName == "PLC_Heart_Beat3")
+//     {
+//         // Code block 3: executed if condition1 and condition2 were false and condition3 is true
+//     }
+// }
+
 void PLCTag::getPLCStatus()
 {
-    //qDebug() << "PLCTag::getPLCStatus()" << QDateTime::currentDateTime();
+    qDebug() << "PLCTag::getPLCStatus()" << QDateTime::currentDateTime();
     //here we will get all the PLC tags, in threads (concurrently)
     //Program:SafetyProgram.PHY_ESTOP_ACTIVATED
     _getPLCStatusTimer->stop();
@@ -277,11 +404,6 @@ void PLCTag::getPLCStatus()
 
 }
 
-
-// QString PLCTag::getPLCAddress() const
-// {
-//     return _plcAddress;
-// }
 
 bool PLCTag::getPLCIsConnected() const
 {
@@ -429,56 +551,56 @@ void PLCTag::startButtonPressedChanged(bool pressed)
 {
     qDebug() << "PLCTag::startButtonPressedChanged()";
 
-    writePLCTag(_plcMainProgramName + "HMI_Start_PB",pressed);
+    writePLCTag(_plcMainProgramName + "HMI_Start_PB", pressed);
 }
 
 void PLCTag::stopButtonPressedChanged(bool pressed)
 {
     qDebug() << "PLCTag::stopButtonPressedChanged()";
 
-    writePLCTag(_plcMainProgramName + "HMI_Stop_PB",pressed);
+    writePLCTag(_plcMainProgramName + "HMI_Stop_PB", pressed);
 }
 
 void PLCTag::resetButtonPressedChanged(bool pressed)
 {
     qDebug() << "PLCTag::resetButtonPressedChanged()";
 
-    writePLCTag(_plcSafetyProgramName + "HMI_Reset_PB",pressed);
+    writePLCTag(_plcSafetyProgramName + "HMI_Reset_PB", pressed);
 }
 
 void PLCTag::moveToHomeButtonPressedChanged(bool pressed)
 {
     qDebug() << "PLCTag::moveToHomeButtonPressedChanged()";
 
-    writePLCTag(_plcMainProgramName + "HMI_Home_PB",pressed);
+    writePLCTag(_plcMainProgramName + "HMI_MoveToHome_PB", pressed);
 }
 
 void PLCTag::moveLeftButtonPressedChanged(bool pressed)
 {
     qDebug() << "PLCTag::moveLeftButtonPressedChanged()";
 
-    writePLCTag(_plcMainProgramName + "HMI_MoveLeft_PB",pressed);
+    writePLCTag(_plcMainProgramName + "HMI_MoveLeft_PB", pressed);
 }
 
 void PLCTag::moveBackButtonPressedChanged(bool pressed)
 {
     qDebug() << "PLCTag::moveBackButtonPressedChanged()";
 
-    writePLCTag(_plcMainProgramName + "HMI_MoveBack_PB",pressed);
+    writePLCTag(_plcMainProgramName + "HMI_MoveBack_PB", pressed);
 }
 
 void PLCTag::moveForwardButtonPressedChanged(bool pressed)
 {
     qDebug() << "PLCTag::moveForwardButtonPressedChanged()";
 
-    writePLCTag(_plcMainProgramName + "HMI_MoveForward_PB",pressed);
+    writePLCTag(_plcMainProgramName + "HMI_MoveForward_PB", pressed);
 }
 
 void PLCTag::moveRightButtonPressedChanged(bool pressed)
 {
     qDebug() << "PLCTag::moveRightButtonPressedChanged()";
 
-    writePLCTag(_plcMainProgramName + "HMI_MoveRight_PB",pressed);
+    writePLCTag(_plcMainProgramName + "HMI_MoveRight_PB", pressed);
 }
 
 

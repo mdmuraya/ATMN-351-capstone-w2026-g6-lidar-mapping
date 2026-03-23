@@ -134,9 +134,11 @@ class PLCTag : public QObject
 
         void getPLCStatus();
         int32_t getPLCTag(QString tagName);
+        // static void eventCallback(int32_t tagId, int eventId, int status, void *userdata);
         bool readPLCTag(QString tagName, bool &tagValue);
         uint64_t readPLCTag(QString tagName, uint64_t &tagValue);
         bool writePLCTag(QString tagName, bool tagValue);
+        // bool updateHMIFromPLCTag(QString tagName);
 
 };
 
