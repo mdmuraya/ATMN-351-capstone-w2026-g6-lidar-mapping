@@ -457,8 +457,8 @@ ApplicationWindow {
                             ProgressBar {
                                 id: progressBar
                                 from: 0.0      // Minimum value
-                                to: 100.0     // Maximum value
-                                //value: 50.36    // Current value
+                                to: 210317    // Maximum value
+                                value: plcTag?.stepperMotorDetectionPosition //50.36    // Current value
                                 Layout.fillWidth: true
 
                                 // Define the background (the progress bar track)
@@ -486,24 +486,24 @@ ApplicationWindow {
                                     }
                                 }
 
-                                NumberAnimation on value {
-                                    from: progressBar.from
-                                    to: progressBar.to
-                                    duration:  5000
-                                    running: ((plcTag?.runState ?? false) && (plcTag?.runStateSCAN ?? false))
-                                }
+                                // NumberAnimation on value {
+                                //     from: progressBar.from
+                                //     to: progressBar.to
+                                //     duration:  5000
+                                //     running: ((plcTag?.runState ?? false) && (plcTag?.runStateSCAN ?? false))
+                                // }
 
-                                onValueChanged: {
-                                        if (value === to && to > 0) {
-                                            plcTag?.stopButtonPressedChanged(true)
-                                            plcTag?.stopButtonPressedChanged(false)
-                                        }
-                                    }
+                                // onValueChanged: {
+                                //         if (value === to && to > 0) {
+                                //             plcTag?.stopButtonPressedChanged(true)
+                                //             plcTag?.stopButtonPressedChanged(false)
+                                //         }
+                                //     }
                             }
 
                             // Add a Text label to show the percentage value
                             Text {
-                                text: progressBar.value.toFixed(0) + "% complete"
+                                text: ((progressBar.value / progressBar.to) * 100).toFixed(1) + "% complete"
                                 font.bold: true
                                 font.pointSize: 15
                                 horizontalAlignment: Text.AlignHCenter

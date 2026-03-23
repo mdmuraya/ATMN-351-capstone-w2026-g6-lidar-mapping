@@ -4,6 +4,15 @@
 #include <QObject>
 #include <QHash>
 
+struct StepperMotor_AZD_AEP_t
+{
+    bool connectionFaulted = false;
+    int  detectionPosition;
+
+    auto operator<=>(const StepperMotor_AZD_AEP_t&) const = default;
+
+} ;
+
 class PLCTag : public QObject
 {
     Q_OBJECT
@@ -26,6 +35,8 @@ class PLCTag : public QObject
     Q_PROPERTY(bool greenPilotLight READ getGreenPilotLight WRITE setGreenPilotLight NOTIFY greenPilotLightChanged)
     Q_PROPERTY(bool bluePilotLight READ getBluePilotLight WRITE setBluePilotLight NOTIFY bluePilotLightChanged)
     Q_PROPERTY(bool whitePilotLight READ getWhitePilotLight WRITE setWhitePilotLight NOTIFY whitePilotLightChanged)
+    Q_PROPERTY(int stepperMotorDetectionPosition READ getStepperMotorDetectionPosition WRITE setStepperMotorDetectionPosition NOTIFY stepperMotorDetectionPositionChanged)
+
 
     public:
         explicit PLCTag(QObject *paren);
@@ -79,6 +90,11 @@ class PLCTag : public QObject
         bool getWhitePilotLight() const;
         void setWhitePilotLight(bool newValue);
 
+        StepperMotor_AZD_AEP_t getStepperMotor_AZD_AEP_Input() const;
+        void setStepperMotor_AZD_AEP_Input(const StepperMotor_AZD_AEP_t &newValue);
+
+        int getStepperMotorDetectionPosition() const;
+        void setStepperMotorDetectionPosition(int newValue);
 
     signals:
         //void plcAddressChanged(bool newValue);
@@ -97,6 +113,8 @@ class PLCTag : public QObject
         void greenPilotLightChanged(bool newValue);
         void bluePilotLightChanged(bool newValue);
         void whitePilotLightChanged(bool newValue);
+        void stepperMotor_AZD_AEP_InputChanged(StepperMotor_AZD_AEP_t newValue);
+        void stepperMotorDetectionPositionChanged(int newValue);
 
     public slots:
         void startButtonPressedChanged(bool pressed);
@@ -111,7 +129,7 @@ class PLCTag : public QObject
     private:
         std::unique_ptr<QTimer> _getPLCStatusTimer = nullptr;
 
-        QString _plcAddress = "";
+        QString m_plcAddress = "";
         QString _plcFamilyId = "";
         QString _plcMainProgramName = "";
         QString _plcSafetyProgramName = "";
@@ -131,15 +149,16 @@ class PLCTag : public QObject
         bool _greenPilotLight = false;
         bool _bluePilotLight = false;
         bool _whitePilotLight = false;
+        StepperMotor_AZD_AEP_t m_stepperMotor_AZD_AEP_Input;
 
         void getPLCStatus();
-        int32_t getPLCTag(QString tagName);
+        int32_t getPLCTag(QString tagName, uint32_t elementSize = 1);
         // static void eventCallback(int32_t tagId, int eventId, int status, void *userdata);
         bool readPLCTag(QString tagName, bool &tagValue);
-        uint64_t readPLCTag(QString tagName, uint64_t &tagValue);
+        bool readPLCTag(QString tagName, uint64_t &tagValue);
+        bool readPLCTag(QString tagName, uint32_t elementSize, StepperMotor_AZD_AEP_t &tagValue);
         bool writePLCTag(QString tagName, bool tagValue);
         // bool updateHMIFromPLCTag(QString tagName);
-
 };
 
 #endif // PLCTAG_HPP

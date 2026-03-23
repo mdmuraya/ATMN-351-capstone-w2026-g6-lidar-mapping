@@ -34,7 +34,7 @@ PLCTag::~PLCTag()
 
 void PLCTag::connectToPLC(QString plcAddress, QString plcFamilyId, QString plcMainProgramName, QString plcSafetyProgramName)
 {
-    _plcAddress = plcAddress;
+    m_plcAddress = plcAddress;
     _plcFamilyId = plcFamilyId;
     _plcMainProgramName = plcMainProgramName;
     _plcSafetyProgramName = plcSafetyProgramName;
@@ -86,7 +86,7 @@ void PLCTag::disconnectFromPLC()
     _getPLCStatusTimer->stop();
 }
 
-int32_t PLCTag::getPLCTag(QString tagName)
+int32_t PLCTag::getPLCTag(QString tagName, uint32_t elementSize)
 {
     qDebug() << "PLCTag::getPLCTag()" << QDateTime::currentDateTime();
 
@@ -99,7 +99,7 @@ int32_t PLCTag::getPLCTag(QString tagName)
 
 
     QString plcPath = (QString::compare(_plcFamilyId, "controllogix", Qt::CaseInsensitive) == 0 ) ? QString("&path=1,0") : "";
-    QString plcTagPath = QString("protocol=ab-eip&gateway=") + _plcAddress + plcPath + QString("&plc=") + _plcFamilyId + QString("&elem_size=1&elem_count=1&name=") + tagName;
+    QString plcTagPath = QString("protocol=ab-eip&gateway=") + m_plcAddress + plcPath + QString("&plc=") + _plcFamilyId + QString("&elem_size=") + QString::number(elementSize) + QString("&elem_count=1&name=") + tagName;
 
     int32_t tag = plc_tag_create(plcTagPath.toUtf8().constData(), 5000 /*wait for a maximumm of 5 seconds*/);
 
@@ -174,7 +174,38 @@ bool PLCTag::readPLCTag(QString tagName, bool &tagValue)
     return false;
 }
 
-uint64_t PLCTag::readPLCTag(QString tagName, uint64_t &tagValue)
+bool PLCTag::readPLCTag(QString tagName, uint32_t elementSize, StepperMotor_AZD_AEP_t &tagValue)
+{
+    //qDebug() << "PLCTag::readPLCTag()" << QDateTime::currentDateTime();
+
+    int32_t tag = getPLCTag(tagName, elementSize);
+
+
+    if(tag > 0)
+    {
+        /* get the data */
+        int rc = plc_tag_read(tag, _getPLCStatusTimer->interval());
+        if(rc != PLCTAG_STATUS_OK)
+        {
+            qDebug() << "ERROR: Unable to read the data! Got error code" << rc << ":" << QString::fromUtf8(plc_tag_decode_error(rc));
+            _PLCTags.remove(tagName);
+            plc_tag_destroy(tag);
+            return false;
+        }
+        //qDebug() << QString::number(tag);
+        tagValue.connectionFaulted = static_cast<bool>(plc_tag_get_bit(tag, 0));
+        tagValue.detectionPosition = plc_tag_get_int32(tag, 20);
+
+        qDebug() << "tagValue.detectionPosition";
+        qDebug() << QString::number(tagValue.detectionPosition);
+
+        return true;
+    }
+
+    return false;
+}
+
+bool PLCTag::readPLCTag(QString tagName, uint64_t &tagValue)
 {
     //qDebug() << "PLCTag::readPLCTag()" << QDateTime::currentDateTime();
 
@@ -299,7 +330,6 @@ void PLCTag::getPLCStatus()
     //Program:SafetyProgram.PHY_ESTOP_ACTIVATED
     _getPLCStatusTimer->stop();
 
-    //bool boolTagValue = false;
     uint64_t uint64TagValue = 0;
 
     if(readPLCTag(_plcMainProgramName + "PLC_Heart_Beat", uint64TagValue))
@@ -311,86 +341,92 @@ void PLCTag::getPLCStatus()
         QFuture<void> future;
 
         future = QtConcurrent::run([this]() {
-            bool boolTagValue = getAllSafetyInputsOK();
-            readPLCTag(QString("") + "ALL_Safety_Inputs_OK", boolTagValue) ? setAllSafetyInputsOK(boolTagValue) : (void)0; // do nothiing if false
+            bool tagValue = getAllSafetyInputsOK();
+            readPLCTag(QString("") + "ALL_Safety_Inputs_OK", tagValue) ? setAllSafetyInputsOK(tagValue) : (void)0; // do nothiing if false
         });
         synchronizer.addFuture(future);
 
         future = QtConcurrent::run([this]() {
-            bool boolTagValue = getEStop1Activated();
-            readPLCTag(_plcSafetyProgramName + "PHY_ESTOP_1_ACTIVATED", boolTagValue) ? setEStop1Activated(boolTagValue) : (void)0; // do nothiing if false
+            bool tagValue = getEStop1Activated();
+            readPLCTag(_plcSafetyProgramName + "PHY_ESTOP_1_ACTIVATED", tagValue) ? setEStop1Activated(tagValue) : (void)0; // do nothiing if false
         });
         synchronizer.addFuture(future);
 
         future = QtConcurrent::run([this]() {
-            bool boolTagValue = getEStop1Faulted();
-            readPLCTag(_plcSafetyProgramName + "PHY_ESTOP_1_FAULTED", boolTagValue) ? setEStop1Faulted(boolTagValue) : (void)0; // do nothiing if false
+            bool tagValue = getEStop1Faulted();
+            readPLCTag(_plcSafetyProgramName + "PHY_ESTOP_1_FAULTED", tagValue) ? setEStop1Faulted(tagValue) : (void)0; // do nothiing if false
         });
         synchronizer.addFuture(future);
 
         future = QtConcurrent::run([this]() {
-            bool boolTagValue = getLightCurtain1Activated();
-            readPLCTag(_plcSafetyProgramName + "PHY_LIGHTCURTAIN_1_ACTIVATED", boolTagValue) ? setLightCurtain1Activated(boolTagValue) : (void)0; // do nothiing if false
+            bool tagValue = getLightCurtain1Activated();
+            readPLCTag(_plcSafetyProgramName + "PHY_LIGHTCURTAIN_1_ACTIVATED", tagValue) ? setLightCurtain1Activated(tagValue) : (void)0; // do nothiing if false
         });
         synchronizer.addFuture(future);
 
         future = QtConcurrent::run([this]() {
-            bool boolTagValue = getLightCurtain1Faulted();
-            readPLCTag(_plcSafetyProgramName + "PHY_LIGHTCURTAIN_1_FAULTED", boolTagValue) ? setLightCurtain1Faulted(boolTagValue) : (void)0; // do nothiing if false
+            bool tagValue = getLightCurtain1Faulted();
+            readPLCTag(_plcSafetyProgramName + "PHY_LIGHTCURTAIN_1_FAULTED", tagValue) ? setLightCurtain1Faulted(tagValue) : (void)0; // do nothiing if false
         });
         synchronizer.addFuture(future);
 
         future = QtConcurrent::run([this]() {
-            bool boolTagValue = getAreaScanner1Activated();
-            readPLCTag(_plcSafetyProgramName + "PHY_AREASCANNER_1_ACTIVATED", boolTagValue) ? setAreaScanner1Activated(boolTagValue) : (void)0; // do nothiing if false
+            bool tagValue = getAreaScanner1Activated();
+            readPLCTag(_plcSafetyProgramName + "PHY_AREASCANNER_1_ACTIVATED", tagValue) ? setAreaScanner1Activated(tagValue) : (void)0; // do nothiing if false
         });
         synchronizer.addFuture(future);
 
         future = QtConcurrent::run([this]() {
-            bool boolTagValue = getAreaScanner1Faulted();
-            readPLCTag(_plcSafetyProgramName + "PHY_AREASCANNER_1_FAULTED", boolTagValue) ? setAreaScanner1Faulted(boolTagValue) : (void)0; // do nothiing if false
+            bool tagValue = getAreaScanner1Faulted();
+            readPLCTag(_plcSafetyProgramName + "PHY_AREASCANNER_1_FAULTED", tagValue) ? setAreaScanner1Faulted(tagValue) : (void)0; // do nothiing if false
         });
         synchronizer.addFuture(future);
 
         future = QtConcurrent::run([this]() {
-            bool boolTagValue = getRunState();
-            readPLCTag(_plcMainProgramName + "System_Running", boolTagValue) ? setRunState(boolTagValue) : (void)0; // do nothiing if false
+            bool tagValue = getRunState();
+            readPLCTag(_plcMainProgramName + "System_Running", tagValue) ? setRunState(tagValue) : (void)0; // do nothiing if false
         });
         synchronizer.addFuture(future);
 
         future = QtConcurrent::run([this]() {
-            bool boolTagValue =getRunStateSCAN();
-            readPLCTag(_plcMainProgramName + "PHY_Selector_Run_SCAN", boolTagValue) ? setRunStateSCAN(boolTagValue) : (void)0; // do nothiing if false
+            bool tagValue =getRunStateSCAN();
+            readPLCTag(_plcMainProgramName + "PHY_Selector_Run_SCAN", tagValue) ? setRunStateSCAN(tagValue) : (void)0; // do nothiing if false
         });
         synchronizer.addFuture(future);
 
         future = QtConcurrent::run([this]() {
-            bool boolTagValue =getRedPilotLight();
-            readPLCTag(_plcMainProgramName + "Red_Pilot_Light", boolTagValue) ? setRedPilotLight(boolTagValue) : (void)0; // do nothiing if false
+            bool tagValue =getRedPilotLight();
+            readPLCTag(_plcMainProgramName + "Red_Pilot_Light", tagValue) ? setRedPilotLight(tagValue) : (void)0; // do nothiing if false
         });
         synchronizer.addFuture(future);
 
         future = QtConcurrent::run([this]() {
-            bool boolTagValue = getAmberPilotLight();
-            readPLCTag(_plcMainProgramName + "Amber_Pilot_Light", boolTagValue) ? setAmberPilotLight(boolTagValue) : (void)0; // do nothiing if false
+            bool tagValue = getAmberPilotLight();
+            readPLCTag(_plcMainProgramName + "Amber_Pilot_Light", tagValue) ? setAmberPilotLight(tagValue) : (void)0; // do nothiing if false
         });
         synchronizer.addFuture(future);
 
         future = QtConcurrent::run([this]() {
-            bool boolTagValue = getGreenPilotLight();
-            readPLCTag(_plcMainProgramName + "Green_Pilot_Light", boolTagValue) ? setGreenPilotLight(boolTagValue) : (void)0; // do nothiing if false
+            bool tagValue = getGreenPilotLight();
+            readPLCTag(_plcMainProgramName + "Green_Pilot_Light", tagValue) ? setGreenPilotLight(tagValue) : (void)0; // do nothiing if false
         });
         synchronizer.addFuture(future);
 
         future = QtConcurrent::run([this]() {
-            bool boolTagValue = getBluePilotLight();
-            readPLCTag(_plcMainProgramName + "Blue_Pilot_Light", boolTagValue) ? setBluePilotLight(boolTagValue) :  (void)0; // do nothiing if false
+            bool tagValue = getBluePilotLight();
+            readPLCTag(_plcMainProgramName + "Blue_Pilot_Light", tagValue) ? setBluePilotLight(tagValue) :  (void)0; // do nothiing if false
         });
         synchronizer.addFuture(future);
 
         future = QtConcurrent::run([this]() {
-            bool boolTagValue = getWhitePilotLight();
-            readPLCTag(_plcMainProgramName + "White_Pilot_Light", boolTagValue) ? setWhitePilotLight(boolTagValue) : (void)0; // do nothiing if false
+            bool tagValue = getWhitePilotLight();
+            readPLCTag(_plcMainProgramName + "White_Pilot_Light", tagValue) ? setWhitePilotLight(tagValue) : (void)0; // do nothiing if false
+        });
+        synchronizer.addFuture(future);
+
+        future = QtConcurrent::run([this]() {
+            StepperMotor_AZD_AEP_t tagValue;// = getWhitePilotLight();
+            readPLCTag(QString("") + "Stepper_MOT:I", 60, tagValue) ? setStepperMotor_AZD_AEP_Input(tagValue) : (void)0; // do nothiing if false
         });
         synchronizer.addFuture(future);
 
@@ -732,3 +768,27 @@ void PLCTag::setWhitePilotLight(bool newValue)
 
 
 
+
+StepperMotor_AZD_AEP_t PLCTag::getStepperMotor_AZD_AEP_Input() const
+{
+    return m_stepperMotor_AZD_AEP_Input;
+}
+
+void PLCTag::setStepperMotor_AZD_AEP_Input(const StepperMotor_AZD_AEP_t &newValue)
+{
+    setStepperMotorDetectionPosition(newValue.detectionPosition);
+}
+
+int PLCTag::getStepperMotorDetectionPosition() const
+{
+    return m_stepperMotor_AZD_AEP_Input.detectionPosition;
+}
+
+void PLCTag::setStepperMotorDetectionPosition(int newValue)
+{
+    if (m_stepperMotor_AZD_AEP_Input.detectionPosition == newValue)
+        return;
+
+    m_stepperMotor_AZD_AEP_Input.detectionPosition = newValue;
+    emit stepperMotorDetectionPositionChanged(m_stepperMotor_AZD_AEP_Input.detectionPosition);
+}
