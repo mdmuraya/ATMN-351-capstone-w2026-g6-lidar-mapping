@@ -35,8 +35,8 @@ LIDARScanPointCloud2Geometry::~LIDARScanPointCloud2Geometry()
 void LIDARScanPointCloud2Geometry::updatePoints(const QVector<QVector3D> &points)
 {
 
-    // if (points.isEmpty())
-    //     return;
+    if (points.isEmpty())
+        return;
 
     QByteArray vbuf;
     vbuf.resize(points.size() * sizeof(Vertex));

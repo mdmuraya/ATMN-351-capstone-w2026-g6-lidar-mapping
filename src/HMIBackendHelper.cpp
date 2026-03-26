@@ -148,6 +148,8 @@ void HMIBackendHelper::connectToPLC()
 
     qDebug() << "HMIBackendHelper::onConnectToPLC()" << _plcFamilyId  << _plcAddress;
 
+    _plcAddress = "192.168.1.102";
+
     if(_plcFamilyId == "controllogix")
     {
         _plcMainProgramName = "Program:MainProgram.";
@@ -275,8 +277,8 @@ void HMIBackendHelper::scanSICKMultiscan100CallBack(const std::shared_ptr<sensor
         float z = (*iterZ) * 20;
         // Do something with x, y, z
 
-        if(((x) < 0) )
-            continue;
+        // if(((x) < 0) )
+        //     continue;
 
         if((x < 0) || (x > 20) || (y > 20) || (z > 20))
             continue;
@@ -289,7 +291,7 @@ void HMIBackendHelper::scanSICKMultiscan100CallBack(const std::shared_ptr<sensor
 
     emit pointCloudReady(points);
     _DEMSurface->updatePoints(points);
-    _LIDARScanPointCloud2Geometry->updatePoints(points);
+    _LIDARScanPointCloud2Geometry->updatePoints(m_points);
 
 }
 
@@ -305,7 +307,7 @@ void HMIBackendHelper::stopDataCaptureButtonClicked()
 {
     qDebug() << "HMIBackendHelper::stopDataCaptureButtonClicked()";
 
-    _LIDARScanPointCloud2Geometry->updatePoints(m_points);
+    //_LIDARScanPointCloud2Geometry->updatePoints(m_points);
 
 }
 
@@ -314,7 +316,7 @@ void HMIBackendHelper::clearDataCaptureButtonClicked()
     qDebug() << "HMIBackendHelper::clearDataCaptureButtonClicked()";
 
     m_points.clear();
-    _LIDARScanPointCloud2Geometry->updatePoints(m_points);
+    //_LIDARScanPointCloud2Geometry->updatePoints(m_points);
 }
 
 void HMIBackendHelper::startTimers()

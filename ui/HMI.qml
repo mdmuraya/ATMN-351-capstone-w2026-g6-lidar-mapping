@@ -118,7 +118,7 @@ ApplicationWindow {
                                 font.bold: true // Sets the font for the entire TextField to bold
                                 font.pointSize: 14 // Optional: Adjust the font size
                                 implicitWidth: 200
-                                text: "127.0.0.1"
+                                text: "192.168.1.102"
                                 // Restrict input to digits and dots
                                 //inputMask: "000.000.000.000;_"
                                 validator: RegularExpressionValidator {
@@ -410,7 +410,8 @@ ApplicationWindow {
 
                                         PerspectiveCamera {
                                            id: camera
-                                           z: 30
+                                           position: Qt.vector3d(5, 0, 30)
+                                           //z: 30
                                            eulerRotation.z: 90
                                        }
 
