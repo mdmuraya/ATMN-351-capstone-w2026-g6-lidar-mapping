@@ -298,6 +298,64 @@ ApplicationWindow {
                                 }
                             }
                         }
+
+                        GroupBox {
+                            title: "Scan Data Capture"
+                            enabled: plcTag?.plcIsConnected ?? false
+                            Layout.fillWidth: true
+                            ColumnLayout {
+                                anchors.fill: parent
+
+                                Button {
+                                    id: startDataCaptureButton
+                                    text: qsTr("Start Data Capture")
+                                    //enabled: (!plcTag?.runState)
+                                    Material.background: startButton.down ? Material.Grey : Material.Green
+                                    Material.foreground: "white"
+                                    Layout.alignment: Qt.AlignHCenter
+                                    font {
+                                        bold: true
+                                        pointSize: 10
+                                    }
+                                    onPressedChanged: {
+                                        hmiBackendHelper?.startDataCaptureButtonClicked();
+                                    }
+                                }
+
+                                Button {
+                                    id: stopDataCaptureButton
+                                    text: qsTr("Stop Data Capture")
+                                    //enabled: plcTag?.runState ?? false
+                                    Material.background: Material.Red
+                                    Material.foreground: "white"
+                                    Layout.alignment: Qt.AlignHCenter
+                                    font {
+                                        bold: true
+                                        pointSize: 10
+                                    }
+                                    onPressedChanged: {
+                                        hmiBackendHelper?.stopDataCaptureButtonClicked();
+                                    }
+                                }
+
+                                Button {
+                                    id: clearDataCaptureButton
+                                    text: qsTr("Clear Data Capture")
+                                    //enabled: (!plcTag?.runState)
+                                    Material.background: Material.Blue
+                                    Material.foreground: "white"
+                                    Layout.alignment: Qt.AlignHCenter
+                                    font {
+                                        bold: true
+                                        pointSize: 10
+                                    }
+                                    onPressedChanged: {
+                                        hmiBackendHelper?.clearDataCaptureButtonClicked();
+                                    }
+                                }
+                            }
+                        }
+
                         Item { Layout.fillHeight: true }
                         GroupBox {
                             Layout.fillWidth: true

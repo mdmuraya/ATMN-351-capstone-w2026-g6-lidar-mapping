@@ -126,6 +126,7 @@ class PLCTag : public QObject
         void moveForwardButtonPressedChanged(bool pressed);
         void moveRightButtonPressedChanged(bool pressed);
 
+
     private:
         std::unique_ptr<QTimer> _getPLCStatusTimer = nullptr;
 

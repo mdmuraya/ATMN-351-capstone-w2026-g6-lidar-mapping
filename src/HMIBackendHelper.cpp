@@ -255,10 +255,10 @@ void HMIBackendHelper::scanCallBack(sensor_msgs::msg::LaserScan::SharedPtr scan)
 
 void HMIBackendHelper::scanSICKMultiscan100CallBack(const std::shared_ptr<sensor_msgs::msg::PointCloud2> pointCloud2)
 {
-    qDebug() << "HMIBackendHelper::scanSICKMultiscan100CallBack()";
+    //qDebug() << "HMIBackendHelper::scanSICKMultiscan100CallBack()";
 
 
-    qDebug() << "sick_scan_ros2_example: pointcloud message received, size " << pointCloud2->width << " x " << pointCloud2->height;
+    //qDebug() << "sick_scan_ros2_example: pointcloud message received, size " << pointCloud2->width << " x " << pointCloud2->height;
 
     QVector<QVector3D> points;
     points.reserve(pointCloud2->width * pointCloud2->height);
@@ -278,15 +278,40 @@ void HMIBackendHelper::scanSICKMultiscan100CallBack(const std::shared_ptr<sensor
         // if(((x) > 20) || ((y) > 20) || ((z) > 20))
         //     continue;
 
-        qDebug() << "sick_scan_ros2_example: PointCloud2 message XYZ: x=" << x << ", y=" << y << ", z=" << z;
+        //qDebug() << "sick_scan_ros2_example: PointCloud2 message XYZ: x=" << x << ", y=" << y << ", z=" << z;
 
         points.append(QVector3D(x, y, z));
+        m_points.append(QVector3D(x, y, z));
     }
 
     emit pointCloudReady(points);
     _DEMSurface->updatePoints(points);
-    _LIDARScanPointCloud2Geometry->updatePoints(points);
+    //_LIDARScanPointCloud2Geometry->updatePoints(points);
 
+}
+
+
+void HMIBackendHelper::startDataCaptureButtonClicked()
+{
+    qDebug() << "HMIBackendHelper::startDataCaptureButtonClicked()";
+
+    clearDataCaptureButtonClicked();
+}
+
+void HMIBackendHelper::stopDataCaptureButtonClicked()
+{
+    qDebug() << "HMIBackendHelper::stopDataCaptureButtonClicked()";
+
+    _LIDARScanPointCloud2Geometry->updatePoints(m_points);
+
+}
+
+void HMIBackendHelper::clearDataCaptureButtonClicked()
+{
+    qDebug() << "HMIBackendHelper::clearDataCaptureButtonClicked()";
+
+    m_points.clear();
+    _LIDARScanPointCloud2Geometry->updatePoints(m_points);
 }
 
 void HMIBackendHelper::startTimers()

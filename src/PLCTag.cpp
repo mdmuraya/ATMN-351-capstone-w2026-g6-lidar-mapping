@@ -88,10 +88,10 @@ void PLCTag::disconnectFromPLC()
 
 int32_t PLCTag::getPLCTag(QString tagName, uint32_t elementSize)
 {
-    qDebug() << "PLCTag::getPLCTag()" << QDateTime::currentDateTime();
+    //qDebug() << "PLCTag::getPLCTag()" << QDateTime::currentDateTime();
 
     if (_PLCTags.contains(tagName)) {
-        qDebug() << "Key" << tagName << " found.";
+        //qDebug() << "Key" << tagName << " found.";
         return _PLCTags.value(tagName);
     }
 
@@ -150,7 +150,7 @@ int32_t PLCTag::getPLCTag(QString tagName, uint32_t elementSize)
 
 bool PLCTag::readPLCTag(QString tagName, bool &tagValue)
 {
-    qDebug() << "PLCTag::readPLCTag()" << QDateTime::currentDateTime();
+    //qDebug() << "PLCTag::readPLCTag()" << QDateTime::currentDateTime();
 
     int32_t tag = getPLCTag(tagName);
 
@@ -325,7 +325,7 @@ bool PLCTag::writePLCTag(QString tagName, bool tagValue)
 
 void PLCTag::getPLCStatus()
 {
-    qDebug() << "PLCTag::getPLCStatus()" << QDateTime::currentDateTime();
+    //qDebug() << "PLCTag::getPLCStatus()" << QDateTime::currentDateTime();
     //here we will get all the PLC tags, in threads (concurrently)
     //Program:SafetyProgram.PHY_ESTOP_ACTIVATED
     _getPLCStatusTimer->stop();
@@ -638,6 +638,7 @@ void PLCTag::moveRightButtonPressedChanged(bool pressed)
 
     writePLCTag(_plcMainProgramName + "HMI_MoveRight_PB", pressed);
 }
+
 
 
 bool PLCTag::getRedPilotLight() const

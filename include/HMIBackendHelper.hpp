@@ -58,6 +58,10 @@ class HMIBackendHelper : public QObject
         void connectToPLC();
         void disconnectFromPLC();
 
+        void startDataCaptureButtonClicked();
+        void stopDataCaptureButtonClicked();
+        void clearDataCaptureButtonClicked();
+
     private:
         QQmlApplicationEngine _QQmlApplicationEngine;
         QDateTime _dateTimeOnApplicationStart = QDateTime::currentDateTime();
@@ -79,6 +83,7 @@ class HMIBackendHelper : public QObject
         QString _plcFamilyId = "";//"controllogix";//controllogix //micro800
         QString _plcMainProgramName = "Program:MainProgram."; //"Program:MainProgram.";
         QString _plcSafetyProgramName = "Program:MainProgram."; //"Program:MainProgram.";
+        QVector<QVector3D> m_points;
 
 
         void initializeROS2();
