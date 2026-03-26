@@ -275,8 +275,11 @@ void HMIBackendHelper::scanSICKMultiscan100CallBack(const std::shared_ptr<sensor
         float z = (*iterZ) * 20;
         // Do something with x, y, z
 
-        // if(((x) > 20) || ((y) > 20) || ((z) > 20))
-        //     continue;
+        if(((x) < 0) )
+            continue;
+
+        if((x < 0) || (x > 20) || (y > 20) || (z > 20))
+            continue;
 
         //qDebug() << "sick_scan_ros2_example: PointCloud2 message XYZ: x=" << x << ", y=" << y << ", z=" << z;
 
@@ -286,7 +289,7 @@ void HMIBackendHelper::scanSICKMultiscan100CallBack(const std::shared_ptr<sensor
 
     emit pointCloudReady(points);
     _DEMSurface->updatePoints(points);
-    //_LIDARScanPointCloud2Geometry->updatePoints(points);
+    _LIDARScanPointCloud2Geometry->updatePoints(points);
 
 }
 

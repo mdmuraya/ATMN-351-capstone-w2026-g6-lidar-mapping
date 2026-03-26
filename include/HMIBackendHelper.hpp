@@ -84,6 +84,7 @@ class HMIBackendHelper : public QObject
         QString _plcMainProgramName = "Program:MainProgram."; //"Program:MainProgram.";
         QString _plcSafetyProgramName = "Program:MainProgram."; //"Program:MainProgram.";
         QVector<QVector3D> m_points;
+        bool m_doDataCapture = false;
 
 
         void initializeROS2();

@@ -410,7 +410,8 @@ ApplicationWindow {
 
                                         PerspectiveCamera {
                                            id: camera
-                                           z: 500
+                                           z: 30
+                                           eulerRotation.z: 90
                                        }
 
                                        DirectionalLight {
