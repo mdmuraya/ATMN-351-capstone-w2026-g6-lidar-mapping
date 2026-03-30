@@ -28,13 +28,15 @@ class PLCTag : public QObject
     Q_PROPERTY(bool lightCurtain1Faulted READ getLightCurtain1Faulted WRITE setLightCurtain1Faulted NOTIFY lightCurtain1FaultedChanged)
     Q_PROPERTY(bool areaScanner1Activated READ getAreaScanner1Activated WRITE setAreaScanner1Activated NOTIFY areaScanner1ActivatedChanged)
     Q_PROPERTY(bool areaScanner1Faulted READ getAreaScanner1Faulted WRITE setAreaScanner1Faulted NOTIFY areaScanner1FaultedChanged)
-    Q_PROPERTY(bool runState READ getRunState WRITE setRunState NOTIFY runStateChanged)
+    Q_PROPERTY(bool powerState READ getPowerState WRITE setPowerState NOTIFY powerStateChanged)
     Q_PROPERTY(bool runStateSCAN READ getRunStateSCAN WRITE setRunStateSCAN NOTIFY runStateSCANChanged)
     Q_PROPERTY(bool redPilotLight READ getRedPilotLight WRITE setRedPilotLight NOTIFY redPilotLightChanged)
     Q_PROPERTY(bool amberPilotLight READ getAmberPilotLight WRITE setAmberPilotLight NOTIFY amberPilotLightChanged)
     Q_PROPERTY(bool greenPilotLight READ getGreenPilotLight WRITE setGreenPilotLight NOTIFY greenPilotLightChanged)
     Q_PROPERTY(bool bluePilotLight READ getBluePilotLight WRITE setBluePilotLight NOTIFY bluePilotLightChanged)
     Q_PROPERTY(bool whitePilotLight READ getWhitePilotLight WRITE setWhitePilotLight NOTIFY whitePilotLightChanged)
+    Q_PROPERTY(bool frontLimitSwitch READ getFrontLimitSwitch WRITE setFrontLimitSwitch NOTIFY frontLimitSwitchChanged)
+    Q_PROPERTY(bool backLimitSwitch READ getBackLimitSwitch WRITE setBackLimitSwitch NOTIFY backLimitSwitchChanged)
     Q_PROPERTY(int stepperMotorDetectionPosition READ getStepperMotorDetectionPosition WRITE setStepperMotorDetectionPosition NOTIFY stepperMotorDetectionPositionChanged)
 
 
@@ -69,8 +71,8 @@ class PLCTag : public QObject
         bool getAreaScanner1Faulted() const;
         void setAreaScanner1Faulted(bool newValue);
 
-        bool getRunState() const;
-        void setRunState(bool newValue);
+        bool getPowerState() const;
+        void setPowerState(bool newValue);
 
         bool getRunStateSCAN() const;
         void setRunStateSCAN(bool newValue);
@@ -90,6 +92,13 @@ class PLCTag : public QObject
         bool getWhitePilotLight() const;
         void setWhitePilotLight(bool newValue);
 
+        bool getFrontLimitSwitch() const;
+        void setFrontLimitSwitch(bool newValue);
+
+        bool getBackLimitSwitch() const;
+        void setBackLimitSwitch(bool newValue);
+
+
         StepperMotor_AZD_AEP_t getStepperMotor_AZD_AEP_Input() const;
         void setStepperMotor_AZD_AEP_Input(const StepperMotor_AZD_AEP_t &newValue);
 
@@ -106,50 +115,54 @@ class PLCTag : public QObject
         void lightCurtain1FaultedChanged(bool newValue);
         void areaScanner1ActivatedChanged(bool newValue);
         void areaScanner1FaultedChanged(bool newValue);
-        void runStateChanged(bool newValue);
+        void powerStateChanged(bool newValue);
         void runStateSCANChanged(bool newValue);
         void redPilotLightChanged(bool newValue);
         void amberPilotLightChanged(bool newValue);
         void greenPilotLightChanged(bool newValue);
         void bluePilotLightChanged(bool newValue);
         void whitePilotLightChanged(bool newValue);
+        void frontLimitSwitchChanged(bool newValue);
+        void backLimitSwitchChanged(bool newValue);
         void stepperMotor_AZD_AEP_InputChanged(StepperMotor_AZD_AEP_t newValue);
         void stepperMotorDetectionPositionChanged(int newValue);
 
     public slots:
-        void startButtonPressedChanged(bool pressed);
-        void stopButtonPressedChanged(bool pressed);
+        void powerOnButtonPressedChanged(bool pressed);
+        void powerOffButtonPressedChanged(bool pressed);
         void resetButtonPressedChanged(bool pressed);
         void moveToHomeButtonPressedChanged(bool pressed);
-        void moveLeftButtonPressedChanged(bool pressed);
+        void moveToEndButtonPressedChanged(bool pressed);
         void moveBackButtonPressedChanged(bool pressed);
         void moveForwardButtonPressedChanged(bool pressed);
-        void moveRightButtonPressedChanged(bool pressed);
-
+        void startDataCaptureButtonPressedChanged(bool pressed);
+        void stopDataCaptureButtonPressedChanged(bool pressed);
 
     private:
         std::unique_ptr<QTimer> _getPLCStatusTimer = nullptr;
 
         QString m_plcAddress = "";
-        QString _plcFamilyId = "";
-        QString _plcMainProgramName = "";
-        QString _plcSafetyProgramName = "";
-        QHash<QString, int32_t> _PLCTags;
-        bool _plcIsConnected = false;
-        bool _runState = false;
-        bool _allSafetyInputsOK = false;
-        bool _eStop1Activated = false;
-        bool _eStop1Faulted = false;
-        bool _lightCurtain1Activated = false;
-        bool _lightCurtain1Faulted = false;
-        bool _areaScanner1Activated = false;
-        bool _areaScanner1Faulted = false;
-        bool _runStateSCAN = false;
-        bool _redPilotLight = false;
-        bool _amberPilotLight = false;
-        bool _greenPilotLight = false;
-        bool _bluePilotLight = false;
-        bool _whitePilotLight = false;
+        QString m_plcFamilyId = "";
+        QString m_plcMainProgramName = "";
+        QString m_plcSafetyProgramName = "";
+        QHash<QString, int32_t> m_PLCTags;
+        bool m_plcIsConnected = false;
+        bool m_powerState = false;
+        bool m_allSafetyInputsOK = false;
+        bool m_eStop1Activated = false;
+        bool m_eStop1Faulted = false;
+        bool m_lightCurtain1Activated = false;
+        bool m_lightCurtain1Faulted = false;
+        bool m_areaScanner1Activated = false;
+        bool m_areaScanner1Faulted = false;
+        bool m_runStateSCAN = false;
+        bool m_redPilotLight = false;
+        bool m_amberPilotLight = false;
+        bool m_greenPilotLight = false;
+        bool m_bluePilotLight = false;
+        bool m_whitePilotLight = false;
+        bool m_frontLimitSwitch = false;
+        bool m_backLimitSwitch = false;
         StepperMotor_AZD_AEP_t m_stepperMotor_AZD_AEP_Input;
 
         void getPLCStatus();

@@ -75,98 +75,7 @@ ApplicationWindow {
                 RowLayout {
                     GroupBox {
                         Layout.fillWidth: true
-
-                        RowLayout {
-                            spacing: 10
-                            Label {
-                                id: plcFamilyLabel
-                                text: qsTr("PLC Family:")
-                                MouseArea {
-                                    anchors.fill: parent
-                                    onClicked: plcFamilyComboBox.forceActiveFocus()
-                                }
-                            }
-
-                            ComboBox {
-                                id: plcFamilyComboBox
-                                implicitWidth: 250
-                                enabled: (!plcTag?.plcIsConnected)
-                                model: hmiBackendHelper?.listOfPLCFamily
-                                //currentValue: hmiBackendHelper?.plcAddress
-                                textRole: "plcFamilyDescription"
-                                valueRole: "plcFamilyId"
-                                onCurrentValueChanged: {
-                                    console.debug("Selected item index:", currentIndex)
-                                    console.debug("Selected item text:", currentText)
-                                    console.debug("Selected item value:", currentValue)
-                                    hmiBackendHelper.plcFamilyId = plcFamilyComboBox.currentValue
-                                }
-                            }
-
-                            Label {
-                                id: plcIPAddress
-                                text: qsTr("PLC IP Address:")
-                                MouseArea {
-                                    anchors.fill: parent
-                                    onClicked: plcIPAddressTextField.forceActiveFocus()
-                                }
-                            }
-
-                            TextField {
-                                id: plcIPAddressTextField
-                                enabled: (!plcTag?.plcIsConnected)
-                                font.bold: true // Sets the font for the entire TextField to bold
-                                font.pointSize: 14 // Optional: Adjust the font size
-                                implicitWidth: 200
-                                text: "192.168.1.102"
-                                // Restrict input to digits and dots
-                                //inputMask: "000.000.000.000;_"
-                                validator: RegularExpressionValidator {
-                                    // Regex for an IPv4 address (0-255 in each octet)
-                                    regularExpression: /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/
-                                }
-                                onEditingFinished: {
-                                    if (plcIPAddressTextField.acceptableInput) {
-                                        console.log("Valid IP Address:", plcIPAddressTextField.text);
-                                        hmiBackendHelper.plcAddress = plcIPAddressTextField.text
-                                    } else {
-                                        console.log("Invalid IP Address format");
-                                        // Optional: Provide visual feedback for invalid input
-                                    }
-                                }
-
-                            }
-
-                            Button {
-                                id: connectToPLCButton
-                                text: plcTag?.plcIsConnected ? qsTr("Disconnect") : qsTr("Connect")
-                                enabled: (!(plcTag == null))
-                                Material.background: connectToPLCButton.down ? Material.Grey : Material.Green
-                                Material.foreground: "white"
-                                Layout.alignment: Qt.AlignHCenter
-                                font {
-                                    bold: true
-                                    pointSize: 14
-                                }
-                                onClicked: {
-
-                                    if(plcTag?.plcIsConnected)
-                                    {
-                                        hmiBackendHelper.disconnectFromPLC()
-                                    }
-                                    else
-                                    {
-                                        // Check validation state before using the IP
-                                        if (plcIPAddressTextField.acceptableInput) {
-                                            // Use the IP address, for example with a QHostAddress in C++
-                                            console.log("Connecting to:", plcIPAddressTextField.text);
-                                            hmiBackendHelper.connectToPLC()
-                                        }
-                                    }
-
-                                }
-                            }
-                        }
+                        PLCFamily {}
                     }
                 }
 
@@ -176,60 +85,11 @@ ApplicationWindow {
                         Layout.horizontalStretchFactor: 1
 
                         GroupBox {
-                            title: "Actions"
+                            title: "Power"
                             enabled: plcTag?.plcIsConnected ?? false
                             Layout.fillWidth: true
-                            ColumnLayout {
-                                anchors.fill: parent
 
-                                Button {
-                                    id: startButton
-                                    text: qsTr("START")
-                                    enabled: (!plcTag?.runState)
-                                    Material.background: startButton.down ? Material.Grey : Material.Green
-                                    Material.foreground: "white"
-                                    Layout.alignment: Qt.AlignHCenter
-                                    font {
-                                        bold: true
-                                        pointSize: 14
-                                    }
-                                    onPressedChanged: {
-                                        plcTag?.startButtonPressedChanged(pressed);
-                                    }
-                                }
-
-                                Button {
-                                    id: stopButton
-                                    text: qsTr("STOP")
-                                    enabled: plcTag?.runState ?? false
-                                    Material.background: Material.Red
-                                    Material.foreground: "white"
-                                    Layout.alignment: Qt.AlignHCenter
-                                    font {
-                                        bold: true
-                                        pointSize: 14
-                                    }
-                                    onPressedChanged: {
-                                        plcTag?.stopButtonPressedChanged(pressed);
-                                    }
-                                }
-
-                                Button {
-                                    id: resetButton
-                                    text: qsTr("RESET")
-                                    enabled: (!plcTag?.runState)
-                                    Material.background: Material.Blue
-                                    Material.foreground: "white"
-                                    Layout.alignment: Qt.AlignHCenter
-                                    font {
-                                        bold: true
-                                        pointSize: 14
-                                    }
-                                    onPressedChanged: {
-                                        plcTag?.resetButtonPressedChanged(pressed);
-                                    }
-                                }
-                            }
+                            PowerActions {}
                         }
 
 
@@ -238,65 +98,8 @@ ApplicationWindow {
                             title: "Jog"
                             enabled: plcTag?.plcIsConnected ?? false
                             Layout.fillWidth: true
-                            ColumnLayout {
-                                anchors.fill: parent
-                                RoundButton {
-                                    text: qsTr("\u2B9D") //move left
-                                    enabled: ((plcTag?.runState ?? false) && (!(plcTag?.runStateSCAN ?? false)))
-                                    Material.background: Material.Blue
-                                    Layout.alignment: Qt.AlignHCenter
-                                    onPressedChanged: {
-                                        plcTag?.moveLeftButtonPressedChanged(pressed);
-                                    }
-                                }
+                            JogActions{}
 
-
-                                RowLayout {
-                                    Item { Layout.fillWidth: true }
-                                    RoundButton {
-                                        text: qsTr("\u2B9C") //move back
-                                        enabled: ((plcTag?.runState ?? false) && (!(plcTag?.runStateSCAN ?? false)))
-                                        Material.background: Material.Blue
-                                        onPressedChanged: {
-                                            plcTag?.moveBackButtonPressedChanged(pressed);
-                                        }
-                                    }
-
-                                    RoundButton {
-                                        text: qsTr("HOME")
-                                        enabled: ((plcTag?.runState ?? false) && (!(plcTag?.runStateSCAN ?? false)))
-                                        Material.background: Material.Blue
-                                        Material.foreground: "white"
-                                        font {
-                                            bold: true
-                                            pointSize: 12
-                                        }
-                                        onPressedChanged: {
-                                            plcTag?.moveToHomeButtonPressedChanged(pressed);
-                                        }
-                                    }
-
-                                    RoundButton {
-                                        text: qsTr("\u2B9E") //move forward
-                                        enabled: ((plcTag?.runState ?? false) && (!(plcTag?.runStateSCAN ?? false)))
-                                        Material.background: Material.Blue
-                                        onPressedChanged: {
-                                            plcTag?.moveForwardButtonPressedChanged(pressed);
-                                        }
-                                    }
-                                    Item { Layout.fillWidth: true }
-                                }
-
-                                RoundButton {
-                                    text: qsTr("\u2B9F") //move right
-                                    enabled: ((plcTag?.runState ?? false) && (!(plcTag?.runStateSCAN ?? false)))
-                                    Material.background: Material.Blue
-                                    Layout.alignment: Qt.AlignHCenter
-                                    onPressedChanged: {
-                                        plcTag?.moveRightButtonPressedChanged(pressed);
-                                    }
-                                }
-                            }
                         }
 
                         GroupBox {
@@ -384,192 +187,7 @@ ApplicationWindow {
                         Layout.fillHeight: true
                         Layout.horizontalStretchFactor: 98
                         //Item { Layout.fillHeight: true }
-                        ColumnLayout {
-                            anchors.fill: parent
-
-                            Rectangle {
-                                id: rectScanArea
-                                Layout.fillWidth: true
-                                Layout.fillHeight: true
-                                color: "transparent"
-
-                                Rectangle {
-                                    anchors.centerIn: parent
-                                    width: rectScanArea.width * 0.93
-                                    height: rectScanArea.height * 0.93
-                                    //color: "#F7F7DA"
-                                    color: applicationWindow.color
-                                    border {
-                                        width: 1
-                                        color: "black"
-                                    }
-
-                                    View3D {
-                                        anchors.fill: parent
-                                        id: view3DNode
-
-                                        PerspectiveCamera {
-                                           id: camera
-                                           position: Qt.vector3d(5, 0, 30)
-                                           //z: 30
-                                           eulerRotation.z: 90
-                                       }
-
-                                       DirectionalLight {
-                                           eulerRotation.x: -30
-                                       }
-
-                                       // // Terrain DEM
-                                       // Model {
-                                       //     geometry: HeightFieldGeometry {
-                                       //         source: DEMSurface.heightMap
-                                       //         extents: Qt.vector3d(100, 20, 100) // x,y,z size in world units
-                                       //         smoothShading: true
-                                       //     }
-                                       //     materials: DefaultMaterial {
-                                       //         diffuseColor: "#8c7a5b"
-                                       //     }
-                                       // }
-
-                                       // Raw point cloud overlay
-
-                                       Model {
-                                           geometry: LIDARScanPointCloud2Geometry
-                                           materials: PrincipledMaterial{
-                                               pointSize: 1
-                                               baseColor: "red"
-                                           }
-                                       }
-
-                                        WasdController {
-                                            controlledObject: camera
-                                        }
-                                    }
-                                }
-
-
-                                Text {
-                                    anchors.top: parent.top
-                                    anchors.horizontalCenter: parent.horizontalCenter
-                                    text: qsTr("\u2B9D = LEFT")
-                                    font {
-                                        bold: true
-                                        pointSize: 10
-                                    }
-                                }
-
-                                Text {
-                                    anchors.bottom: parent.bottom
-                                    anchors.horizontalCenter: parent.horizontalCenter
-                                    text: qsTr("\u2B9F = RIGHT")
-                                    font {
-                                        bold: true
-                                        pointSize: 10
-                                    }
-                                }
-
-                                Text {
-                                    anchors.right: parent.right
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    text: qsTr("\u2B9F = FRONT")
-                                    rotation: 270
-                                    font {
-                                        bold: true
-                                        pointSize: 10
-                                    }
-                                }
-
-                                Text {
-                                    anchors.left: parent.left
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    text: qsTr("\u2B9D = BACK")
-                                    rotation: 270
-                                    font {
-                                        bold: true
-                                        pointSize: 10
-                                    }
-                                }
-
-                                Text {
-                                    anchors.left: parent.left
-                                    anchors.bottom: parent.bottom
-                                    text: qsTr("HOME")
-                                    font {
-                                        bold: true
-                                        pointSize: 10
-                                    }
-                                }
-                            }
-                            RowLayout {
-                                Item {
-                                   Layout.fillWidth: true
-
-                                   Rectangle {
-                                        // Position the line
-                                        // Set width and height to create a line
-                                        width: parent.width // Stretches across the parent width
-                                        height: 1            // Makes it a thin horizontal line
-                                        color: "black"        // Set the line color
-                                    }
-                                }
-                            }
-
-                            ProgressBar {
-                                id: progressBar
-                                from: 0.0      // Minimum value
-                                to: 210317    // Maximum value
-                                value: plcTag?.stepperMotorDetectionPosition //50.36    // Current value
-                                Layout.fillWidth: true
-
-                                // Define the background (the progress bar track)
-                                background: Rectangle {
-                                    Layout.fillWidth: true
-                                    implicitHeight: 20
-                                    color: applicationWindow.color//"#e6e6e6" // Light gray track color
-                                    radius: 5
-                                    border.color: "#cccccc"
-                                    border.width: 1
-                                }
-
-                                // Define the contentItem ( the progress indicator)
-                                contentItem: Item {
-                                    //implicitWidth: 300
-                                    //implicitHeight: 20
-
-                                    // Use a Rectangle and bind its width to the progress bar's visual position
-                                    Rectangle {
-                                        width: progressBar.visualPosition * parent.width
-                                        height: parent.height
-                                        radius: 5
-                                        color: "steelblue"//"#4CAF50" // Green fill color
-
-                                    }
-                                }
-
-                                // NumberAnimation on value {
-                                //     from: progressBar.from
-                                //     to: progressBar.to
-                                //     duration:  5000
-                                //     running: ((plcTag?.runState ?? false) && (plcTag?.runStateSCAN ?? false))
-                                // }
-
-                                // onValueChanged: {
-                                //         if (value === to && to > 0) {
-                                //             plcTag?.stopButtonPressedChanged(true)
-                                //             plcTag?.stopButtonPressedChanged(false)
-                                //         }
-                                //     }
-                            }
-
-                            // Add a Text label to show the percentage value
-                            Text {
-                                text: ((progressBar.value / progressBar.to) * 100).toFixed(1) + "% complete"
-                                font.bold: true
-                                font.pointSize: 15
-                                horizontalAlignment: Text.AlignHCenter
-                                Layout.fillWidth: true
-                            }
-                        }
+                        ScanArea {}
                     }
 
                     ColumnLayout {
@@ -605,27 +223,9 @@ ApplicationWindow {
 
                                 Rectangle {
                                     //width: 150
-                                    height: 35
-                                    color: plcTag?.plcIsConnected ? (plcTag?.runStateSCAN ? "green" : "blue") : "transparent"
-                                    radius: 5 // Optional: adds rounded corners
-                                    Layout.fillWidth: true
-                                    border {
-                                        width: 1
-                                        color: "black"
-                                    }
-                                    Text {
-                                        text: plcTag?.plcIsConnected ? (plcTag?.runStateSCAN ? "SCAN" : "JOG") : "??"
-                                        color: plcTag?.plcIsConnected ? "white" : "black"
-                                        font.bold: true
-                                        font.pointSize: 12
-                                        anchors.centerIn: parent // Centers the text within the rectangle
-                                    }
-                                }
-                                Rectangle {
-                                    //width: 150
                                     //Layout.fillWidth: true
                                     height: 35
-                                    color: plcTag?.plcIsConnected ? (plcTag?.runState ? "green" : "transparent") : "transparent"
+                                    color: plcTag?.plcIsConnected ? (plcTag?.powerState ? "green" : "transparent") : "transparent"
                                     radius: 5 // Optional: adds rounded corners
                                     Layout.fillWidth: true
                                     border {
@@ -634,13 +234,33 @@ ApplicationWindow {
                                     }
                                     Text {
                                         id: plcStatusText
-                                        text: plcTag?.plcIsConnected ? (plcTag?.runState ? "RUNNING" : "NOT RUNNING") : "??"
-                                        color: plcTag?.plcIsConnected ? (plcTag?.runState ? "white" : "black") : "black"
+                                        text: plcTag?.plcIsConnected ? (plcTag?.powerState ? "POWER ON" : "POWER OFF") : "?? POWER"
+                                        color: plcTag?.plcIsConnected ? (plcTag?.powerState ? "white" : "black") : "black"
                                         font.bold: true
                                         font.pointSize: 12
                                         anchors.centerIn: parent // Centers the text within the rectangle
                                     }
                                 }
+
+                                Rectangle {
+                                    //width: 150
+                                    height: 35
+                                    color: (plcTag?.plcIsConnected && plcTag?.powerState) ? (plcTag?.runStateSCAN ? "green" : "blue") : "transparent"
+                                    radius: 5 // Optional: adds rounded corners
+                                    Layout.fillWidth: true
+                                    border {
+                                        width: 1
+                                        color: "black"
+                                    }
+                                    Text {
+                                        text: (plcTag?.plcIsConnected && plcTag?.powerState) ? (plcTag?.runStateSCAN ? "SCAN" : "JOG") : "?? SCAN / JOG"
+                                        color: (plcTag?.plcIsConnected && plcTag?.powerState) ? "white" : "black"
+                                        font.bold: true
+                                        font.pointSize: 12
+                                        anchors.centerIn: parent // Centers the text within the rectangle
+                                    }
+                                }
+
                                 //Item { Layout.fillWidth: true }
 
                             }
