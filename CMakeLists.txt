@@ -109,6 +109,10 @@ if(USE_QT)
        QML_FILES ui/ScanArea.qml
        QML_FILES ui/PowerActions.qml
        QML_FILES ui/JogActions.qml
+       QML_FILES ui/ScanDataCapture.qml
+       QML_FILES ui/SystemState.qml
+       QML_FILES ui/Alarms.qml
+       QML_FILES ui/IndicatorLights.qml
        SOURCES include/HMIBackendHelper.hpp src/HMIBackendHelper.cpp
     )
     add_subdirectory(lib/libplctag)

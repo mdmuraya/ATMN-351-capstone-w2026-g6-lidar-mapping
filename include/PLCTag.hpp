@@ -35,8 +35,8 @@ class PLCTag : public QObject
     Q_PROPERTY(bool greenPilotLight READ getGreenPilotLight WRITE setGreenPilotLight NOTIFY greenPilotLightChanged)
     Q_PROPERTY(bool bluePilotLight READ getBluePilotLight WRITE setBluePilotLight NOTIFY bluePilotLightChanged)
     Q_PROPERTY(bool whitePilotLight READ getWhitePilotLight WRITE setWhitePilotLight NOTIFY whitePilotLightChanged)
-    Q_PROPERTY(bool frontLimitSwitch READ getFrontLimitSwitch WRITE setFrontLimitSwitch NOTIFY frontLimitSwitchChanged)
-    Q_PROPERTY(bool backLimitSwitch READ getBackLimitSwitch WRITE setBackLimitSwitch NOTIFY backLimitSwitchChanged)
+    Q_PROPERTY(bool endLimitSwitch READ getEndLimitSwitch WRITE setEndLimitSwitch NOTIFY endLimitSwitchChanged)
+    Q_PROPERTY(bool homeLimitSwitch READ getHomeLimitSwitch WRITE setHomeLimitSwitch NOTIFY homeLimitSwitchChanged)
     Q_PROPERTY(int stepperMotorDetectionPosition READ getStepperMotorDetectionPosition WRITE setStepperMotorDetectionPosition NOTIFY stepperMotorDetectionPositionChanged)
 
 
@@ -92,11 +92,11 @@ class PLCTag : public QObject
         bool getWhitePilotLight() const;
         void setWhitePilotLight(bool newValue);
 
-        bool getFrontLimitSwitch() const;
-        void setFrontLimitSwitch(bool newValue);
+        bool getEndLimitSwitch() const;
+        void setEndLimitSwitch(bool newValue);
 
-        bool getBackLimitSwitch() const;
-        void setBackLimitSwitch(bool newValue);
+        bool getHomeLimitSwitch() const;
+        void setHomeLimitSwitch(bool newValue);
 
 
         StepperMotor_AZD_AEP_t getStepperMotor_AZD_AEP_Input() const;
@@ -122,8 +122,8 @@ class PLCTag : public QObject
         void greenPilotLightChanged(bool newValue);
         void bluePilotLightChanged(bool newValue);
         void whitePilotLightChanged(bool newValue);
-        void frontLimitSwitchChanged(bool newValue);
-        void backLimitSwitchChanged(bool newValue);
+        void endLimitSwitchChanged(bool newValue);
+        void homeLimitSwitchChanged(bool newValue);
         void stepperMotor_AZD_AEP_InputChanged(StepperMotor_AZD_AEP_t newValue);
         void stepperMotorDetectionPositionChanged(int newValue);
 
@@ -161,8 +161,8 @@ class PLCTag : public QObject
         bool m_greenPilotLight = false;
         bool m_bluePilotLight = false;
         bool m_whitePilotLight = false;
-        bool m_frontLimitSwitch = false;
-        bool m_backLimitSwitch = false;
+        bool m_EndLimitSwitch = false;
+        bool m_HomeLimitSwitch = false;
         StepperMotor_AZD_AEP_t m_stepperMotor_AZD_AEP_Input;
 
         void getPLCStatus();

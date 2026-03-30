@@ -425,14 +425,14 @@ void PLCTag::getPLCStatus()
         synchronizer.addFuture(future);
 
         future = QtConcurrent::run([this]() {
-            bool tagValue = getFrontLimitSwitch();
-            readPLCTag(m_plcMainProgramName + "PHY_Front_LIMIT_SWITCH", tagValue) ? setFrontLimitSwitch(tagValue) : (void)0; // do nothiing if false
+            bool tagValue = getEndLimitSwitch();
+            readPLCTag(m_plcMainProgramName + "PHY_End_LIMIT_SWITCH", tagValue) ? setEndLimitSwitch(tagValue) : (void)0; // do nothiing if false
         });
         synchronizer.addFuture(future);
 
         future = QtConcurrent::run([this]() {
-            bool tagValue =getBackLimitSwitch();
-            readPLCTag(m_plcMainProgramName + "PHY_Backk_LIMIT_SWITCH", tagValue) ? setBackLimitSwitch(tagValue) : (void)0; // do nothiing if false
+            bool tagValue =getHomeLimitSwitch();
+            readPLCTag(m_plcMainProgramName + "PHY_Home_LIMIT_SWITCH", tagValue) ? setHomeLimitSwitch(tagValue) : (void)0; // do nothiing if false
         });
         synchronizer.addFuture(future);
 
@@ -730,32 +730,32 @@ void PLCTag::setWhitePilotLight(bool newValue)
     emit whitePilotLightChanged(m_whitePilotLight);
 }
 
-bool PLCTag::getFrontLimitSwitch() const
+bool PLCTag::getEndLimitSwitch() const
 {
-    return m_frontLimitSwitch;
+    return m_EndLimitSwitch;
 }
 
-void PLCTag::setFrontLimitSwitch(bool newValue)
+void PLCTag::setEndLimitSwitch(bool newValue)
 {
-    if (m_frontLimitSwitch == newValue)
+    if (m_EndLimitSwitch == newValue)
         return;
 
-    m_frontLimitSwitch = newValue;;
-    emit frontLimitSwitchChanged(m_frontLimitSwitch);
+    m_EndLimitSwitch = newValue;;
+    emit endLimitSwitchChanged(m_EndLimitSwitch);
 }
 
-bool PLCTag::getBackLimitSwitch() const
+bool PLCTag::getHomeLimitSwitch() const
 {
-    return m_backLimitSwitch;
+    return m_HomeLimitSwitch;
 }
 
-void PLCTag::setBackLimitSwitch(bool newValue)
+void PLCTag::setHomeLimitSwitch(bool newValue)
 {
-    if (m_backLimitSwitch == newValue)
+    if (m_HomeLimitSwitch == newValue)
         return;
 
-    m_backLimitSwitch = newValue;;
-    emit backLimitSwitchChanged(m_backLimitSwitch);
+    m_HomeLimitSwitch = newValue;;
+    emit homeLimitSwitchChanged(m_HomeLimitSwitch);
 }
 
 /*
