@@ -634,7 +634,7 @@ void PLCTag::startDataCaptureButtonPressedChanged(bool pressed)
 {
     qDebug() << "PLCTag::startDataCaptureButtonPressedChanged()";
 
-    writePLCTag(m_plcMainProgramName + "HMI_StartDataCapture_PB", pressed);
+    writePLCTag(m_plcMainProgramName + "HMI_MoveToEnd_PB", pressed);
 }
 
 void PLCTag::moveBackButtonPressedChanged(bool pressed)
@@ -655,7 +655,7 @@ void PLCTag::stopDataCaptureButtonPressedChanged(bool pressed)
 {
     qDebug() << "PLCTag::stopDataCaptureButtonPressedChanged()";
 
-    writePLCTag(m_plcMainProgramName + "HMI_StopDataCapture_PB", pressed);
+    writePLCTag(m_plcMainProgramName + "HMI_StopMotion_PB", pressed);
 }
 
 void PLCTag::stopMotionButtonPressedChanged(bool pressed)

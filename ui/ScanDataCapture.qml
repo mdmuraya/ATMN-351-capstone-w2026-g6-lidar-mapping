@@ -9,7 +9,7 @@ ColumnLayout {
     Button {
         id: startDataCaptureButton
         text: qsTr("Start Capture")
-        //enabled: (!plcTag?.runState)
+        enabled: (plcTag?.runStateSCAN && plcTag?.homeLimitSwitch )
         Material.background: startDataCaptureButton.down ? Material.Grey : Material.Green
         Material.foreground: "white"
         Layout.alignment: Qt.AlignHCenter
@@ -18,6 +18,9 @@ ColumnLayout {
             pointSize: 10
         }
         onPressedChanged: {
+            plcTag?.startDataCaptureButtonPressedChanged(pressed);
+        }
+        onClicked: {
             hmiBackendHelper?.startDataCaptureButtonClicked();
         }
     }
@@ -25,7 +28,7 @@ ColumnLayout {
     Button {
         id: stopDataCaptureButton
         text: qsTr("Stop Capture")
-        //enabled: plcTag?.runState ?? false
+        enabled: (plcTag?.runStateSCAN && !(plcTag?.endLimitSwitch || plcTag?.homeLimitSwitch) )
         Material.background: Material.Red
         Material.foreground: "white"
         Layout.alignment: Qt.AlignHCenter
@@ -34,6 +37,9 @@ ColumnLayout {
             pointSize: 10
         }
         onPressedChanged: {
+            plcTag?.stopDataCaptureButtonPressedChanged(pressed);
+        }
+        onClicked: {
             hmiBackendHelper?.stopDataCaptureButtonClicked();
         }
     }

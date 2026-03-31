@@ -262,36 +262,41 @@ void HMIBackendHelper::scanSICKMultiscan100CallBack(const std::shared_ptr<sensor
 
     //qDebug() << "sick_scan_ros2_example: pointcloud message received, size " << pointCloud2->width << " x " << pointCloud2->height;
 
-    QVector<QVector3D> points;
-    points.reserve(pointCloud2->width * pointCloud2->height);
-
-    // Create iterators for x, y, and z fields
-    sensor_msgs::PointCloud2ConstIterator<float> iterX(*pointCloud2, "x");
-    sensor_msgs::PointCloud2ConstIterator<float> iterY(*pointCloud2, "y");
-    sensor_msgs::PointCloud2ConstIterator<float> iterZ(*pointCloud2, "z");
-
-    for (; iterX != iterX.end(); ++iterX, ++iterY, ++iterZ)
+    if(_PLCTag->getRunStateSCAN() && !(_PLCTag->getEndLimitSwitch()))
     {
-        float x = (*iterX) * 20;
-        float y = (*iterY) * 20;
-        float z = (*iterZ) * 20;
-        // Do something with x, y, z
+        QVector<QVector3D> points;
+        points.reserve(pointCloud2->width * pointCloud2->height);
 
-        // if(((x) < 0) )
-        //     continue;
+        // Create iterators for x, y, and z fields
+        sensor_msgs::PointCloud2ConstIterator<float> iterX(*pointCloud2, "x");
+        sensor_msgs::PointCloud2ConstIterator<float> iterY(*pointCloud2, "y");
+        sensor_msgs::PointCloud2ConstIterator<float> iterZ(*pointCloud2, "z");
 
-        if((x < 0) || (x > 20) || (y > 20) || (z > 20))
-            continue;
+        for (; iterX != iterX.end(); ++iterX, ++iterY, ++iterZ)
+        {
+            float x = (*iterX) * 20;
+            float y = (*iterY) * 20;
+            float z = (*iterZ) * 20;
+            // Do something with x, y, z
 
-        //qDebug() << "sick_scan_ros2_example: PointCloud2 message XYZ: x=" << x << ", y=" << y << ", z=" << z;
+            // if(((x) < 0) )
+            //     continue;
 
-        points.append(QVector3D(x, y, z));
-        m_points.append(QVector3D(x, y, z));
+            if((x < 0) || (x > 20) || (y > 20) || (z > 20))
+                continue;
+
+            //qDebug() << "sick_scan_ros2_example: PointCloud2 message XYZ: x=" << x << ", y=" << y << ", z=" << z;
+
+            points.append(QVector3D(x, y, z));
+            m_points.append(QVector3D(x, y, z));
+        }
+
+        emit pointCloudReady(points);
+        _DEMSurface->updatePoints(points);
+        _LIDARScanPointCloud2Geometry->updatePoints(m_points);
     }
 
-    emit pointCloudReady(points);
-    _DEMSurface->updatePoints(points);
-    _LIDARScanPointCloud2Geometry->updatePoints(m_points);
+
 
 }
 
