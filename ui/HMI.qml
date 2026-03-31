@@ -89,18 +89,18 @@ ApplicationWindow {
                         }
 
                         GroupBox {
-                            title: "Jog"
+                            title: "Motion"
                             enabled: plcTag?.plcIsConnected ?? false
                             Layout.fillWidth: true
-                            JogActions{}
+                            MotionActions{}
                         }
 
-                        GroupBox {
-                            title: "Scan Data Capture"
-                            enabled: plcTag?.plcIsConnected ?? false
-                            Layout.fillWidth: true
-                            ScanDataCapture {}
-                        }
+                        // GroupBox {
+                        //     title: "Scan Data Capture"
+                        //     enabled: plcTag?.plcIsConnected ?? false
+                        //     Layout.fillWidth: true
+                        //     ScanDataCapture {}
+                        // }
 
                         Item { Layout.fillHeight: true }
                         GroupBox {

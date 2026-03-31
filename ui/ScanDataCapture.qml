@@ -8,7 +8,7 @@ ColumnLayout {
 
     Button {
         id: startDataCaptureButton
-        text: qsTr("Start Data Capture")
+        text: qsTr("Start Capture")
         //enabled: (!plcTag?.runState)
         Material.background: startDataCaptureButton.down ? Material.Grey : Material.Green
         Material.foreground: "white"
@@ -24,7 +24,7 @@ ColumnLayout {
 
     Button {
         id: stopDataCaptureButton
-        text: qsTr("Stop Data Capture")
+        text: qsTr("Stop Capture")
         //enabled: plcTag?.runState ?? false
         Material.background: Material.Red
         Material.foreground: "white"

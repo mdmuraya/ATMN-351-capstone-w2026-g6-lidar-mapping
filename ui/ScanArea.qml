@@ -103,7 +103,7 @@ ColumnLayout {
                 pointSize: 10
             }
             background: Rectangle {
-                color: (plcTag?.plcIsConnected && plcTag?.powerState) ? (plcTag?.backLimitSwitch ? "#34eb7d" : "transparent") : "transparent"
+                color: (plcTag?.plcIsConnected && plcTag?.powerState) ? (plcTag?.homeLimitSwitch ? "#34eb7d" : "transparent") : "transparent"
                 radius: 5 // Optional: rounded corners
                 width: parent.width + 5 // Add some padding
                 height: parent.height + 5 // Add some padding
@@ -121,7 +121,7 @@ ColumnLayout {
                 pointSize: 10
             }
             background: Rectangle {
-                color: (plcTag?.plcIsConnected && plcTag?.powerState) ? (plcTag?.frontLimitSwitch ? "#34eb7d" : "transparent") : "transparent"
+                color: (plcTag?.plcIsConnected && plcTag?.powerState) ? (plcTag?.endLimitSwitch ? "#34eb7d" : "transparent") : "transparent"
                 radius: 5 // Optional: rounded corners
                 width: parent.width + 5 // Add some padding
                 height: parent.height + 5 // Add some padding

@@ -15,7 +15,20 @@ ColumnLayout {
     //     }
     // }
 
-
+    RoundButton {
+        text: qsTr("HOME")
+        enabled: ((plcTag?.powerState ?? false) && (!(plcTag?.runStateSCAN ?? false)))
+        Material.background: Material.Blue
+        Material.foreground: "white"
+        Layout.alignment: Qt.AlignHCenter
+        font {
+            bold: true
+            //pointSize: 12
+        }
+        onPressedChanged: {
+            plcTag?.moveToHomeButtonPressedChanged(pressed);
+        }
+    }
 
 
     RowLayout {
@@ -29,33 +42,23 @@ ColumnLayout {
             }
         }
 
+
+
         RoundButton {
-            text: qsTr("HOME")
+            text: qsTr("STOP")
             enabled: ((plcTag?.powerState ?? false) && (!(plcTag?.runStateSCAN ?? false)))
-            Material.background: Material.Blue
+            Material.background: Material.Red
             Material.foreground: "white"
             font {
                 bold: true
                 //pointSize: 12
             }
             onPressedChanged: {
-                plcTag?.moveToHomeButtonPressedChanged(pressed);
+                plcTag?.stopMotionButtonPressedChanged(pressed);
             }
         }
 
-        RoundButton {
-            text: qsTr("END")
-            enabled: ((plcTag?.powerState ?? false) && (!(plcTag?.runStateSCAN ?? false)))
-            Material.background: Material.Blue
-            Material.foreground: "white"
-            font {
-                bold: true
-                //pointSize: 12
-            }
-            onPressedChanged: {
-                plcTag?.moveToEndButtonPressedChanged(pressed);
-            }
-        }
+
 
         RoundButton {
             text: qsTr("\u2B9E") //move forward
@@ -66,6 +69,21 @@ ColumnLayout {
             }
         }
         Item { Layout.fillWidth: true }
+    }
+
+    RoundButton {
+        text: qsTr("END")
+        enabled: ((plcTag?.powerState ?? false) && (!(plcTag?.runStateSCAN ?? false)))
+        Material.background: Material.Blue
+        Material.foreground: "white"
+        Layout.alignment: Qt.AlignHCenter
+        font {
+            bold: true
+            //pointSize: 12
+        }
+        onPressedChanged: {
+            plcTag?.moveToEndButtonPressedChanged(pressed);
+        }
     }
 
     // RoundButton {

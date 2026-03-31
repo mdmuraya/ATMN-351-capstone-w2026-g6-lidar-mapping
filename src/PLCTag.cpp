@@ -658,6 +658,13 @@ void PLCTag::stopDataCaptureButtonPressedChanged(bool pressed)
     writePLCTag(m_plcMainProgramName + "HMI_StopDataCapture_PB", pressed);
 }
 
+void PLCTag::stopMotionButtonPressedChanged(bool pressed)
+{
+    qDebug() << "PLCTag::stopMotionButtonPressedChanged()";
+
+    writePLCTag(m_plcMainProgramName + "HMI_StopMotion_PB", pressed);
+}
+
 
 
 bool PLCTag::getRedPilotLight() const

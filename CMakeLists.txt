@@ -108,7 +108,7 @@ if(USE_QT)
        QML_FILES ui/PLCFamily.qml
        QML_FILES ui/ScanArea.qml
        QML_FILES ui/PowerActions.qml
-       QML_FILES ui/JogActions.qml
+       QML_FILES ui/MotionActions.qml
        QML_FILES ui/ScanDataCapture.qml
        QML_FILES ui/SystemState.qml
        QML_FILES ui/Alarms.qml
