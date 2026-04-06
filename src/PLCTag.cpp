@@ -847,3 +847,17 @@ void PLCTag::setStepperMotorDetectionPosition(int newValue)
     m_stepperMotor_AZD_AEP_Input.detectionPosition = newValue;
     emit stepperMotorDetectionPositionChanged(m_stepperMotor_AZD_AEP_Input.detectionPosition);
 }
+
+bool PLCTag::getScanFoward() const
+{
+    return m_scanFoward;
+}
+
+void PLCTag::setScanFoward(bool newValue)
+{
+    if (m_scanFoward == newValue)
+        return;
+
+    m_scanFoward = newValue;
+    emit scanFowardChanged(m_scanFoward);
+}

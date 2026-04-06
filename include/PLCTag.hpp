@@ -37,6 +37,7 @@ class PLCTag : public QObject
     Q_PROPERTY(bool whitePilotLight READ getWhitePilotLight WRITE setWhitePilotLight NOTIFY whitePilotLightChanged)
     Q_PROPERTY(bool endLimitSwitch READ getEndLimitSwitch WRITE setEndLimitSwitch NOTIFY endLimitSwitchChanged)
     Q_PROPERTY(bool homeLimitSwitch READ getHomeLimitSwitch WRITE setHomeLimitSwitch NOTIFY homeLimitSwitchChanged)
+    Q_PROPERTY(bool scanFoward READ getScanFoward WRITE setScanFoward NOTIFY scanFowardChanged)
     Q_PROPERTY(int stepperMotorDetectionPosition READ getStepperMotorDetectionPosition WRITE setStepperMotorDetectionPosition NOTIFY stepperMotorDetectionPositionChanged)
 
 
@@ -105,6 +106,9 @@ class PLCTag : public QObject
         int getStepperMotorDetectionPosition() const;
         void setStepperMotorDetectionPosition(int newValue);
 
+        bool getScanFoward() const;
+        void setScanFoward(bool newScanFoward);
+
     signals:
         //void plcAddressChanged(bool newValue);
         void plcIsConnectedChanged(bool newValue);
@@ -126,6 +130,8 @@ class PLCTag : public QObject
         void homeLimitSwitchChanged(bool newValue);
         void stepperMotor_AZD_AEP_InputChanged(StepperMotor_AZD_AEP_t newValue);
         void stepperMotorDetectionPositionChanged(int newValue);
+
+        void scanFowardChanged();
 
     public slots:
         void powerOnButtonPressedChanged(bool pressed);
@@ -164,6 +170,7 @@ class PLCTag : public QObject
         bool m_whitePilotLight = false;
         bool m_EndLimitSwitch = false;
         bool m_HomeLimitSwitch = false;
+        bool m_scanFoward = false;
         StepperMotor_AZD_AEP_t m_stepperMotor_AZD_AEP_Input;
 
         void getPLCStatus();
@@ -174,6 +181,7 @@ class PLCTag : public QObject
         bool readPLCTag(QString tagName, uint32_t elementSize, StepperMotor_AZD_AEP_t &tagValue);
         bool writePLCTag(QString tagName, bool tagValue);
         // bool updateHMIFromPLCTag(QString tagName);
+
 };
 
 #endif // PLCTAG_HPP
