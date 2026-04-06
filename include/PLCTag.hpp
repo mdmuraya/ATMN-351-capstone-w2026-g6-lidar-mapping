@@ -38,6 +38,7 @@ class PLCTag : public QObject
     Q_PROPERTY(bool endLimitSwitch READ getEndLimitSwitch WRITE setEndLimitSwitch NOTIFY endLimitSwitchChanged)
     Q_PROPERTY(bool homeLimitSwitch READ getHomeLimitSwitch WRITE setHomeLimitSwitch NOTIFY homeLimitSwitchChanged)
     Q_PROPERTY(bool scanFoward READ getScanFoward WRITE setScanFoward NOTIFY scanFowardChanged)
+    Q_PROPERTY(bool scanReverse READ getScanReverse WRITE setScanReverse NOTIFY scanReverseChanged)
     Q_PROPERTY(int stepperMotorDetectionPosition READ getStepperMotorDetectionPosition WRITE setStepperMotorDetectionPosition NOTIFY stepperMotorDetectionPositionChanged)
 
 
@@ -107,7 +108,10 @@ class PLCTag : public QObject
         void setStepperMotorDetectionPosition(int newValue);
 
         bool getScanFoward() const;
-        void setScanFoward(bool newScanFoward);
+        void setScanFoward(bool newValue);
+
+        bool getScanReverse() const;
+        void setScanReverse(bool newScanReverse);
 
     signals:
         //void plcAddressChanged(bool newValue);
@@ -128,10 +132,14 @@ class PLCTag : public QObject
         void whitePilotLightChanged(bool newValue);
         void endLimitSwitchChanged(bool newValue);
         void homeLimitSwitchChanged(bool newValue);
+        void scanFowardChanged(bool newValue);
+        void scanReverseChanged(bool newValue);
         void stepperMotor_AZD_AEP_InputChanged(StepperMotor_AZD_AEP_t newValue);
         void stepperMotorDetectionPositionChanged(int newValue);
 
-        void scanFowardChanged();
+
+
+
 
     public slots:
         void powerOnButtonPressedChanged(bool pressed);
@@ -171,6 +179,7 @@ class PLCTag : public QObject
         bool m_EndLimitSwitch = false;
         bool m_HomeLimitSwitch = false;
         bool m_scanFoward = false;
+        bool m_scanReverse = false;
         StepperMotor_AZD_AEP_t m_stepperMotor_AZD_AEP_Input;
 
         void getPLCStatus();
@@ -181,6 +190,7 @@ class PLCTag : public QObject
         bool readPLCTag(QString tagName, uint32_t elementSize, StepperMotor_AZD_AEP_t &tagValue);
         bool writePLCTag(QString tagName, bool tagValue);
         // bool updateHMIFromPLCTag(QString tagName);
+
 
 };
 

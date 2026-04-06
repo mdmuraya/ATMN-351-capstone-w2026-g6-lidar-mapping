@@ -262,7 +262,7 @@ void HMIBackendHelper::scanSICKMultiscan100CallBack(const std::shared_ptr<sensor
 
     //qDebug() << "sick_scan_ros2_example: pointcloud message received, size " << pointCloud2->width << " x " << pointCloud2->height;
 
-    if(_PLCTag->getRunStateSCAN() && !(_PLCTag->getEndLimitSwitch()))
+    if(_PLCTag->getRunStateSCAN() && !(_PLCTag->getScanReverse()))
     {
         QVector<QVector3D> points;
         points.reserve(pointCloud2->width * pointCloud2->height);

@@ -437,6 +437,12 @@ void PLCTag::getPLCStatus()
         synchronizer.addFuture(future);
 
         future = QtConcurrent::run([this]() {
+            bool tagValue =getScanFoward();
+            readPLCTag(m_plcMainProgramName + "SCAN_FORWARD", tagValue) ? setScanFoward(tagValue) : (void)0; // do nothiing if false
+        });
+        synchronizer.addFuture(future);
+
+        future = QtConcurrent::run([this]() {
             StepperMotor_AZD_AEP_t tagValue;// = getWhitePilotLight();
             readPLCTag(QString("") + "Stepper_MOT:I", 60, tagValue) ? setStepperMotor_AZD_AEP_Input(tagValue) : (void)0; // do nothiing if false
         });
@@ -860,4 +866,18 @@ void PLCTag::setScanFoward(bool newValue)
 
     m_scanFoward = newValue;
     emit scanFowardChanged(m_scanFoward);
+}
+
+bool PLCTag::getScanReverse() const
+{
+    return m_scanReverse;
+}
+
+void PLCTag::setScanReverse(bool newValue)
+{
+    if (m_scanReverse == newValue)
+        return;
+    m_scanReverse = newValue;
+
+    emit scanReverseChanged(m_scanReverse);
 }
