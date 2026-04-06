@@ -44,21 +44,21 @@ ColumnLayout {
         }
     }
 
-    // Button {
-    //     id: clearDataCaptureButton
-    //     text: qsTr("Clear Data Capture")
-    //     //enabled: (!plcTag?.runState)
-    //     Material.background: Material.Blue
-    //     Material.foreground: "white"
-    //     Layout.alignment: Qt.AlignHCenter
-    //     font {
-    //         bold: true
-    //         pointSize: 10
-    //     }
-    //     onPressedChanged: {
-    //         hmiBackendHelper?.clearDataCaptureButtonClicked();
-    //     }
-    // }
+    Button {
+        id: clearDataCaptureButton
+        text: qsTr("Clear Data")
+        //enabled: (!plcTag?.runState)
+        Material.background: Material.Blue
+        Material.foreground: "white"
+        Layout.alignment: Qt.AlignHCenter
+        font {
+            bold: true
+            pointSize: 10
+        }
+        onPressedChanged: {
+            hmiBackendHelper?.clearDataCaptureButtonClicked();
+        }
+    }
 }
 
 

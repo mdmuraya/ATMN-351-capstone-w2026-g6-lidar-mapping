@@ -191,7 +191,7 @@ ColumnLayout {
 
     // Add a Text label to show the percentage value
     Text {
-        text: ((progressBar.value / progressBar.to) * 100).toFixed(1) + "% complete"
+        text: ((progressBar.value / progressBar.to) * 100).toFixed(0) + "% complete"
         font.bold: true
         font.pointSize: 15
         horizontalAlignment: Text.AlignHCenter

@@ -35,8 +35,8 @@ LIDARScanPointCloud2Geometry::~LIDARScanPointCloud2Geometry()
 void LIDARScanPointCloud2Geometry::updatePoints(const QVector<QVector3D> &points)
 {
 
-    if (points.isEmpty())
-        return;
+    // if (points.isEmpty())
+    //     return;
 
     QByteArray vbuf;
     vbuf.resize(points.size() * sizeof(Vertex));
@@ -55,7 +55,6 @@ void LIDARScanPointCloud2Geometry::updatePoints(const QVector<QVector3D> &points
     addAttribute(QQuick3DGeometry::Attribute::PositionSemantic, 0, QQuick3DGeometry::Attribute::F32Type);
     addAttribute(QQuick3DGeometry::Attribute::NormalSemantic, offsetof(Vertex, nx), QQuick3DGeometry::Attribute::F32Type);
     setPrimitiveType(QQuick3DGeometry::PrimitiveType::Points);
-
 
      update();
 
